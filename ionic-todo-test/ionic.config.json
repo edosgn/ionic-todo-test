@@ -1,7 +1,0 @@
-{
-  "name": "ionic-todo-test",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "angular-standalone"
-}
