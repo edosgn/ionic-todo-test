@@ -28,7 +28,8 @@ import {
   AlertController,
   ToastController,
   IonBackButton,
-  IonButtons
+  IonButtons,
+  ModalController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -43,7 +44,7 @@ import {
 
 import { CategoryStore } from '../../stores/category.store';
 import { Category } from '../../../domain/entities/category.entity';
-import { CreateCategoryInput, UpdateCategoryInput } from '../../../application';
+import { CategoryFormModalComponent } from '../../components/category-form-modal/category-form-modal.component';
 
 @Component({
   selector: 'app-categories',
@@ -83,6 +84,7 @@ export class CategoriesPage implements OnInit {
   private readonly router = inject(Router);
   private readonly alertController = inject(AlertController);
   private readonly toastController = inject(ToastController);
+  private readonly modalController = inject(ModalController);
 
   // Reactive signals from store
   readonly categories = this.categoryStore.categories;
@@ -129,148 +131,39 @@ export class CategoriesPage implements OnInit {
   }
 
   async onCreateCategory() {
-    const alert = await this.alertController.create({
-      header: 'New Category',
-      inputs: [
-        {
-          name: 'name',
-          type: 'text',
-          placeholder: 'Category name',
-          attributes: {
-            maxlength: 50
-          }
-        },
-        {
-          name: 'color',
-          type: 'text',
-          placeholder: 'Color (e.g., #FF5733)',
-          value: this.generateRandomColor()
-        },
-        {
-          name: 'icon',
-          type: 'text',
-          placeholder: 'Icon name (e.g., folder)',
-          value: 'folder'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Create',
-          handler: (data) => this.createCategory(data)
-        }
-      ]
+    const modal = await this.modalController.create({
+      component: CategoryFormModalComponent,
+      componentProps: {
+        category: null
+      }
     });
 
-    await alert.present();
-  }
+    modal.onDidDismiss().then((result) => {
+      if (result.data) {
+        // Category was created successfully
+        this.loadCategories();
+      }
+    });
 
-  private async createCategory(data: { name: string; color: string; icon: string }) {
-    if (!data.name?.trim()) {
-      this.showErrorToast('Category name is required');
-      return false;
-    }
-
-    const input: CreateCategoryInput = {
-      name: data.name.trim(),
-      color: data.color || this.generateRandomColor(),
-      icon: data.icon || 'folder'
-    };
-
-    try {
-      this.categoryStore.createCategory(input).subscribe({
-        next: () => {
-          this.showSuccessToast('Category created successfully');
-        },
-        error: (error) => {
-          console.error('Error creating category:', error);
-          this.showErrorToast('Error creating category');
-        }
-      });
-      return true;
-    } catch (error) {
-      console.error('Error creating category:', error);
-      this.showErrorToast('Error creating category');
-      return false;
-    }
+    await modal.present();
   }
 
   async onEditCategory(category: Category) {
-    const alert = await this.alertController.create({
-      header: 'Edit Category',
-      inputs: [
-        {
-          name: 'name',
-          type: 'text',
-          value: category.name,
-          placeholder: 'Category name',
-          attributes: {
-            maxlength: 50
-          }
-        },
-        {
-          name: 'color',
-          type: 'text',
-          value: category.color,
-          placeholder: 'Color (e.g., #FF5733)'
-        },
-        {
-          name: 'icon',
-          type: 'text',
-          value: category.icon,
-          placeholder: 'Icon name (e.g., folder)'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Update',
-          handler: (data) => this.updateCategory(category.id, data)
-        }
-      ]
+    const modal = await this.modalController.create({
+      component: CategoryFormModalComponent,
+      componentProps: {
+        category: category
+      }
     });
 
-    await alert.present();
-  }
+    modal.onDidDismiss().then((result) => {
+      if (result.data) {
+        // Category was updated successfully
+        this.loadCategories();
+      }
+    });
 
-  private async updateCategory(
-    categoryId: string, 
-    data: { name: string; color: string; icon: string }
-  ) {
-    if (!data.name?.trim()) {
-      this.showErrorToast('Category name is required');
-      return false;
-    }
-
-    const input: UpdateCategoryInput = {
-      id: categoryId,
-      name: data.name.trim(),
-      color: data.color || this.generateRandomColor(),
-      icon: data.icon || 'folder'
-    };
-
-    try {
-      this.categoryStore.updateCategory(input).subscribe({
-        next: () => {
-          this.showSuccessToast('Category updated successfully');
-        },
-        error: (error) => {
-          console.error('Error updating category:', error);
-          this.showErrorToast('Error updating category');
-        }
-      });
-      return true;
-    } catch (error) {
-      console.error('Error updating category:', error);
-      this.showErrorToast('Error updating category');
-      return false;
-    }
+    await modal.present();
   }
 
   async onDeleteCategory(category: Category) {

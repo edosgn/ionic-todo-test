@@ -25,11 +25,12 @@ import { CreateTaskInput, UpdateTaskInput } from '../../../application';
 // Presentation imports
 import { TaskStore } from '../../stores/task.store';
 import { CategoryStore } from '../../stores/category.store';
+import { CategorySelectorComponent } from '../category-selector/category-selector.component';
 
 @Component({
   selector: 'app-task-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule],
+  imports: [CommonModule, ReactiveFormsModule, IonicModule, CategorySelectorComponent],
   template: `
     <ion-header>
       <ion-toolbar>
@@ -80,28 +81,12 @@ import { CategoryStore } from '../../stores/category.store';
         </ion-item>
 
         <!-- Category Selection -->
-        <ion-item *ngIf="categories().length > 0">
-          <ion-label position="stacked">Category</ion-label>
-          <ion-select
-            formControlName="categoryId"
-            placeholder="Select a category (optional)"
-            interface="popover">
-            <ion-select-option value="">No category</ion-select-option>
-            <ion-select-option 
-              *ngFor="let category of categories(); trackBy: trackByCategoryId"
-              [value]="category.id">
-              {{ category.name }}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        <!-- Selected Category Preview -->
-        <div *ngIf="selectedCategory()" class="category-preview">
-          <h4>Selected Category</h4>
-          <ion-chip [color]="selectedCategory()!.color">
-            <ion-icon [name]="selectedCategory()!.icon"></ion-icon>
-            <ion-label>{{ selectedCategory()!.name }}</ion-label>
-          </ion-chip>
+        <div class="category-selection-section">
+          <h4>Category Selection</h4>
+          <app-category-selector
+            [selectedCategoryId]="selectedCategorySignal"
+            (categorySelected)="onCategorySelected($event)">
+          </app-category-selector>
         </div>
 
         <!-- Error Messages -->
@@ -157,8 +142,8 @@ export class TaskFormComponent implements OnInit {
 
   // Computed properties
   readonly isEditMode = signal(false);
-  
   readonly selectedCategory = signal<Category | null>(null);
+  readonly selectedCategorySignal = signal<string | null>(null);
 
   // Form controls for easier access
   get titleControl() { return this.taskForm.get('title')!; }
@@ -184,12 +169,15 @@ export class TaskFormComponent implements OnInit {
         categoryId: this.task.categoryId || ''
       });
       this.updateSelectedCategory(this.task.categoryId);
+      this.selectedCategorySignal.set(this.task.categoryId || null);
     }
+  }
 
-    // Watch for category selection changes
-    this.categoryIdControl.valueChanges.subscribe(categoryId => {
-      this.updateSelectedCategory(categoryId);
-    });
+  onCategorySelected(category: Category | null): void {
+    const categoryId = category?.id || null;
+    this.taskForm.patchValue({ categoryId });
+    this.selectedCategorySignal.set(categoryId);
+    this.updateSelectedCategory(categoryId);
   }
 
   private initializeForm(): void {
