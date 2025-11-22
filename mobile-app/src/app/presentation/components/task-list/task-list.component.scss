@@ -22,27 +22,11 @@
   }
 }
 
-// Search section
+// Search section with design system component
 .search-section {
   padding: 20px 16px 16px;
   margin-bottom: 8px;
-
-  .modern-searchbar {
-    --background: rgba(255, 255, 255, 0.9);
-    --border-radius: 16px;
-    --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    --color: var(--ion-color-dark);
-    --placeholder-color: var(--ion-color-medium);
-    --icon-color: var(--ion-color-primary);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
-
-    &:hover {
-      --box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-      transform: translateY(-2px);
-    }
-  }
+  // Design system SearchComponent handles its own styling
 }
 
 // Filter pills section

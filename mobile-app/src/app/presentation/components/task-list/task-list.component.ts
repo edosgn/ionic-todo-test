@@ -30,7 +30,7 @@ import {
   trendingUp,
   appsOutline
 } from 'ionicons/icons';// Design System imports
-import { ButtonComponent } from '@ionic-todo-test/shared-ui';
+import { ButtonComponent, SearchComponent } from '@ionic-todo-test/shared-ui';
 
 // Domain imports
 import { Task } from '../../../domain';
@@ -42,7 +42,7 @@ import { CategoryStore } from '../../stores/category.store';
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, ButtonComponent],
+  imports: [CommonModule, FormsModule, IonicModule, ButtonComponent, SearchComponent],
   template: `
     <ion-header [translucent]="true">
       <ion-toolbar>
@@ -58,13 +58,13 @@ import { CategoryStore } from '../../stores/category.store';
     <ion-content [fullscreen]="true" class="modern-content">
       <!-- Search Bar -->
       <div class="search-section">
-        <ion-searchbar 
+        <lib-search 
           [value]="searchTerm()" 
-          (ionInput)="onSearchChange($event)"
+          (searchChange)="onSearchChange($event)"
           placeholder="Search tasks..."
-          [debounce]="300"
+          [debounceTime]="300"
           class="modern-searchbar">
-        </ion-searchbar>
+        </lib-search>
       </div>
 
       <!-- Category Filter Pills -->
@@ -298,8 +298,7 @@ export class TaskListComponent implements OnInit {
   /**
    * Handle search input changes
    */
-  onSearchChange(event: any): void {
-    const searchTerm = event.target.value;
+  onSearchChange(searchTerm: string): void {
     this.taskStore.setSearchTerm(searchTerm);
   }
 
