@@ -1,0 +1,272 @@
+// Categories Page Styles
+// Mobile-first responsive design for category management interface
+
+.stats-card {
+  margin-bottom: 1rem;
+  
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    
+    ion-icon {
+      font-size: 1.3rem;
+    }
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+    
+    .stat-item {
+      text-align: center;
+      
+      h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
+      
+      p {
+        margin: 0.25rem 0 0 0;
+        font-size: 0.8rem;
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  
+  ion-spinner {
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    margin: 0;
+    opacity: 0.7;
+  }
+}
+
+.error-card {
+  margin: 1rem 0;
+  
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.5rem 0;
+    
+    ion-icon {
+      font-size: 1.2rem;
+    }
+  }
+  
+  p {
+    margin: 0 0 1rem 0;
+    opacity: 0.9;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+  
+  .empty-icon {
+    font-size: 4rem;
+    opacity: 0.4;
+    margin-bottom: 1rem;
+    color: var(--ion-color-medium);
+  }
+  
+  h2 {
+    margin: 0 0 0.5rem 0;
+    color: var(--ion-color-dark);
+  }
+  
+  p {
+    margin: 0 0 2rem 0;
+    opacity: 0.7;
+    max-width: 280px;
+  }
+}
+
+.categories-list {
+  margin-top: 1rem;
+  
+  .category-item-sliding {
+    margin-bottom: 0.5rem;
+    border-radius: 12px;
+    overflow: hidden;
+    
+    ion-item {
+      --background: var(--ion-color-light);
+      --border-color: var(--ion-color-light-shade);
+      --padding-start: 16px;
+      --padding-end: 16px;
+      --min-height: 70px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      
+      &:hover {
+        --background: var(--ion-color-light-tint);
+      }
+    }
+  }
+  
+  .category-content {
+    display: flex;
+    align-items: center;
+    margin-right: 12px;
+  }
+  
+  .category-color-indicator {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--ion-color-light-contrast);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  ion-label {
+    h2 {
+      margin: 0 0 4px 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+    
+    p {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      
+      ion-icon {
+        font-size: 0.9rem;
+      }
+    }
+  }
+  
+  .category-date {
+    opacity: 0.6;
+    font-size: 0.75rem;
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .categories-list {
+    .category-item-sliding {
+      ion-item {
+        --background: var(--ion-color-dark);
+        --border-color: var(--ion-color-dark-shade);
+        
+        &:hover {
+          --background: var(--ion-color-dark-tint);
+        }
+      }
+    }
+    
+    .category-color-indicator {
+      border-color: var(--ion-color-dark-contrast);
+    }
+    
+    ion-label {
+      h2 {
+        color: var(--ion-color-light);
+      }
+    }
+  }
+  
+  .empty-state {
+    h2 {
+      color: var(--ion-color-light);
+    }
+    
+    .empty-icon {
+      color: var(--ion-color-medium-tint);
+    }
+  }
+}
+
+// Tablet and desktop responsive design
+@media (min-width: 768px) {
+  .stats-card {
+    .stats-grid {
+      gap: 2rem;
+      
+      .stat-item {
+        h2 {
+          font-size: 2.2rem;
+        }
+        
+        p {
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+  
+  .categories-list {
+    .category-item-sliding {
+      ion-item {
+        --min-height: 80px;
+        --padding-start: 20px;
+        --padding-end: 20px;
+      }
+    }
+    
+    ion-label {
+      h2 {
+        font-size: 1.1rem;
+      }
+      
+      p {
+        font-size: 0.85rem;
+      }
+    }
+  }
+  
+  .empty-state {
+    padding: 4rem 2rem;
+    
+    .empty-icon {
+      font-size: 5rem;
+    }
+    
+    p {
+      max-width: 400px;
+      font-size: 1rem;
+    }
+  }
+}
+
+// Large desktop
+@media (min-width: 1200px) {
+  ion-content {
+    --padding-start: 10%;
+    --padding-end: 10%;
+  }
+  
+  .stats-card,
+  .categories-list {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

@@ -12,6 +12,12 @@
 export { TaskStore } from './stores/task.store';
 export { CategoryStore } from './stores/category.store';
 
+// Services
+export { NavigationService } from './services/navigation.service';
+
+// Guards
+export { TaskDataGuard, TaskExistsGuard } from './guards/task.guards';
+
 // Mappers
 export { TaskPresentationMapper } from './mappers/task-presentation.mapper';
 export { CategoryPresentationMapper } from './mappers/category-presentation.mapper';
@@ -22,6 +28,7 @@ export { TaskFormComponent } from './components/task-form/task-form.component';
 
 // Pages
 export { TasksPage } from './pages/tasks/tasks.page';
+export { CategoriesPage } from './pages/categories/categories.page';
 
 // Module
 export { PresentationModule } from './presentation.module';

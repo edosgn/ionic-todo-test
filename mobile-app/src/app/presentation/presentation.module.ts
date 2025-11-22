@@ -32,8 +32,12 @@ import {
 // Presentation services
 import { TaskStore } from './stores/task.store';
 import { CategoryStore } from './stores/category.store';
+import { NavigationService } from './services/navigation.service';
 import { TaskPresentationMapper } from './mappers/task-presentation.mapper';
 import { CategoryPresentationMapper } from './mappers/category-presentation.mapper';
+
+// Guards
+import { TaskDataGuard, TaskExistsGuard } from './guards/task.guards';
 
 /**
  * Presentation Module
@@ -65,6 +69,13 @@ import { CategoryPresentationMapper } from './mappers/category-presentation.mapp
     // Presentation Mappers
     TaskPresentationMapper,
     CategoryPresentationMapper,
+    
+    // Services
+    NavigationService,
+    
+    // Guards
+    TaskDataGuard,
+    TaskExistsGuard,
     
     // Store Services
     TaskStore,

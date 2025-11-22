@@ -9,19 +9,53 @@
 
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { 
+  IonHeader, 
+  IonToolbar, 
+  IonTitle, 
+  IonContent,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonFab,
+  IonFabButton
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { add, list, settings } from 'ionicons/icons';
 
 // Presentation imports
 import { TaskListComponent } from '../../components/task-list/task-list.component';
 
 @Component({
   selector: 'app-tasks',
-  standalone: true,
-  imports: [CommonModule, IonicModule, TaskListComponent],
-  template: `
-    <app-task-list></app-task-list>
-  `
+  templateUrl: './tasks.page.html',
+  styleUrls: ['./tasks.page.scss'],
+  imports: [
+    CommonModule, 
+    TaskListComponent,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonFab,
+    IonFabButton
+  ]
 })
 export class TasksPage {
-  constructor() {}
+
+  constructor(private router: Router) {
+    addIcons({ add, list, settings });
+  }
+
+  navigateToCategories() {
+    this.router.navigate(['/categories']);
+  }
+
+  navigateToNewTask() {
+    this.router.navigate(['/task/new']);
+  }
 }
