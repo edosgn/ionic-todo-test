@@ -1,0 +1,100 @@
+/**
+ * Badge Component Styles
+ */
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  &.lib-badge-wrapper--inline {
+    display: inline;
+  }
+}
+
+.lib-badge {
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease-in-out;
+
+  &--dot {
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    min-width: unset !important;
+  }
+
+  &--pulse {
+    animation: badge-pulse 2s infinite;
+  }
+
+  &__count {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+}
+
+// Size variants
+.lib-badge-wrapper {
+  &--sm {
+    .lib-badge {
+      font-size: 0.675rem;
+      padding: 0.125rem 0.375rem;
+      
+      &--dot {
+        width: 6px !important;
+        height: 6px !important;
+      }
+    }
+  }
+
+  &--md {
+    .lib-badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      
+      &--dot {
+        width: 8px !important;
+        height: 8px !important;
+      }
+    }
+  }
+
+  &--lg {
+    .lib-badge {
+      font-size: 0.875rem;
+      padding: 0.375rem 0.75rem;
+      
+      &--dot {
+        width: 10px !important;
+        height: 10px !important;
+      }
+    }
+  }
+}
+
+// Pulse animation
+@keyframes badge-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Accessibility
+.lib-badge:focus-visible {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
+}

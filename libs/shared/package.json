@@ -1,0 +1,23 @@
+{
+  "name": "@ionic-todo-test/shared-ui",
+  "version": "1.0.0",
+  "description": "Shared UI components and design system for Ionic Todo Test application",
+  "main": "index.js",
+  "module": "index.js",
+  "es2015": "index.js",
+  "typings": "index.d.ts",
+  "keywords": [
+    "angular",
+    "ionic",
+    "design-system",
+    "components",
+    "ui"
+  ],
+  "author": "Ionic Todo Test Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@ionic/angular": "^8.0.0"
+  }
+}

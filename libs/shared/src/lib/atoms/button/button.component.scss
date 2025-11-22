@@ -1,0 +1,116 @@
+/**
+ * Button Component Styles
+ * 
+ * Uses design tokens for consistent styling and follows Ionic design principles
+ */
+
+:host {
+  display: inline-block;
+  
+  &.ds-button-wrapper--loading {
+    pointer-events: none;
+  }
+}
+
+.ds-button {
+  position: relative;
+  transition: all 0.2s ease-in-out;
+  font-family: inherit;
+  
+  // Custom loading state
+  &--loading {
+    color: transparent !important;
+    
+    .ds-button__content {
+      opacity: 0;
+    }
+  }
+
+  // Icon spacing
+  &__icon {
+    &--start {
+      margin-right: 8px;
+    }
+    
+    &--end {
+      margin-left: 8px;
+    }
+  }
+
+  // Spinner positioning
+  &__spinner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+  }
+
+  // Content wrapper
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease-in-out;
+    
+    &--hidden {
+      opacity: 0;
+    }
+  }
+}
+
+// Size-specific spinner sizes
+.ds-button-wrapper--small .ds-button__spinner {
+  width: 14px;
+  height: 14px;
+}
+
+.ds-button-wrapper--large .ds-button__spinner {
+  width: 18px;
+  height: 18px;
+}
+
+// Variant-specific styles
+.ds-button-wrapper {
+  &--ghost {
+    ion-button {
+      --color: var(--ion-color-primary);
+      --color-hover: var(--ion-color-primary-shade);
+      --background: transparent;
+      --background-hover: var(--ion-color-primary, rgba(56, 128, 255, 0.1));
+      --border-color: transparent;
+    }
+  }
+
+  // Custom focus states
+  ion-button:focus-visible {
+    outline: 2px solid var(--ion-color-primary);
+    outline-offset: 2px;
+  }
+
+  // Disabled state
+  &--disabled {
+    ion-button {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Animation for loading state
+@keyframes button-loading {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.ds-button-wrapper--loading .ds-button__spinner {
+  animation: button-loading 1.5s ease-in-out infinite;
+}
