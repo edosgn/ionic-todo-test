@@ -1,0 +1,105 @@
+/**
+ * TaskFormComponent Styles
+ */
+
+.required {
+  color: var(--ion-color-danger);
+  font-weight: 500;
+}
+
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 16px;
+
+  ion-label {
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  ion-input, ion-textarea, ion-select {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    border: 1px solid var(--ion-color-medium-shade);
+    border-radius: 8px;
+    background: var(--ion-background-color);
+
+    &:focus-within {
+      border-color: var(--ion-color-primary);
+      box-shadow: 0 0 0 2px rgba(var(--ion-color-primary-rgb), 0.2);
+    }
+
+    &.ion-invalid {
+      border-color: var(--ion-color-danger);
+    }
+  }
+
+  ion-note[slot="error"] {
+    font-size: 0.8rem;
+    margin-top: 4px;
+    padding-left: 12px;
+  }
+}
+
+.category-preview {
+  margin: 16px 0;
+  padding: 16px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+
+  h4 {
+    margin: 0 0 8px 0;
+    color: var(--ion-color-dark);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  ion-chip {
+    margin: 0;
+  }
+}
+
+.form-actions {
+  padding-top: 16px;
+
+  ion-button {
+    margin-bottom: 12px;
+    height: 44px;
+    font-weight: 500;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Error card styling
+ion-card[color="danger"] {
+  margin: 16px 0;
+
+  h4 {
+    color: var(--ion-color-danger-contrast);
+    margin: 0 0 8px 0;
+    font-weight: 500;
+  }
+
+  p {
+    color: var(--ion-color-danger-contrast);
+    opacity: 0.9;
+    margin: 0;
+    line-height: 1.4;
+  }
+}
+
+// Dark mode
+@media (prefers-color-scheme: dark) {
+  .category-preview {
+    background: var(--ion-color-dark);
+  }
+
+  ion-item {
+    ion-input, ion-textarea, ion-select {
+      border-color: var(--ion-color-dark-shade);
+    }
+  }
+}
