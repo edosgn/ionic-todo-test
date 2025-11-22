@@ -19,12 +19,17 @@ import {
   ellipseOutline, 
   trash, 
   create, 
-  search,
-  add,
-  funnel
-} from 'ionicons/icons';
-
-// Design System imports
+  search, 
+  add, 
+  funnel,
+  close,
+  addCircle,
+  albums,
+  listOutline,
+  timeOutline,
+  trendingUp,
+  appsOutline
+} from 'ionicons/icons';// Design System imports
 import { ButtonComponent } from '@ionic-todo-test/shared-ui';
 
 // Domain imports
@@ -41,67 +46,88 @@ import { CategoryStore } from '../../stores/category.store';
   template: `
     <ion-header [translucent]="true">
       <ion-toolbar>
-        <ion-title>Tasks</ion-title>
+        <ion-title>Todo Tasks</ion-title>
         <ion-buttons slot="end">
-          <lib-button 
-            variant="clear" 
-            size="medium"
-            startIcon="add"
-            (buttonClick)="onAddTask()">
-          </lib-button>
+          <ion-button fill="clear" (click)="navigateToCategories()">
+            <ion-icon name="list-outline" slot="icon-only"></ion-icon>
+          </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [fullscreen]="true" class="ion-padding">
+    <ion-content [fullscreen]="true" class="modern-content">
       <!-- Search Bar -->
-      <ion-searchbar 
-        [value]="searchTerm()" 
-        (ionInput)="onSearchChange($event)"
-        placeholder="Search tasks..."
-        [debounce]="300">
-      </ion-searchbar>
+      <div class="search-section">
+        <ion-searchbar 
+          [value]="searchTerm()" 
+          (ionInput)="onSearchChange($event)"
+          placeholder="Search tasks..."
+          [debounce]="300"
+          class="modern-searchbar">
+        </ion-searchbar>
+      </div>
 
-      <!-- Category Filter -->
+      <!-- Category Filter Pills -->
       <div class="filter-section" *ngIf="categories().length > 0">
         <ion-chip 
           *ngFor="let category of categories()" 
           [color]="selectedCategoryId() === category.id ? 'primary' : 'medium'"
-          (click)="onCategoryFilter(category.id)">
+          (click)="onCategoryFilter(category.id)"
+          class="filter-pill">
           <ion-icon [name]="category.icon"></ion-icon>
           <ion-label>{{ category.name }}</ion-label>
         </ion-chip>
         <ion-chip 
           [color]="selectedCategoryId() === null ? 'primary' : 'medium'"
-          (click)="onClearFilters()">
-          <ion-icon name="funnel"></ion-icon>
+          (click)="onClearFilters()"
+          class="filter-pill">
+          <ion-icon name="apps-outline"></ion-icon>
           <ion-label>All</ion-label>
         </ion-chip>
       </div>
 
-      <!-- Task Statistics -->
-      <ion-card class="stats-card">
-        <ion-card-content>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <h3>{{ taskStats().total }}</h3>
-              <p>Total</p>
+      <!-- Enhanced Statistics Cards -->
+      <div class="stats-container">
+        <ion-card class="stat-card">
+          <ion-card-content>
+            <div class="stat-content">
+              <div class="stat-number">{{ taskStats().total }}</div>
+              <div class="stat-label">Total Tasks</div>
             </div>
-            <div class="stat-item">
-              <h3>{{ taskStats().completed }}</h3>
-              <p>Completed</p>
+            <ion-icon name="list-outline" class="stat-icon"></ion-icon>
+          </ion-card-content>
+        </ion-card>
+        
+        <ion-card class="stat-card completed">
+          <ion-card-content>
+            <div class="stat-content">
+              <div class="stat-number">{{ taskStats().completed }}</div>
+              <div class="stat-label">Completed</div>
             </div>
-            <div class="stat-item">
-              <h3>{{ taskStats().pending }}</h3>
-              <p>Pending</p>
+            <ion-icon name="checkmark-circle" class="stat-icon"></ion-icon>
+          </ion-card-content>
+        </ion-card>
+        
+        <ion-card class="stat-card pending">
+          <ion-card-content>
+            <div class="stat-content">
+              <div class="stat-number">{{ taskStats().pending }}</div>
+              <div class="stat-label">Pending</div>
             </div>
-            <div class="stat-item">
-              <h3>{{ taskStats().completionRate }}%</h3>
-              <p>Progress</p>
+            <ion-icon name="time-outline" class="stat-icon"></ion-icon>
+          </ion-card-content>
+        </ion-card>
+        
+        <ion-card class="stat-card progress">
+          <ion-card-content>
+            <div class="stat-content">
+              <div class="stat-number">{{ taskStats().completionRate }}%</div>
+              <div class="stat-label">Progress</div>
             </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
+            <ion-icon name="trending-up" class="stat-icon"></ion-icon>
+          </ion-card-content>
+        </ion-card>
+      </div>
 
       <!-- Loading State -->
       <div *ngIf="isLoading()" class="loading-container">
@@ -138,10 +164,10 @@ import { CategoryStore } from '../../stores/category.store';
       </div>
 
       <!-- Task List -->
-      <ion-list *ngIf="filteredTasks().length > 0">
+      <ion-list *ngIf="filteredTasks().length > 0" class="modern-task-list">
         <ion-item-sliding *ngFor="let task of filteredTasks(); trackBy: trackByTaskId">
           <!-- Task Item -->
-          <ion-item>
+          <ion-item class="task-item">
             <ion-checkbox 
               slot="start" 
               [checked]="task.completed" 
@@ -188,12 +214,33 @@ import { CategoryStore } from '../../stores/category.store';
         </ion-item-sliding>
       </ion-list>
 
-      <!-- Floating Action Button -->
-      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button (click)="onAddTask()">
-          <ion-icon name="add"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
+      <!-- Modern Floating Action Menu -->
+      <div class="fab-menu">
+        <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+          <ion-fab-button 
+            color="primary" 
+            class="main-fab"
+            (click)="toggleFabMenu()">
+            <ion-icon [name]="fabMenuOpen() ? 'close' : 'add'"></ion-icon>
+          </ion-fab-button>
+          
+          <!-- Sub FABs -->
+          <ion-fab-list side="top" [activated]="fabMenuOpen()">
+            <ion-fab-button 
+              color="secondary" 
+              (click)="onAddTask()" 
+              class="sub-fab">
+              <ion-icon name="add-circle"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button 
+              color="tertiary" 
+              (click)="navigateToCategories()" 
+              class="sub-fab">
+              <ion-icon name="albums"></ion-icon>
+            </ion-fab-button>
+          </ion-fab-list>
+        </ion-fab>
+      </div>
     </ion-content>
   `,
   styleUrls: ['./task-list.component.scss']
@@ -218,6 +265,9 @@ export class TaskListComponent implements OnInit {
 
   // Local computed signals
   readonly hasAnyTasks = computed(() => this.tasks().length > 0);
+  
+  // FAB menu state
+  readonly fabMenuOpen = signal(false);
 
   constructor() {
     // Add required Ionic icons
@@ -228,7 +278,14 @@ export class TaskListComponent implements OnInit {
       create,
       search,
       add,
-      funnel
+      funnel,
+      close,
+      addCircle,
+      albums,
+      listOutline,
+      timeOutline,
+      trendingUp,
+      appsOutline
     });
   }
 
@@ -347,6 +404,7 @@ export class TaskListComponent implements OnInit {
    * Handle add task action - navigate to task form
    */
   onAddTask(): void {
+    this.fabMenuOpen.set(false); // Close FAB menu
     this.router.navigate(['/task/new']);
   }
 
@@ -389,5 +447,20 @@ export class TaskListComponent implements OnInit {
       day: 'numeric',
       year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
     });
+  }
+
+  /**
+   * Toggle FAB menu state
+   */
+  toggleFabMenu(): void {
+    this.fabMenuOpen.set(!this.fabMenuOpen());
+  }
+
+  /**
+   * Navigate to categories page
+   */
+  navigateToCategories(): void {
+    this.fabMenuOpen.set(false); // Close FAB menu
+    this.router.navigate(['/categories']);
   }
 }
