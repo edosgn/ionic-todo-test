@@ -152,7 +152,7 @@ import { IconSelectorComponent } from '../icon-selector/icon-selector.component'
             </div>
             <ion-label>
               <h3>{{ categoryForm.value.name || 'Category Name' }}</h3>
-              <p>Created {{ new Date() | date:'mediumDate' }}</p>
+              <p>Created {{ currentDate | date:'mediumDate' }}</p>
             </ion-label>
           </ion-item>
         </div>
@@ -277,6 +277,7 @@ export class CategoryFormModalComponent implements OnInit {
   readonly isEditMode = signal(false);
   readonly selectedColor = signal('#4ECDC4');
   readonly selectedIcon = signal('folder');
+  readonly currentDate = new Date();
 
   // Form
   categoryForm!: FormGroup;

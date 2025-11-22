@@ -24,6 +24,9 @@ import {
   funnel
 } from 'ionicons/icons';
 
+// Design System imports
+import { ButtonComponent, IconComponent, BadgeComponent } from '@ionic-todo-test/shared-ui';
+
 // Domain imports
 import { Task } from '../../../domain';
 
@@ -34,15 +37,18 @@ import { CategoryStore } from '../../stores/category.store';
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule],
+  imports: [CommonModule, FormsModule, IonicModule, ButtonComponent, IconComponent, BadgeComponent],
   template: `
     <ion-header [translucent]="true">
       <ion-toolbar>
         <ion-title>Tasks</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="onAddTask()">
-            <ion-icon name="add" slot="icon-only"></ion-icon>
-          </ion-button>
+          <lib-button 
+            variant="clear" 
+            size="medium"
+            startIcon="add"
+            (buttonClick)="onAddTask()">
+          </lib-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -108,10 +114,12 @@ import { CategoryStore } from '../../stores/category.store';
         <ion-card-content>
           <h3>Error</h3>
           <p>{{ error() }}</p>
-          <ion-button fill="clear" (click)="onRetry()">
-            <ion-icon name="refresh" slot="start"></ion-icon>
+          <lib-button 
+            variant="clear" 
+            startIcon="refresh"
+            (buttonClick)="onRetry()">
             Retry
-          </ion-button>
+          </lib-button>
         </ion-card-content>
       </ion-card>
 
@@ -120,10 +128,13 @@ import { CategoryStore } from '../../stores/category.store';
         <ion-icon name="checkbox-outline" size="large"></ion-icon>
         <h3>{{ hasAnyTasks() ? 'No tasks match your filters' : 'No tasks yet' }}</h3>
         <p>{{ hasAnyTasks() ? 'Try adjusting your search or filter criteria' : 'Create your first task to get started!' }}</p>
-        <ion-button fill="solid" (click)="onAddTask()" *ngIf="!hasAnyTasks()">
-          <ion-icon name="add" slot="start"></ion-icon>
+        <lib-button 
+          variant="primary" 
+          startIcon="add"
+          (buttonClick)="onAddTask()" 
+          *ngIf="!hasAnyTasks()">
           Add Task
-        </ion-button>
+        </lib-button>
       </div>
 
       <!-- Task List -->
@@ -152,13 +163,13 @@ import { CategoryStore } from '../../stores/category.store';
               </div>
             </ion-label>
             
-            <ion-button 
-              fill="clear" 
-              slot="end" 
-              (click)="onEditTask(task)"
-              [disabled]="isLoading()">
-              <ion-icon name="create" slot="icon-only"></ion-icon>
-            </ion-button>
+            <lib-button 
+              variant="clear" 
+              size="medium"
+              startIcon="create"
+              [disabled]="isLoading()"
+              (buttonClick)="onEditTask(task)">
+            </lib-button>
           </ion-item>
 
           <!-- Slide Options -->
