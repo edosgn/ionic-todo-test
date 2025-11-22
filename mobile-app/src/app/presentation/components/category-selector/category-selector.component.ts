@@ -31,14 +31,10 @@ import { CategoryStore } from '../../stores/category.store';
   standalone: true,
   imports: [
     CommonModule,
-    IonList,
     IonItem,
     IonLabel,
     IonIcon,
-    IonCheckbox,
-    IonButton,
-    IonText,
-    IonNote
+    IonText
   ],
   template: `
     <div class="category-selector">

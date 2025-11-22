@@ -25,7 +25,7 @@ import {
 } from 'ionicons/icons';
 
 // Design System imports
-import { ButtonComponent, IconComponent, BadgeComponent } from '@ionic-todo-test/shared-ui';
+import { ButtonComponent } from '@ionic-todo-test/shared-ui';
 
 // Domain imports
 import { Task } from '../../../domain';
@@ -37,7 +37,7 @@ import { CategoryStore } from '../../stores/category.store';
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, ButtonComponent, IconComponent, BadgeComponent],
+  imports: [CommonModule, FormsModule, IonicModule, ButtonComponent],
   template: `
     <ion-header [translucent]="true">
       <ion-toolbar>

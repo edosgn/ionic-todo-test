@@ -55,7 +55,6 @@ import { IconSelectorComponent } from '../icon-selector/icon-selector.component'
     IonItem,
     IonLabel,
     IonInput,
-    IonTextarea,
     IonNote,
     IonList,
     IonAccordion,

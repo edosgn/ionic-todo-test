@@ -17,7 +17,7 @@ import { addIcons } from 'ionicons';
 import { save, close, checkmark, checkmarkCircle, alertCircle } from 'ionicons/icons';
 
 // Design System imports
-import { ButtonComponent, IconComponent, FormFieldComponent } from '@ionic-todo-test/shared-ui';
+import { ButtonComponent, FormFieldComponent } from '@ionic-todo-test/shared-ui';
 
 // Domain imports
 import { Task, Category } from '../../../domain';
@@ -33,7 +33,7 @@ import { CategorySelectorComponent } from '../category-selector/category-selecto
 @Component({
   selector: 'app-task-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, CategorySelectorComponent, ButtonComponent, IconComponent, FormFieldComponent],
+  imports: [CommonModule, ReactiveFormsModule, IonicModule, CategorySelectorComponent, ButtonComponent, FormFieldComponent],
   template: `
     <ion-header>
       <ion-toolbar>
