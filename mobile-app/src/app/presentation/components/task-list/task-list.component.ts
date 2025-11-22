@@ -30,7 +30,7 @@ import {
   trendingUp,
   appsOutline
 } from 'ionicons/icons';// Design System imports
-import { ButtonComponent, SearchComponent } from '@ionic-todo-test/shared-ui';
+import { ButtonComponent, SearchComponent, StatCardComponent, TaskCardComponent, FilterChipComponent } from '@ionic-todo-test/shared-ui';
 
 // Domain imports
 import { Task } from '../../../domain';
@@ -42,7 +42,7 @@ import { CategoryStore } from '../../stores/category.store';
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, ButtonComponent, SearchComponent],
+  imports: [CommonModule, FormsModule, IonicModule, ButtonComponent, SearchComponent, StatCardComponent, TaskCardComponent, FilterChipComponent],
   template: `
     <ion-header [translucent]="true">
       <ion-toolbar>
@@ -67,66 +67,83 @@ import { CategoryStore } from '../../stores/category.store';
         </lib-search>
       </div>
 
-      <!-- Category Filter Pills -->
+      <!-- Modern Category Filter Chips -->
       <div class="filter-section" *ngIf="categories().length > 0">
-        <ion-chip 
-          *ngFor="let category of categories()" 
-          [color]="selectedCategoryId() === category.id ? 'primary' : 'medium'"
-          (click)="onCategoryFilter(category.id)"
-          class="filter-pill">
-          <ion-icon [name]="category.icon"></ion-icon>
-          <ion-label>{{ category.name }}</ion-label>
-        </ion-chip>
-        <ion-chip 
-          [color]="selectedCategoryId() === null ? 'primary' : 'medium'"
-          (click)="onClearFilters()"
-          class="filter-pill">
-          <ion-icon name="apps-outline"></ion-icon>
-          <ion-label>All</ion-label>
-        </ion-chip>
+        <!-- All Categories Filter -->
+        <lib-filter-chip
+          [data]="{
+            id: 'all',
+            label: 'All Tasks',
+            icon: 'apps-outline',
+            count: taskStats().total
+          }"
+          [selected]="selectedCategoryId() === null"
+          [showCount]="true"
+          size="medium"
+          variant="filled"
+          (chipClick)="onFilterChipClick($event)"
+          class="filter-chip-item">
+        </lib-filter-chip>
+
+        <!-- Category Filters -->
+        <lib-filter-chip
+          *ngFor="let category of categories()"
+          [data]="{
+            id: category.id,
+            label: category.name,
+            icon: category.icon,
+            color: category.color,
+            count: getTaskCountForCategory(category.id)
+          }"
+          [selected]="selectedCategoryId() === category.id"
+          [showCount]="true"
+          [dismissible]="true"
+          size="medium"
+          variant="filled"
+          (chipClick)="onFilterChipClick($event)"
+          (dismissClick)="onFilterChipDismiss($event)"
+          class="filter-chip-item">
+        </lib-filter-chip>
       </div>
 
       <!-- Enhanced Statistics Cards -->
       <div class="stats-container">
-        <ion-card class="stat-card">
-          <ion-card-content>
-            <div class="stat-content">
-              <div class="stat-number">{{ taskStats().total }}</div>
-              <div class="stat-label">Total Tasks</div>
-            </div>
-            <ion-icon name="list-outline" class="stat-icon"></ion-icon>
-          </ion-card-content>
-        </ion-card>
+        <lib-stat-card 
+          [value]="taskStats().total.toString()"
+          label="Total Tasks"
+          icon="list-outline"
+          [variant]="'minimal'"
+          [size]="'small'"
+          class="stat-card">
+        </lib-stat-card>
         
-        <ion-card class="stat-card completed">
-          <ion-card-content>
-            <div class="stat-content">
-              <div class="stat-number">{{ taskStats().completed }}</div>
-              <div class="stat-label">Completed</div>
-            </div>
-            <ion-icon name="checkmark-circle" class="stat-icon"></ion-icon>
-          </ion-card-content>
-        </ion-card>
+        <lib-stat-card 
+          [value]="taskStats().completed.toString()"
+          label="Completed"
+          icon="checkmark-circle"
+          [variant]="'minimal'"
+          [size]="'small'"
+          class="stat-card completed">
+        </lib-stat-card>
         
-        <ion-card class="stat-card pending">
-          <ion-card-content>
-            <div class="stat-content">
-              <div class="stat-number">{{ taskStats().pending }}</div>
-              <div class="stat-label">Pending</div>
-            </div>
-            <ion-icon name="time-outline" class="stat-icon"></ion-icon>
-          </ion-card-content>
-        </ion-card>
+        <lib-stat-card 
+          [value]="taskStats().pending.toString()"
+          label="Pending"
+          icon="time-outline"
+          [variant]="'minimal'"
+          [size]="'small'"
+          class="stat-card pending">
+        </lib-stat-card>
         
-        <ion-card class="stat-card progress">
-          <ion-card-content>
-            <div class="stat-content">
-              <div class="stat-number">{{ taskStats().completionRate }}%</div>
-              <div class="stat-label">Progress</div>
-            </div>
-            <ion-icon name="trending-up" class="stat-icon"></ion-icon>
-          </ion-card-content>
-        </ion-card>
+        <lib-stat-card 
+          [value]="taskStats().completionRate + '%'"
+          label="Progress"
+          icon="trending-up"
+          [trend]="taskStats().completionRate > 50 ? 'up' : undefined"
+          [variant]="'minimal'"
+          [size]="'small'"
+          class="stat-card progress">
+        </lib-stat-card>
       </div>
 
       <!-- Loading State -->
@@ -163,56 +180,22 @@ import { CategoryStore } from '../../stores/category.store';
         </lib-button>
       </div>
 
-      <!-- Task List -->
-      <ion-list *ngIf="filteredTasks().length > 0" class="modern-task-list">
-        <ion-item-sliding *ngFor="let task of filteredTasks(); trackBy: trackByTaskId">
-          <!-- Task Item -->
-          <ion-item class="task-item">
-            <ion-checkbox 
-              slot="start" 
-              [checked]="task.completed" 
-              (ionChange)="onToggleComplete(task.id, $event)">
-            </ion-checkbox>
-            
-            <ion-label [class.completed]="task.completed">
-              <h2>{{ task.title }}</h2>
-              <p *ngIf="task.description">{{ task.description }}</p>
-              <div class="task-meta">
-                <span class="task-date">{{ formatDate(task.createdAt) }}</span>
-                <ion-chip 
-                  *ngIf="getCategoryForTask(task.categoryId) as category" 
-                  size="small"
-                  [color]="category.color">
-                  <ion-icon [name]="category.icon"></ion-icon>
-                  <ion-label>{{ category.name }}</ion-label>
-                </ion-chip>
-              </div>
-            </ion-label>
-            
-            <lib-button 
-              variant="clear" 
-              size="medium"
-              startIcon="create"
-              [disabled]="isLoading()"
-              (buttonClick)="onEditTask(task)">
-            </lib-button>
-          </ion-item>
-
-          <!-- Slide Options -->
-          <ion-item-options side="end">
-            <ion-item-option 
-              color="primary" 
-              (click)="onEditTask(task)">
-              <ion-icon name="create" slot="icon-only"></ion-icon>
-            </ion-item-option>
-            <ion-item-option 
-              color="danger" 
-              (click)="onDeleteTask(task.id)">
-              <ion-icon name="trash" slot="icon-only"></ion-icon>
-            </ion-item-option>
-          </ion-item-options>
-        </ion-item-sliding>
-      </ion-list>
+      <!-- Task List with Design System Task Cards -->
+      <div *ngIf="filteredTasks().length > 0" class="modern-task-list">
+        <lib-task-card 
+          *ngFor="let task of filteredTasks(); trackBy: trackByTaskId"
+          [task]="task"
+          [category]="getCategoryForTask(task.categoryId)"
+          [loading]="isLoading()"
+          [showActions]="true"
+          [showDescription]="true"
+          [interactive]="false"
+          (toggleComplete)="onToggleCompleteFromCard($event)"
+          (editTask)="onEditTaskFromCard($event)"
+          (deleteTask)="onDeleteTaskFromCard($event)"
+          class="task-card-item">
+        </lib-task-card>
+      </div>
 
       <!-- Modern Floating Action Menu -->
       <div class="fab-menu">
@@ -296,6 +279,31 @@ export class TaskListComponent implements OnInit {
   }
 
   /**
+   * Handle filter chip click
+   */
+  onFilterChipClick(chipId: string): void {
+    if (chipId === 'all') {
+      this.onClearFilters();
+    } else {
+      this.onCategoryFilter(chipId);
+    }
+  }
+
+  /**
+   * Handle filter chip dismiss
+   */
+  onFilterChipDismiss(chipId: string): void {
+    this.taskStore.setCategoryFilter(null);
+  }
+
+  /**
+   * Get task count for a specific category
+   */
+  getTaskCountForCategory(categoryId: string): number {
+    return this.tasks().filter(task => task.categoryId === categoryId).length;
+  }
+
+  /**
    * Handle search input changes
    */
   onSearchChange(searchTerm: string): void {
@@ -319,6 +327,66 @@ export class TaskListComponent implements OnInit {
    */
   onClearFilters(): void {
     this.taskStore.clearFilters();
+  }
+
+  /**
+   * Handle task completion toggle from TaskCardComponent
+   */
+  onToggleCompleteFromCard(event: { taskId: string; completed: boolean }): void {
+    this.taskStore.toggleTaskCompletion(event.taskId).subscribe({
+      next: async (updatedTask) => {
+        const toast = await this.toastController.create({
+          message: `Task marked as ${event.completed ? 'completed' : 'pending'}`,
+          duration: 1500,
+          color: event.completed ? 'success' : 'medium'
+        });
+        await toast.present();
+      },
+      error: async (error) => {
+        console.error('Failed to toggle task completion:', error);
+        const toast = await this.toastController.create({
+          message: 'Failed to update task',
+          duration: 3000,
+          color: 'danger'
+        });
+        await toast.present();
+      }
+    });
+  }
+
+  /**
+   * Handle edit task from TaskCardComponent
+   */
+  onEditTaskFromCard(taskId: string): void {
+    this.router.navigate(['/task', taskId, 'edit']);
+  }
+
+  /**
+   * Handle delete task from TaskCardComponent
+   */
+  async onDeleteTaskFromCard(taskId: string): Promise<void> {
+    const task = this.tasks().find(t => t.id === taskId);
+    if (!task) return;
+
+    const alert = await this.alertController.create({
+      header: 'Delete Task',
+      message: `Are you sure you want to delete "${task.title}"? This action cannot be undone.`,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            this.deleteTaskConfirmed(taskId);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   /**

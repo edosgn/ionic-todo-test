@@ -1,0 +1,306 @@
+/**
+ * FilterChipComponent Styles
+ * 
+ * Modern filter chip with glass-morphism design, selection states,
+ * smooth animations, and responsive behavior.
+ */
+
+.lib-filter-chip {
+  --chip-background: rgba(255, 255, 255, 0.7);
+  --chip-background-selected: var(--chip-color);
+  --chip-border: 1px solid rgba(255, 255, 255, 0.3);
+  --chip-border-selected: 1px solid var(--chip-color);
+  --chip-border-radius: 20px;
+  --chip-padding: 8px 12px;
+  --chip-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --chip-shadow-selected: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --chip-backdrop-filter: blur(6px);
+  --chip-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  background: var(--chip-background);
+  border: var(--chip-border);
+  border-radius: var(--chip-border-radius);
+  box-shadow: var(--chip-shadow);
+  backdrop-filter: var(--chip-backdrop-filter);
+  padding: var(--chip-padding);
+  cursor: pointer;
+  transition: var(--chip-transition);
+  user-select: none;
+  overflow: hidden;
+
+  &:hover:not(.lib-filter-chip--disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  &:focus {
+    outline: 2px solid var(--chip-color);
+    outline-offset: 2px;
+  }
+
+  &:active:not(.lib-filter-chip--disabled) {
+    transform: translateY(0);
+    box-shadow: var(--chip-shadow);
+  }
+
+  // Selected state
+  &--selected {
+    background: var(--chip-background-selected);
+    border: var(--chip-border-selected);
+    box-shadow: var(--chip-shadow-selected);
+    color: white;
+
+    .lib-filter-chip__label {
+      color: white;
+      font-weight: 600;
+    }
+
+    .lib-filter-chip__count {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    &:hover:not(.lib-filter-chip--disabled) {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  // Disabled state
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  // Dismissible state
+  &--dismissible {
+    padding-right: 6px;
+  }
+
+  // Size variants
+  &--small {
+    --chip-padding: 6px 10px;
+    --chip-border-radius: 16px;
+    
+    .lib-filter-chip__label {
+      font-size: 0.75rem;
+    }
+
+    .lib-filter-chip__count {
+      font-size: 0.6rem;
+      min-width: 16px;
+      height: 16px;
+      line-height: 16px;
+    }
+  }
+
+  &--large {
+    --chip-padding: 12px 16px;
+    --chip-border-radius: 24px;
+    
+    .lib-filter-chip__label {
+      font-size: 1rem;
+    }
+
+    .lib-filter-chip__count {
+      font-size: 0.8rem;
+      min-width: 24px;
+      height: 24px;
+      line-height: 24px;
+    }
+  }
+
+  // Content layout
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    z-index: 2;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+
+    .lib-filter-chip--selected & {
+      transform: scale(1.1);
+    }
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ion-color-dark);
+    transition: color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  &__count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: rgba(var(--chip-color), 0.1);
+    color: var(--chip-color);
+    border: 1px solid rgba(var(--chip-color), 0.2);
+    border-radius: 10px;
+    line-height: 1;
+    transition: all 0.2s ease;
+  }
+
+  &__dismiss {
+    padding: 2px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    &:active {
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(0.95);
+    }
+  }
+
+  // Selection indicator
+  &__indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--chip-color);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+
+    &--visible {
+      opacity: 1;
+    }
+  }
+}
+
+// Variant styles
+.lib-filter-chip {
+  // Outlined variant
+  &[data-variant="outlined"] {
+    --chip-background: transparent;
+    --chip-border: 2px solid var(--chip-color);
+
+    &.lib-filter-chip--selected {
+      background: rgba(var(--chip-color), 0.1);
+    }
+  }
+
+  // Minimal variant
+  &[data-variant="minimal"] {
+    --chip-background: transparent;
+    --chip-border: none;
+    --chip-shadow: none;
+    --chip-backdrop-filter: none;
+    
+    &:hover:not(.lib-filter-chip--disabled) {
+      background: rgba(var(--chip-color), 0.05);
+    }
+
+    &.lib-filter-chip--selected {
+      background: rgba(var(--chip-color), 0.1);
+      
+      .lib-filter-chip__label {
+        color: var(--chip-color);
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// Dark mode adaptations
+@media (prefers-color-scheme: dark) {
+  .lib-filter-chip {
+    --chip-background: rgba(50, 50, 60, 0.8);
+    --chip-border: 1px solid rgba(255, 255, 255, 0.1);
+
+    &__label {
+      color: var(--ion-color-light);
+    }
+
+    &--selected {
+      .lib-filter-chip__count {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    &[data-variant="outlined"] {
+      --chip-background: transparent;
+    }
+
+    &[data-variant="minimal"] {
+      &:hover:not(.lib-filter-chip--disabled) {
+        background: rgba(var(--chip-color), 0.1);
+      }
+    }
+  }
+}
+
+// Mobile optimizations
+@media (max-width: 768px) {
+  .lib-filter-chip {
+    &:hover {
+      transform: none;
+    }
+
+    &:active:not(.lib-filter-chip--disabled) {
+      transform: scale(0.95);
+    }
+
+    &__label {
+      font-size: 0.8rem;
+    }
+
+    &--large {
+      --chip-padding: 10px 14px;
+    }
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .lib-filter-chip {
+    --chip-border: 2px solid var(--chip-color);
+    --chip-backdrop-filter: none;
+
+    &--selected {
+      border-width: 3px;
+    }
+  }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .lib-filter-chip {
+    transition: none;
+
+    &__icon,
+    &__label,
+    &__count,
+    &__dismiss,
+    &__indicator {
+      transition: none;
+    }
+
+    &:hover:not(.lib-filter-chip--disabled) {
+      transform: none;
+    }
+  }
+}
