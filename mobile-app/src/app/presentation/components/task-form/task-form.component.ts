@@ -17,7 +17,7 @@ import { addIcons } from 'ionicons';
 import { save, close, checkmark, checkmarkCircle, alertCircle } from 'ionicons/icons';
 
 // Design System imports
-import { ButtonComponent, IconComponent } from '@ionic-todo-test/shared-ui';
+import { ButtonComponent, IconComponent, FormFieldComponent } from '@ionic-todo-test/shared-ui';
 
 // Domain imports
 import { Task, Category } from '../../../domain';
@@ -33,7 +33,7 @@ import { CategorySelectorComponent } from '../category-selector/category-selecto
 @Component({
   selector: 'app-task-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, CategorySelectorComponent, ButtonComponent, IconComponent],
+  imports: [CommonModule, ReactiveFormsModule, IonicModule, CategorySelectorComponent, ButtonComponent, IconComponent, FormFieldComponent],
   template: `
     <ion-header>
       <ion-toolbar>
@@ -61,32 +61,27 @@ import { CategorySelectorComponent } from '../category-selector/category-selecto
     <ion-content class="ion-padding">
       <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
         <!-- Task Title -->
-        <ion-item>
-          <ion-label position="stacked">
-            Title <span class="required">*</span>
-          </ion-label>
-          <ion-input
-            formControlName="title"
-            placeholder="Enter task title"
-            [class.ion-invalid]="titleControl.invalid && titleControl.touched">
-          </ion-input>
-          <ion-note 
-            slot="error" 
-            *ngIf="titleControl.invalid && titleControl.touched">
-            Title is required and must be at least 2 characters long
-          </ion-note>
-        </ion-item>
+        <lib-form-field
+          label="Title"
+          formControlName="title"
+          placeholder="Enter task title"
+          type="text"
+          [maxLength]="100"
+          [required]="true"
+          errorMessage="Title is required and must be at least 2 characters long"
+          [showCharacterCount]="true">
+        </lib-form-field>
 
         <!-- Task Description -->
-        <ion-item>
-          <ion-label position="stacked">Description</ion-label>
-          <ion-textarea
-            formControlName="description"
-            placeholder="Enter task description (optional)"
-            [autoGrow]="true"
-            rows="3">
-          </ion-textarea>
-        </ion-item>
+        <lib-form-field
+          label="Description"
+          formControlName="description"
+          placeholder="Enter task description (optional)"
+          type="textarea"
+          [maxLength]="500"
+          helperText="Optional - Add more details about this task"
+          [showCharacterCount]="true">
+        </lib-form-field>
 
         <!-- Category Selection -->
         <div class="category-selection-section">
