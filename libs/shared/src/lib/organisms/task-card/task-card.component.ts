@@ -32,7 +32,7 @@ export interface TaskCardData {
   description?: string;
   completed: boolean;
   createdAt: Date;
-  categoryId?: string;
+  categoryId: string | null;
 }
 
 export interface TaskCategory {
@@ -167,7 +167,7 @@ export interface TaskCardActions {
 export class TaskCardComponent {
   // Input Properties
   @Input({ required: true }) task!: TaskCardData;
-  @Input() category?: TaskCategory;
+  @Input() category: TaskCategory | null = null;
   @Input() loading = false;
   @Input() disabled = false;
   @Input() interactive = false;
