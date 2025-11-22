@@ -16,6 +16,9 @@ import { IonicModule, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { save, close, checkmark, checkmarkCircle, alertCircle } from 'ionicons/icons';
 
+// Design System imports
+import { ButtonComponent, FormFieldComponent } from '@ionic-todo-test/shared-ui';
+
 // Domain imports
 import { Task, Category } from '../../../domain';
 
@@ -30,22 +33,27 @@ import { CategorySelectorComponent } from '../category-selector/category-selecto
 @Component({
   selector: 'app-task-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, CategorySelectorComponent],
+  imports: [CommonModule, ReactiveFormsModule, IonicModule, CategorySelectorComponent, ButtonComponent, FormFieldComponent],
   template: `
     <ion-header>
       <ion-toolbar>
         <ion-title>{{ isEditMode() ? 'Edit Task' : 'New Task' }}</ion-title>
         <ion-buttons slot="start">
-          <ion-button (click)="onCancel()">
-            <ion-icon name="close" slot="icon-only"></ion-icon>
-          </ion-button>
+          <lib-button 
+            variant="clear" 
+            size="medium"
+            startIcon="close"
+            (buttonClick)="onCancel()">
+          </lib-button>
         </ion-buttons>
         <ion-buttons slot="end">
-          <ion-button 
+          <lib-button 
+            variant="clear" 
+            size="medium"
+            startIcon="checkmark"
             [disabled]="taskForm.invalid || isSubmitting()"
-            (click)="onSubmit()">
-            <ion-icon name="checkmark" slot="icon-only"></ion-icon>
-          </ion-button>
+            (buttonClick)="onSubmit()">
+          </lib-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -53,32 +61,27 @@ import { CategorySelectorComponent } from '../category-selector/category-selecto
     <ion-content class="ion-padding">
       <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
         <!-- Task Title -->
-        <ion-item>
-          <ion-label position="stacked">
-            Title <span class="required">*</span>
-          </ion-label>
-          <ion-input
-            formControlName="title"
-            placeholder="Enter task title"
-            [class.ion-invalid]="titleControl.invalid && titleControl.touched">
-          </ion-input>
-          <ion-note 
-            slot="error" 
-            *ngIf="titleControl.invalid && titleControl.touched">
-            Title is required and must be at least 2 characters long
-          </ion-note>
-        </ion-item>
+        <lib-form-field
+          label="Title"
+          formControlName="title"
+          placeholder="Enter task title"
+          type="text"
+          [maxLength]="100"
+          [required]="true"
+          errorMessage="Title is required and must be at least 2 characters long"
+          [showCharacterCount]="true">
+        </lib-form-field>
 
         <!-- Task Description -->
-        <ion-item>
-          <ion-label position="stacked">Description</ion-label>
-          <ion-textarea
-            formControlName="description"
-            placeholder="Enter task description (optional)"
-            [autoGrow]="true"
-            rows="3">
-          </ion-textarea>
-        </ion-item>
+        <lib-form-field
+          label="Description"
+          formControlName="description"
+          placeholder="Enter task description (optional)"
+          type="textarea"
+          [maxLength]="500"
+          helperText="Optional - Add more details about this task"
+          [showCharacterCount]="true">
+        </lib-form-field>
 
         <!-- Category Selection -->
         <div class="category-selection-section">
@@ -99,22 +102,25 @@ import { CategorySelectorComponent } from '../category-selector/category-selecto
 
         <!-- Action Buttons (Mobile) -->
         <div class="form-actions ion-margin-top">
-          <ion-button 
-            expand="block" 
-            fill="solid" 
-            type="submit"
-            [disabled]="taskForm.invalid || isSubmitting()">
-            <ion-icon name="save" slot="start"></ion-icon>
-            {{ isSubmitting() ? 'Saving...' : (isEditMode() ? 'Update Task' : 'Create Task') }}
-          </ion-button>
+          <lib-button 
+            variant="primary" 
+            size="large"
+            expand="full"
+            startIcon="save"
+            [disabled]="taskForm.invalid || isSubmitting()"
+            [loading]="isSubmitting()"
+            (buttonClick)="onSubmit()">
+            {{ isEditMode() ? 'Update Task' : 'Create Task' }}
+          </lib-button>
           
-          <ion-button 
-            expand="block" 
-            fill="outline" 
-            (click)="onCancel()"
-            [disabled]="isSubmitting()">
+          <lib-button 
+            variant="outline" 
+            size="large"
+            expand="full"
+            [disabled]="isSubmitting()"
+            (buttonClick)="onCancel()">
             Cancel
-          </ion-button>
+          </lib-button>
         </div>
       </form>
     </ion-content>

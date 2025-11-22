@@ -1,0 +1,120 @@
+/**
+ * FormField Component Styles
+ */
+
+.lib-form-field {
+  --border-radius: 8px;
+  --border-width: 1px;
+  --border-color: var(--ion-color-medium);
+  --border-color-focused: var(--ion-color-primary);
+  --border-color-error: var(--ion-color-danger);
+  
+  margin-bottom: 16px;
+  border-radius: var(--border-radius);
+  transition: all 0.2s ease-in-out;
+
+  &:hover:not(.lib-form-field--disabled) {
+    --border-color: var(--ion-color-primary-shade);
+  }
+
+  &--focused {
+    --border-color: var(--border-color-focused);
+    box-shadow: 0 0 0 2px rgba(var(--ion-color-primary-rgb), 0.1);
+  }
+
+  &--error {
+    --border-color: var(--border-color-error);
+    
+    &.lib-form-field--focused {
+      box-shadow: 0 0 0 2px rgba(var(--ion-color-danger-rgb), 0.1);
+    }
+  }
+
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  // Label styles
+  &__label--required {
+    font-weight: 500;
+  }
+
+  &__required {
+    color: var(--ion-color-danger);
+    margin-left: 2px;
+  }
+
+  // Helper and error text
+  &__helper {
+    display: block;
+    margin: 4px 16px 0;
+    font-size: 0.75rem;
+    color: var(--ion-color-medium);
+    line-height: 1.3;
+  }
+
+  &__error {
+    display: block;
+    margin: 4px 16px 0;
+    font-size: 0.75rem;
+    color: var(--ion-color-danger);
+    line-height: 1.3;
+    font-weight: 500;
+  }
+
+  &__count {
+    display: block;
+    margin: 4px 16px 0;
+    font-size: 0.75rem;
+    color: var(--ion-color-medium);
+    text-align: right;
+  }
+}
+
+// Size variants
+.lib-form-field--small {
+  ion-input, ion-textarea {
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+    font-size: 0.875rem;
+  }
+
+  ion-label {
+    font-size: 0.875rem;
+  }
+}
+
+.lib-form-field--large {
+  ion-input, ion-textarea {
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    font-size: 1.125rem;
+  }
+
+  ion-label {
+    font-size: 1.125rem;
+  }
+}
+
+// Animation for validation states
+.lib-form-field__error {
+  animation: slideInError 0.3s ease-out;
+}
+
+@keyframes slideInError {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Focus ring for accessibility
+.lib-form-field:focus-within {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
+}

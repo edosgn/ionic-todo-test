@@ -19,10 +19,18 @@ import {
   ellipseOutline, 
   trash, 
   create, 
-  search,
-  add,
-  funnel
-} from 'ionicons/icons';
+  search, 
+  add, 
+  funnel,
+  close,
+  addCircle,
+  albums,
+  listOutline,
+  timeOutline,
+  trendingUp,
+  appsOutline
+} from 'ionicons/icons';// Design System imports
+import { ButtonComponent, SearchComponent, StatCardComponent, TaskCardComponent, FilterChipComponent } from '@ionic-todo-test/shared-ui';
 
 // Domain imports
 import { Task } from '../../../domain';
@@ -34,68 +42,109 @@ import { CategoryStore } from '../../stores/category.store';
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule],
+  imports: [CommonModule, FormsModule, IonicModule, ButtonComponent, SearchComponent, StatCardComponent, TaskCardComponent, FilterChipComponent],
   template: `
     <ion-header [translucent]="true">
       <ion-toolbar>
-        <ion-title>Tasks</ion-title>
+        <ion-title>Todo Tasks</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="onAddTask()">
-            <ion-icon name="add" slot="icon-only"></ion-icon>
+          <ion-button fill="clear" (click)="navigateToCategories()">
+            <ion-icon name="list-outline" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [fullscreen]="true" class="ion-padding">
+    <ion-content [fullscreen]="true" class="modern-content">
       <!-- Search Bar -->
-      <ion-searchbar 
-        [value]="searchTerm()" 
-        (ionInput)="onSearchChange($event)"
-        placeholder="Search tasks..."
-        [debounce]="300">
-      </ion-searchbar>
-
-      <!-- Category Filter -->
-      <div class="filter-section" *ngIf="categories().length > 0">
-        <ion-chip 
-          *ngFor="let category of categories()" 
-          [color]="selectedCategoryId() === category.id ? 'primary' : 'medium'"
-          (click)="onCategoryFilter(category.id)">
-          <ion-icon [name]="category.icon"></ion-icon>
-          <ion-label>{{ category.name }}</ion-label>
-        </ion-chip>
-        <ion-chip 
-          [color]="selectedCategoryId() === null ? 'primary' : 'medium'"
-          (click)="onClearFilters()">
-          <ion-icon name="funnel"></ion-icon>
-          <ion-label>All</ion-label>
-        </ion-chip>
+      <div class="search-section">
+        <lib-search 
+          [value]="searchTerm()" 
+          (searchChange)="onSearchChange($event)"
+          placeholder="Search tasks..."
+          [debounceTime]="300"
+          class="modern-searchbar">
+        </lib-search>
       </div>
 
-      <!-- Task Statistics -->
-      <ion-card class="stats-card">
-        <ion-card-content>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <h3>{{ taskStats().total }}</h3>
-              <p>Total</p>
-            </div>
-            <div class="stat-item">
-              <h3>{{ taskStats().completed }}</h3>
-              <p>Completed</p>
-            </div>
-            <div class="stat-item">
-              <h3>{{ taskStats().pending }}</h3>
-              <p>Pending</p>
-            </div>
-            <div class="stat-item">
-              <h3>{{ taskStats().completionRate }}%</h3>
-              <p>Progress</p>
-            </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
+      <!-- Modern Category Filter Chips -->
+      <div class="filter-section" *ngIf="categories().length > 0">
+        <!-- All Categories Filter -->
+        <lib-filter-chip
+          [data]="{
+            id: 'all',
+            label: 'All Tasks',
+            icon: 'apps-outline',
+            count: taskStats().total
+          }"
+          [selected]="selectedCategoryId() === null"
+          [showCount]="true"
+          size="medium"
+          variant="filled"
+          (chipClick)="onFilterChipClick($event)"
+          class="filter-chip-item">
+        </lib-filter-chip>
+
+        <!-- Category Filters -->
+        <lib-filter-chip
+          *ngFor="let category of categories()"
+          [data]="{
+            id: category.id,
+            label: category.name,
+            icon: category.icon,
+            color: category.color,
+            count: getTaskCountForCategory(category.id)
+          }"
+          [selected]="selectedCategoryId() === category.id"
+          [showCount]="true"
+          [dismissible]="true"
+          size="medium"
+          variant="filled"
+          (chipClick)="onFilterChipClick($event)"
+          (dismissClick)="onFilterChipDismiss($event)"
+          class="filter-chip-item">
+        </lib-filter-chip>
+      </div>
+
+      <!-- Enhanced Statistics Cards -->
+      <div class="stats-container">
+        <lib-stat-card 
+          [value]="taskStats().total.toString()"
+          label="Total Tasks"
+          icon="list-outline"
+          [variant]="'minimal'"
+          [size]="'small'"
+          class="stat-card">
+        </lib-stat-card>
+        
+        <lib-stat-card 
+          [value]="taskStats().completed.toString()"
+          label="Completed"
+          icon="checkmark-circle"
+          [variant]="'minimal'"
+          [size]="'small'"
+          class="stat-card completed">
+        </lib-stat-card>
+        
+        <lib-stat-card 
+          [value]="taskStats().pending.toString()"
+          label="Pending"
+          icon="time-outline"
+          [variant]="'minimal'"
+          [size]="'small'"
+          class="stat-card pending">
+        </lib-stat-card>
+        
+        <lib-stat-card 
+          [value]="taskStats().completionRate + '%'"
+          label="Progress"
+          icon="trending-up"
+          [trend]="taskStats().completionRate > 50 ? 'up' : undefined"
+          [variant]="'minimal'"
+          [size]="'small'"
+          class="stat-card progress">
+        </lib-stat-card>
+      </div>
 
       <!-- Loading State -->
       <div *ngIf="isLoading()" class="loading-container">
@@ -108,10 +157,12 @@ import { CategoryStore } from '../../stores/category.store';
         <ion-card-content>
           <h3>Error</h3>
           <p>{{ error() }}</p>
-          <ion-button fill="clear" (click)="onRetry()">
-            <ion-icon name="refresh" slot="start"></ion-icon>
+          <lib-button 
+            variant="clear" 
+            startIcon="refresh"
+            (buttonClick)="onRetry()">
             Retry
-          </ion-button>
+          </lib-button>
         </ion-card-content>
       </ion-card>
 
@@ -120,69 +171,59 @@ import { CategoryStore } from '../../stores/category.store';
         <ion-icon name="checkbox-outline" size="large"></ion-icon>
         <h3>{{ hasAnyTasks() ? 'No tasks match your filters' : 'No tasks yet' }}</h3>
         <p>{{ hasAnyTasks() ? 'Try adjusting your search or filter criteria' : 'Create your first task to get started!' }}</p>
-        <ion-button fill="solid" (click)="onAddTask()" *ngIf="!hasAnyTasks()">
-          <ion-icon name="add" slot="start"></ion-icon>
+        <lib-button 
+          variant="primary" 
+          startIcon="add"
+          (buttonClick)="onAddTask()" 
+          *ngIf="!hasAnyTasks()">
           Add Task
-        </ion-button>
+        </lib-button>
       </div>
 
-      <!-- Task List -->
-      <ion-list *ngIf="filteredTasks().length > 0">
-        <ion-item-sliding *ngFor="let task of filteredTasks(); trackBy: trackByTaskId">
-          <!-- Task Item -->
-          <ion-item>
-            <ion-checkbox 
-              slot="start" 
-              [checked]="task.completed" 
-              (ionChange)="onToggleComplete(task.id, $event)">
-            </ion-checkbox>
-            
-            <ion-label [class.completed]="task.completed">
-              <h2>{{ task.title }}</h2>
-              <p *ngIf="task.description">{{ task.description }}</p>
-              <div class="task-meta">
-                <span class="task-date">{{ formatDate(task.createdAt) }}</span>
-                <ion-chip 
-                  *ngIf="getCategoryForTask(task.categoryId) as category" 
-                  size="small"
-                  [color]="category.color">
-                  <ion-icon [name]="category.icon"></ion-icon>
-                  <ion-label>{{ category.name }}</ion-label>
-                </ion-chip>
-              </div>
-            </ion-label>
-            
-            <ion-button 
-              fill="clear" 
-              slot="end" 
-              (click)="onEditTask(task)"
-              [disabled]="isLoading()">
-              <ion-icon name="create" slot="icon-only"></ion-icon>
-            </ion-button>
-          </ion-item>
+      <!-- Task List with Design System Task Cards -->
+      <div *ngIf="filteredTasks().length > 0" class="modern-task-list">
+        <lib-task-card 
+          *ngFor="let task of filteredTasks(); trackBy: trackByTaskId"
+          [task]="task"
+          [category]="getCategoryForTask(task.categoryId)"
+          [loading]="isLoading()"
+          [showActions]="true"
+          [showDescription]="true"
+          [interactive]="false"
+          (toggleComplete)="onToggleCompleteFromCard($event)"
+          (editTask)="onEditTaskFromCard($event)"
+          (deleteTask)="onDeleteTaskFromCard($event)"
+          class="task-card-item">
+        </lib-task-card>
+      </div>
 
-          <!-- Slide Options -->
-          <ion-item-options side="end">
-            <ion-item-option 
-              color="primary" 
-              (click)="onEditTask(task)">
-              <ion-icon name="create" slot="icon-only"></ion-icon>
-            </ion-item-option>
-            <ion-item-option 
-              color="danger" 
-              (click)="onDeleteTask(task.id)">
-              <ion-icon name="trash" slot="icon-only"></ion-icon>
-            </ion-item-option>
-          </ion-item-options>
-        </ion-item-sliding>
-      </ion-list>
-
-      <!-- Floating Action Button -->
-      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button (click)="onAddTask()">
-          <ion-icon name="add"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
+      <!-- Modern Floating Action Menu -->
+      <div class="fab-menu">
+        <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+          <ion-fab-button 
+            color="primary" 
+            class="main-fab"
+            (click)="toggleFabMenu()">
+            <ion-icon [name]="fabMenuOpen() ? 'close' : 'add'"></ion-icon>
+          </ion-fab-button>
+          
+          <!-- Sub FABs -->
+          <ion-fab-list side="top" [activated]="fabMenuOpen()">
+            <ion-fab-button 
+              color="secondary" 
+              (click)="onAddTask()" 
+              class="sub-fab">
+              <ion-icon name="add-circle"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button 
+              color="tertiary" 
+              (click)="navigateToCategories()" 
+              class="sub-fab">
+              <ion-icon name="albums"></ion-icon>
+            </ion-fab-button>
+          </ion-fab-list>
+        </ion-fab>
+      </div>
     </ion-content>
   `,
   styleUrls: ['./task-list.component.scss']
@@ -207,6 +248,9 @@ export class TaskListComponent implements OnInit {
 
   // Local computed signals
   readonly hasAnyTasks = computed(() => this.tasks().length > 0);
+  
+  // FAB menu state
+  readonly fabMenuOpen = signal(false);
 
   constructor() {
     // Add required Ionic icons
@@ -217,7 +261,14 @@ export class TaskListComponent implements OnInit {
       create,
       search,
       add,
-      funnel
+      funnel,
+      close,
+      addCircle,
+      albums,
+      listOutline,
+      timeOutline,
+      trendingUp,
+      appsOutline
     });
   }
 
@@ -228,10 +279,34 @@ export class TaskListComponent implements OnInit {
   }
 
   /**
+   * Handle filter chip click
+   */
+  onFilterChipClick(chipId: string): void {
+    if (chipId === 'all') {
+      this.onClearFilters();
+    } else {
+      this.onCategoryFilter(chipId);
+    }
+  }
+
+  /**
+   * Handle filter chip dismiss
+   */
+  onFilterChipDismiss(chipId: string): void {
+    this.taskStore.setCategoryFilter(null);
+  }
+
+  /**
+   * Get task count for a specific category
+   */
+  getTaskCountForCategory(categoryId: string): number {
+    return this.tasks().filter(task => task.categoryId === categoryId).length;
+  }
+
+  /**
    * Handle search input changes
    */
-  onSearchChange(event: any): void {
-    const searchTerm = event.target.value;
+  onSearchChange(searchTerm: string): void {
     this.taskStore.setSearchTerm(searchTerm);
   }
 
@@ -252,6 +327,66 @@ export class TaskListComponent implements OnInit {
    */
   onClearFilters(): void {
     this.taskStore.clearFilters();
+  }
+
+  /**
+   * Handle task completion toggle from TaskCardComponent
+   */
+  onToggleCompleteFromCard(event: { taskId: string; completed: boolean }): void {
+    this.taskStore.toggleTaskCompletion(event.taskId).subscribe({
+      next: async (updatedTask) => {
+        const toast = await this.toastController.create({
+          message: `Task marked as ${event.completed ? 'completed' : 'pending'}`,
+          duration: 1500,
+          color: event.completed ? 'success' : 'medium'
+        });
+        await toast.present();
+      },
+      error: async (error) => {
+        console.error('Failed to toggle task completion:', error);
+        const toast = await this.toastController.create({
+          message: 'Failed to update task',
+          duration: 3000,
+          color: 'danger'
+        });
+        await toast.present();
+      }
+    });
+  }
+
+  /**
+   * Handle edit task from TaskCardComponent
+   */
+  onEditTaskFromCard(taskId: string): void {
+    this.router.navigate(['/task', taskId, 'edit']);
+  }
+
+  /**
+   * Handle delete task from TaskCardComponent
+   */
+  async onDeleteTaskFromCard(taskId: string): Promise<void> {
+    const task = this.tasks().find(t => t.id === taskId);
+    if (!task) return;
+
+    const alert = await this.alertController.create({
+      header: 'Delete Task',
+      message: `Are you sure you want to delete "${task.title}"? This action cannot be undone.`,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            this.deleteTaskConfirmed(taskId);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   /**
@@ -336,6 +471,7 @@ export class TaskListComponent implements OnInit {
    * Handle add task action - navigate to task form
    */
   onAddTask(): void {
+    this.fabMenuOpen.set(false); // Close FAB menu
     this.router.navigate(['/task/new']);
   }
 
@@ -378,5 +514,20 @@ export class TaskListComponent implements OnInit {
       day: 'numeric',
       year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
     });
+  }
+
+  /**
+   * Toggle FAB menu state
+   */
+  toggleFabMenu(): void {
+    this.fabMenuOpen.set(!this.fabMenuOpen());
+  }
+
+  /**
+   * Navigate to categories page
+   */
+  navigateToCategories(): void {
+    this.fabMenuOpen.set(false); // Close FAB menu
+    this.router.navigate(['/categories']);
   }
 }
