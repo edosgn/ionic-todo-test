@@ -1,0 +1,54 @@
+// Tasks Page Styles
+// Main page with header navigation and floating action button
+
+ion-header {
+  ion-toolbar {
+    ion-title {
+      font-weight: 600;
+    }
+    
+    ion-button {
+      --color: var(--ion-color-medium-contrast);
+      
+      &:hover {
+        --background: var(--ion-color-light);
+      }
+    }
+  }
+}
+
+ion-content {
+  --background: var(--ion-color-light);
+}
+
+// Floating Action Button styling
+ion-fab {
+  ion-fab-button {
+    --background: var(--ion-color-primary);
+    --color: white;
+    --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    
+    &:hover {
+      --background: var(--ion-color-primary-shade);
+    }
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  ion-content {
+    --background: var(--ion-color-dark);
+  }
+  
+  ion-header {
+    ion-toolbar {
+      ion-button {
+        --color: var(--ion-color-light);
+        
+        &:hover {
+          --background: var(--ion-color-dark-tint);
+        }
+      }
+    }
+  }
+}

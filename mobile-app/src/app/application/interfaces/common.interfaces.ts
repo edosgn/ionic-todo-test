@@ -177,10 +177,8 @@ export class UseCaseError extends Error {
     this.name = 'UseCaseError';
     this.timestamp = new Date();
     
-    // Maintain proper stack trace
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, UseCaseError);
-    }
+    // Set the prototype explicitly to maintain instanceof behavior
+    Object.setPrototypeOf(this, UseCaseError.prototype);
   }
 }
 

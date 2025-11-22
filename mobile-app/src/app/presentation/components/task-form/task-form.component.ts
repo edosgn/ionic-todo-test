@@ -11,9 +11,10 @@
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { Router, ActivatedRoute } from '@angular/router';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { save, close, checkmark } from 'ionicons/icons';
+import { save, close, checkmark, checkmarkCircle, alertCircle } from 'ionicons/icons';
 
 // Domain imports
 import { Task, Category } from '../../../domain';
@@ -143,6 +144,8 @@ export class TaskFormComponent implements OnInit {
   private readonly taskStore = inject(TaskStore);
   private readonly categoryStore = inject(CategoryStore);
   private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly toastController = inject(ToastController);
 
   // Component state
   readonly isSubmitting = signal(false);
@@ -163,7 +166,7 @@ export class TaskFormComponent implements OnInit {
   get categoryIdControl() { return this.taskForm.get('categoryId')!; }
 
   constructor() {
-    addIcons({ save, close, checkmark });
+    addIcons({ save, close, checkmark, checkmarkCircle, alertCircle });
     this.initializeForm();
   }
 
@@ -255,19 +258,41 @@ export class TaskFormComponent implements OnInit {
   }
 
   onCancel(): void {
-    // TODO: Emit cancel event or navigate back
-    console.log('Task form cancelled');
+    // Navigate back to task list
+    this.router.navigate(['/tasks']);
   }
 
-  private onSuccess(): void {
+  private async onSuccess(): Promise<void> {
     this.isSubmitting.set(false);
-    // TODO: Emit success event or navigate back
-    console.log('Task form completed successfully');
+    
+    // Show success toast
+    const toast = await this.toastController.create({
+      message: this.isEditMode() ? 'Task updated successfully' : 'Task created successfully',
+      duration: 2000,
+      position: 'bottom',
+      color: 'success',
+      icon: 'checkmark-circle'
+    });
+    await toast.present();
+    
+    // Navigate back to task list
+    this.router.navigate(['/tasks']);
   }
 
-  private handleError(error: any): void {
+  private async handleError(error: any): Promise<void> {
     this.isSubmitting.set(false);
     this.error.set(error.message || 'Failed to save task');
+    
+    // Show error toast
+    const toast = await this.toastController.create({
+      message: error.message || 'Failed to save task',
+      duration: 3000,
+      position: 'bottom',
+      color: 'danger',
+      icon: 'alert-circle'
+    });
+    await toast.present();
+    
     console.error('Task form error:', error);
   }
 
