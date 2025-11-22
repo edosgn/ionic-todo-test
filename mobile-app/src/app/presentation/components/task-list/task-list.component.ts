@@ -11,7 +11,8 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { 
   checkmarkCircle, 
@@ -187,9 +188,12 @@ import { CategoryStore } from '../../stores/category.store';
   styleUrls: ['./task-list.component.scss']
 })
 export class TaskListComponent implements OnInit {
-  // Inject stores
+  // Inject stores and services
   private readonly taskStore = inject(TaskStore);
   private readonly categoryStore = inject(CategoryStore);
+  private readonly router = inject(Router);
+  private readonly alertController = inject(AlertController);
+  private readonly toastController = inject(ToastController);
 
   // Component signals from stores
   readonly tasks = this.taskStore.tasks;
@@ -251,52 +255,95 @@ export class TaskListComponent implements OnInit {
   }
 
   /**
-   * Handle task completion toggle
+   * Handle task completion toggle with feedback
    */
   onToggleComplete(taskId: string, event: any): void {
     const isCompleted = event.detail.checked;
     this.taskStore.toggleTaskCompletion(taskId).subscribe({
-      next: (updatedTask) => {
-        console.log(`Task ${updatedTask.title} marked as ${isCompleted ? 'completed' : 'pending'}`);
+      next: async (updatedTask) => {
+        const toast = await this.toastController.create({
+          message: `Task marked as ${isCompleted ? 'completed' : 'pending'}`,
+          duration: 1500,
+          color: isCompleted ? 'success' : 'medium'
+        });
+        await toast.present();
       },
-      error: (error) => {
+      error: async (error) => {
         console.error('Failed to toggle task completion:', error);
-        // Optionally show a toast notification
+        // Revert the checkbox state
+        event.target.checked = !isCompleted;
+        const toast = await this.toastController.create({
+          message: 'Failed to update task',
+          duration: 3000,
+          color: 'danger'
+        });
+        await toast.present();
       }
     });
   }
 
   /**
-   * Handle task deletion
+   * Handle task deletion with confirmation
    */
-  onDeleteTask(taskId: string): void {
-    // TODO: Show confirmation dialog
+  async onDeleteTask(taskId: string): Promise<void> {
+    const task = this.tasks().find(t => t.id === taskId);
+    if (!task) return;
+
+    const alert = await this.alertController.create({
+      header: 'Delete Task',
+      message: `Are you sure you want to delete "${task.title}"? This action cannot be undone.`,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            this.deleteTaskConfirmed(taskId);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private deleteTaskConfirmed(taskId: string): void {
     this.taskStore.deleteTask(taskId).subscribe({
-      next: () => {
-        console.log('Task deleted successfully');
-        // Optionally show success toast
+      next: async () => {
+        const toast = await this.toastController.create({
+          message: 'Task deleted successfully',
+          duration: 2000,
+          color: 'success'
+        });
+        await toast.present();
       },
-      error: (error) => {
+      error: async (error) => {
         console.error('Failed to delete task:', error);
-        // Optionally show error toast
+        const toast = await this.toastController.create({
+          message: 'Failed to delete task',
+          duration: 3000,
+          color: 'danger'
+        });
+        await toast.present();
       }
     });
   }
 
   /**
-   * Handle add task action
+   * Handle add task action - navigate to task form
    */
   onAddTask(): void {
-    // TODO: Navigate to task form or open modal
-    console.log('Add task clicked');
+    this.router.navigate(['/task/new']);
   }
 
   /**
-   * Handle edit task action
+   * Handle edit task action - navigate to edit form
    */
   onEditTask(task: Task): void {
-    // TODO: Navigate to task form or open modal with task data
-    console.log('Edit task clicked:', task);
+    this.router.navigate(['/task', task.id, 'edit']);
   }
 
   /**
