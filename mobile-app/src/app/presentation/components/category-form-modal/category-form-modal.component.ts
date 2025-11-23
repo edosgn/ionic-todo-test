@@ -360,8 +360,14 @@ export class CategoryFormModalComponent implements OnInit {
 
     return new Promise((resolve, reject) => {
       this.categoryStore.createCategory(input).subscribe({
-        next: () => resolve(),
-        error: reject
+        next: () => {
+          console.log('Category created successfully');
+          resolve();
+        },
+        error: (error) => {
+          console.error('Error creating category:', error);
+          reject(error);
+        }
       });
     });
   }

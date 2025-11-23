@@ -397,6 +397,43 @@ ion-item-options {
     --color: var(--ion-text-color);
   }
 
+  // Enhanced empty state contrast for dark mode
+  .empty-state {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    
+    ion-icon {
+      color: var(--ion-color-primary-tint) !important;
+      opacity: 0.8;
+    }
+
+    h3 {
+      color: #ffffff !important;
+      font-weight: 600;
+    }
+
+    p {
+      color: var(--ion-color-medium-tint) !important;
+      opacity: 0.9;
+    }
+
+    // Enhanced button contrast for dark mode
+    lib-button {
+      --ion-color-primary: var(--ion-color-primary-tint);
+      --ion-color-primary-contrast: var(--ion-background-color);
+    }
+  }
+
+  .loading-container {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    p {
+      color: var(--ion-color-medium-tint) !important;
+      opacity: 0.9;
+    }
+  }
+
   .task-item {
     border-bottom-color: var(--ion-item-border-color);
     --color: var(--ion-text-color);

@@ -10,7 +10,7 @@
  */
 
 import { Injectable, signal, computed } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, tap, shareReplay } from 'rxjs';
 
 // Domain imports
 import { Category } from '../../domain';
@@ -104,26 +104,26 @@ export class CategoryStore {
     this._loading.set(true);
     this._error.set(null);
 
-    const result$ = this.createCategoryUseCase.execute(input);
-    
-    result$.subscribe({
-      next: (categoryOutput) => {
-        // Convert DTO to domain entity and add to current state
-        const category = this.mapper.toDomain(categoryOutput);
-        this._categories.update(categories => [...categories, category]);
-        this._loading.set(false);
-      },
-      error: (error) => {
-        console.error('Error creating category:', error);
-        this._error.set(error.message || 'Failed to create category');
-        this._loading.set(false);
-      }
-    });
-
-    // Return mapped observable for caller
-    return result$.pipe(
-      map((categoryOutput: CategoryOutput) => this.mapper.toDomain(categoryOutput))
+    // Create a shared observable to prevent multiple subscriptions
+    const result$ = this.createCategoryUseCase.execute(input).pipe(
+      tap({
+        next: (categoryOutput: CategoryOutput) => {
+          // Convert DTO to domain entity and add to current state
+          const category = this.mapper.toDomain(categoryOutput);
+          this._categories.update(categories => [...categories, category]);
+          this._loading.set(false);
+        },
+        error: (error: any) => {
+          console.error('Error creating category:', error);
+          this._error.set(error.message || 'Failed to create category');
+          this._loading.set(false);
+        }
+      }),
+      map((categoryOutput: CategoryOutput) => this.mapper.toDomain(categoryOutput)),
+      shareReplay(1) // Prevent multiple executions
     );
+
+    return result$;
   }
 
   /**

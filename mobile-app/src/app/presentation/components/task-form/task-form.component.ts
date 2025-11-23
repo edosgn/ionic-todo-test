@@ -71,7 +71,6 @@ import { TranslationService } from '../../../infrastructure/services/translation
           type="text"
           [maxLength]="100"
           [required]="true"
-          [errorMessage]="translationService.getForms('TITLE_ERROR')"
           [showCharacterCount]="true">
         </lib-form-field>
 
