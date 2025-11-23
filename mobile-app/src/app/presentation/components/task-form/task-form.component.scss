@@ -109,14 +109,28 @@ ion-card[color="danger"] {
 :host-context(body.dark) {
   .category-selection-section,
   .category-preview {
-    background: var(--ion-color-dark);
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .category-selection-section h4,
+  .category-preview h4 {
+    color: #ffffff !important;
+    font-weight: 600;
   }
 
   ion-item {
     ion-input, ion-textarea, ion-select {
-      border-color: var(--ion-color-dark-shade);
-      background: var(--ion-item-background);
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.04) !important;
       color: var(--ion-text-color);
+      
+      &:focus-within {
+        border-color: var(--ion-color-primary-tint);
+        background: rgba(255, 255, 255, 0.08) !important;
+      }
     }
   }
 }

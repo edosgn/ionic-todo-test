@@ -1,0 +1,81 @@
+.icon-selector {
+  padding: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.icon-search {
+  margin: 8px 0;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.icons-grid {
+  margin: 16px 0;
+  padding: 0;
+}
+
+.icon-col {
+  padding: 2px;
+}
+
+.icon-button {
+  width: 100%;
+  height: 40px;
+  margin: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  --border-radius: 8px;
+  --background: transparent;
+}
+
+.icon-button.selected {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+}
+
+.icon-button:hover {
+  --background: var(--ion-color-light);
+}
+
+.icon-display {
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+
+.icon-display.selected-icon {
+  color: var(--ion-color-primary-contrast);
+}
+
+.no-results {
+  text-align: center;
+  padding: 20px;
+}
+
+.no-results p {
+  margin: 0 0 4px 0;
+}
+
+.no-results small {
+  opacity: 0.7;
+}
+
+.icon-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  border-top: 1px solid var(--ion-color-medium);
+}
+
+.preview-icon {
+  font-size: 24px;
+  color: var(--ion-color-primary);
+}
+
+.icon-preview p {
+  margin: 0;
+}

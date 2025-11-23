@@ -1,0 +1,58 @@
+<div class="color-selector">
+  <ion-text>
+    <h4>Choose a color</h4>
+  </ion-text>
+  
+  <!-- Predefined Colors Grid -->
+  <ion-grid class="color-grid">
+    <ion-row>
+      <ion-col 
+        size="2" 
+        *ngFor="let color of predefinedColors; trackBy: trackByColorValue"
+        class="color-col">
+        <ion-button
+          fill="clear"
+          class="color-button"
+          [class.selected]="selectedColor === color.value"
+          (click)="selectColor(color.value)"
+          [attr.aria-label]="color.name">
+          <div 
+            class="color-circle"
+            [style.background-color]="color.value"
+            [attr.title]="color.name">
+            <ion-icon 
+              *ngIf="selectedColor === color.value" 
+              name="checkmark" 
+              class="checkmark-icon">
+            </ion-icon>
+          </div>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Custom Color Input -->
+  <ion-item class="custom-color-item">
+    <ion-icon name="color-palette" slot="start"></ion-icon>
+    <ion-label position="stacked">Custom Color (Hex)</ion-label>
+    <ion-input
+      type="text"
+      placeholder="#FF5733"
+      [value]="customColor()"
+      (ionInput)="onCustomColorChange($event)"
+      pattern="^#[0-9A-Fa-f]{6}$"
+      maxlength="7">
+    </ion-input>
+  </ion-item>
+
+  <!-- Color Preview -->
+  <div class="color-preview" *ngIf="selectedColor">
+    <div 
+      class="preview-circle"
+      [style.background-color]="selectedColor">
+    </div>
+    <ion-text>
+      <p>Selected: <strong>{{ selectedColor }}</strong></p>
+    </ion-text>
+  </div>
+</div>

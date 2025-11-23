@@ -1,0 +1,123 @@
+.category-selector {
+  width: 100%;
+}
+
+.category-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --min-height: 60px;
+  margin: 4px 0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.category-item.selected {
+  --background: var(--ion-color-primary-tint);
+  --color: var(--ion-color-primary-contrast);
+}
+
+.category-item:hover {
+  --background: var(--ion-color-light);
+}
+
+.category-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.category-color-circle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--ion-color-medium);
+  position: relative;
+}
+
+.category-color-circle.no-category {
+  background: var(--ion-color-light);
+  border: 2px dashed var(--ion-color-medium);
+}
+
+.category-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  color: var(--ion-color-primary);
+}
+
+.empty-categories {
+  text-align: center;
+  padding: 20px;
+}
+
+.empty-categories p {
+  margin: 0 0 4px 0;
+}
+
+.empty-categories small {
+  opacity: 0.7;
+}
+
+// Dark mode adaptations
+:host-context(body.dark) {
+  .category-selector {
+    background: transparent;
+  }
+
+  .category-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    margin: 4px 0;
+    --color: #ffffff;
+
+    &.selected {
+      background: rgba(var(--ion-color-primary-rgb), 0.2) !important;
+      border-color: var(--ion-color-primary-tint);
+      --color: var(--ion-color-primary-tint);
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    ion-label h3 {
+      color: #ffffff !important;
+    }
+
+    ion-label p {
+      color: rgba(255, 255, 255, 0.7) !important;
+    }
+  }
+
+  .category-color-circle {
+    border-color: rgba(255, 255, 255, 0.3);
+
+    &.no-category {
+      background: rgba(255, 255, 255, 0.1) !important;
+      border: 2px dashed rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  .category-icon {
+    color: var(--ion-color-primary-tint) !important;
+  }
+
+  .empty-categories {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+
+    p {
+      color: #ffffff !important;
+    }
+
+    small {
+      color: rgba(255, 255, 255, 0.6) !important;
+    }
+  }
+}

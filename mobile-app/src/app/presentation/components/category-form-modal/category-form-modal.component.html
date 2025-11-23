@@ -1,0 +1,126 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEditMode() ? 'Editar Categoría' : 'Nueva Categoría' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="dismissModal()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Category Preview -->
+  <div class="category-preview">
+    <h4>Vista Previa</h4>
+    <ion-item lines="none" class="preview-item">
+      <div class="category-indicator" slot="start">
+        <div class="category-color-circle" [style.background-color]="selectedColor()"></div>
+        <ion-icon class="category-icon" [name]="selectedIcon()"></ion-icon>
+      </div>
+      <ion-label>
+        <h3>{{ nameControl.value || 'Nombre de categoría' }}</h3>
+        <p>{{ currentDate | date:'short' }}</p>
+      </ion-label>
+    </ion-item>
+  </div>
+
+  <!-- Category Form -->
+  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+    <ion-list lines="none">
+      <!-- Name Input -->
+      <ion-item>
+        <ion-label position="stacked">Nombre *</ion-label>
+        <ion-input 
+          formControlName="name" 
+          placeholder="Ingresa el nombre de la categoría"
+          [clearInput]="true"
+          maxlength="50"
+        ></ion-input>
+        <ion-note 
+          slot="helper" 
+          *ngIf="!nameControl.errors?.['required']"
+        >
+          Mínimo 3 caracteres
+        </ion-note>
+        <ion-note 
+          slot="error" 
+          *ngIf="nameControl.errors?.['required'] && nameControl.touched"
+        >
+          El nombre es obligatorio
+        </ion-note>
+        <ion-note 
+          slot="error" 
+          *ngIf="nameControl.errors?.['minlength'] && nameControl.touched"
+        >
+          Mínimo 3 caracteres
+        </ion-note>
+        <ion-note 
+          slot="error" 
+          *ngIf="nameControl.errors?.['maxlength'] && nameControl.touched"
+        >
+          Máximo 50 caracteres
+        </ion-note>
+      </ion-item>
+
+      <!-- Color and Icon Selection Accordions -->
+      <ion-accordion-group class="styling-accordion">
+        <!-- Color Selection -->
+        <ion-accordion value="color">
+          <ion-item slot="header">
+            <ion-label>Color</ion-label>
+            <div class="color-preview" slot="end">
+              <div class="color-circle" [style.background-color]="selectedColor()"></div>
+            </div>
+          </ion-item>
+          <div class="accordion-content" slot="content">
+            <app-color-selector 
+              [selectedColor]="selectedColor()"
+              (colorSelected)="onColorSelected($event)"
+            ></app-color-selector>
+          </div>
+        </ion-accordion>
+
+        <!-- Icon Selection -->
+        <ion-accordion value="icon">
+          <ion-item slot="header">
+            <ion-label>Ícono</ion-label>
+            <ion-icon 
+              class="icon-preview" 
+              [name]="selectedIcon()" 
+              slot="end"
+            ></ion-icon>
+          </ion-item>
+          <div class="accordion-content" slot="content">
+            <app-icon-selector 
+              [selectedIcon]="selectedIcon()"
+              (iconSelected)="onIconSelected($event)"
+            ></app-icon-selector>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+    </ion-list>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <ion-button 
+        expand="block" 
+        type="submit" 
+        [disabled]="categoryForm.invalid || isSubmitting()"
+        class="submit-button"
+      >
+        <ion-icon name="save" slot="start"></ion-icon>
+        {{ isSubmitting() ? 'Guardando...' : (isEditMode() ? 'Actualizar' : 'Crear') }}
+      </ion-button>
+      
+      <ion-button 
+        expand="block" 
+        fill="outline" 
+        (click)="dismissModal()"
+        [disabled]="isSubmitting()"
+      >
+        Cancelar
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

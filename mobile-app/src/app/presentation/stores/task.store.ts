@@ -10,7 +10,7 @@
  */
 
 import { Injectable, signal, computed, inject } from '@angular/core';
-import { Observable, map, throwError } from 'rxjs';
+import { Observable, map, throwError, tap } from 'rxjs';
 
 // Domain imports
 import { Task } from '../../domain';
@@ -224,22 +224,23 @@ export class TaskStore {
 
     const result$ = this.deleteTaskUseCase.execute({ id: taskId });
     
-    result$.subscribe({
-      next: () => {
-        // Remove task from current state
-        this._tasks.update(tasks => 
-          tasks.filter(task => task.id !== taskId)
-        );
-        this._loading.set(false);
-      },
-      error: (error) => {
-        console.error('Error deleting task:', error);
-        this._error.set(error.message || 'Failed to delete task');
-        this._loading.set(false);
-      }
-    });
-
-    return result$;
+    // Use pipe and tap to handle side effects without double subscription
+    return result$.pipe(
+      tap({
+        next: () => {
+          // Remove task from current state
+          this._tasks.update(tasks => 
+            tasks.filter(task => task.id !== taskId)
+          );
+          this._loading.set(false);
+        },
+        error: (error) => {
+          console.error('Error deleting task:', error);
+          this._error.set(error.message || 'Failed to delete task');
+          this._loading.set(false);
+        }
+      })
+    );
   }
 
   /**
