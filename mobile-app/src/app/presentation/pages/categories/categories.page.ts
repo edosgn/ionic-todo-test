@@ -43,6 +43,7 @@ import {
 } from 'ionicons/icons';
 
 import { CategoryStore } from '../../stores/category.store';
+import { FeatureFlagStore } from '../../stores/feature-flag.store';
 import { Category } from '../../../domain/entities/category.entity';
 import { CategoryFormModalComponent } from '../../components/category-form-modal/category-form-modal.component';
 
@@ -81,6 +82,7 @@ import { CategoryFormModalComponent } from '../../components/category-form-modal
 })
 export class CategoriesPage implements OnInit {
   private readonly categoryStore = inject(CategoryStore);
+  private readonly featureFlagStore = inject(FeatureFlagStore);
   private readonly router = inject(Router);
   private readonly alertController = inject(AlertController);
   private readonly toastController = inject(ToastController);
@@ -92,6 +94,10 @@ export class CategoriesPage implements OnInit {
   readonly stats = this.categoryStore.stats;
   readonly loading = this.categoryStore.loading;
   readonly error = this.categoryStore.error;
+
+  // Feature flags
+  readonly statisticsVisible = this.featureFlagStore.statisticsVisible;
+  readonly deleteTaskEnabled = this.featureFlagStore.deleteTaskEnabled;
 
   searchText = '';
 

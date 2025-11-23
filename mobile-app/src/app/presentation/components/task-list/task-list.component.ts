@@ -38,6 +38,7 @@ import { Task } from '../../../domain';
 // Presentation imports
 import { TaskStore } from '../../stores/task.store';
 import { CategoryStore } from '../../stores/category.store';
+import { FeatureFlagStore } from '../../stores/feature-flag.store';
 
 @Component({
   selector: 'app-task-list',
@@ -107,7 +108,7 @@ import { CategoryStore } from '../../stores/category.store';
       </div>
 
       <!-- Enhanced Statistics Cards -->
-      <div class="stats-container">
+      <div class="stats-container" *ngIf="statisticsVisible()">
         <lib-stat-card 
           [value]="taskStats().total.toString()"
           label="Total Tasks"
@@ -187,7 +188,7 @@ import { CategoryStore } from '../../stores/category.store';
           [task]="task"
           [category]="getCategoryForTask(task.categoryId)"
           [loading]="isLoading()"
-          [showActions]="true"
+          [showActions]="deleteTaskEnabled()"
           [showDescription]="true"
           [interactive]="false"
           (toggleComplete)="onToggleCompleteFromCard($event)"
@@ -232,6 +233,7 @@ export class TaskListComponent implements OnInit {
   // Inject stores and services
   private readonly taskStore = inject(TaskStore);
   private readonly categoryStore = inject(CategoryStore);
+  private readonly featureFlagStore = inject(FeatureFlagStore);
   private readonly router = inject(Router);
   private readonly alertController = inject(AlertController);
   private readonly toastController = inject(ToastController);
@@ -246,8 +248,14 @@ export class TaskListComponent implements OnInit {
   readonly selectedCategoryId = this.taskStore.selectedCategoryId;
   readonly categories = this.categoryStore.categories;
 
+  // Feature flags from store
+  readonly deleteTaskEnabled = this.featureFlagStore.deleteTaskEnabled;
+  readonly statisticsVisible = this.featureFlagStore.statisticsVisible;
+  readonly maxTasksLimit = this.featureFlagStore.maxTasksLimit;
+
   // Local computed signals
   readonly hasAnyTasks = computed(() => this.tasks().length > 0);
+  readonly canAddMoreTasks = computed(() => this.tasks().length < this.maxTasksLimit());
   
   // FAB menu state
   readonly fabMenuOpen = signal(false);
@@ -470,8 +478,20 @@ export class TaskListComponent implements OnInit {
   /**
    * Handle add task action - navigate to task form
    */
-  onAddTask(): void {
+  async onAddTask(): Promise<void> {
     this.fabMenuOpen.set(false); // Close FAB menu
+    
+    // Check if we can add more tasks
+    if (!this.canAddMoreTasks()) {
+      const alert = await this.alertController.create({
+        header: 'Task Limit Reached',
+        message: `You have reached the maximum limit of ${this.maxTasksLimit()} tasks. Please delete some tasks before creating new ones.`,
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
+    }
+    
     this.router.navigate(['/task/new']);
   }
 

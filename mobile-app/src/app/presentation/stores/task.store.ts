@@ -9,8 +9,8 @@
  * @since 1.0.0
  */
 
-import { Injectable, signal, computed } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { Observable, map, throwError } from 'rxjs';
 
 // Domain imports
 import { Task } from '../../domain';
@@ -32,6 +32,7 @@ import {
 
 // Presentation imports
 import { TaskPresentationMapper } from '../mappers/task-presentation.mapper';
+import { FeatureFlagStore } from './feature-flag.store';
 
 /**
  * Task Store Service
@@ -114,7 +115,12 @@ export class TaskStore {
     private completeTaskUseCase: CompleteTaskUseCase,
     private getTasksByCategoryUseCase: GetTasksByCategoryUseCase,
     private mapper: TaskPresentationMapper
-  ) {}
+  ) {
+    // Inject FeatureFlagStore
+    this.featureFlagStore = inject(FeatureFlagStore);
+  }
+
+  private readonly featureFlagStore: FeatureFlagStore;
 
   /**
    * Load all tasks from repository
@@ -141,6 +147,16 @@ export class TaskStore {
    * Create a new task
    */
   createTask(input: CreateTaskInput): Observable<Task> {
+    // Validate max tasks limit from feature flags
+    const maxTasks = this.featureFlagStore.maxTasksLimit();
+    const currentTaskCount = this._tasks().length;
+    
+    if (currentTaskCount >= maxTasks) {
+      const errorMsg = `Cannot create task. Maximum limit of ${maxTasks} tasks reached.`;
+      this._error.set(errorMsg);
+      return throwError(() => new Error(errorMsg));
+    }
+
     this._loading.set(true);
     this._error.set(null);
 

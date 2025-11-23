@@ -12,12 +12,17 @@ import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getRemoteConfig, provideRemoteConfig } from '@angular/fire/remote-config';
 
 // Application routes
 import { routes } from './app.routes';
 
 // Infrastructure module with repository implementations
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
+
+// Environment
+import { environment } from '../environments/environment';
 
 /**
  * Application configuration object
@@ -34,6 +39,10 @@ export const appConfig: ApplicationConfig = {
     
     // Animations support
     provideAnimations(),
+    
+    // Firebase configuration
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideRemoteConfig(() => getRemoteConfig()),
     
     // Infrastructure services and repositories
     importProvidersFrom(InfrastructureModule)
