@@ -105,8 +105,8 @@ ion-card[color="danger"] {
   }
 }
 
-// Dark mode
-@media (prefers-color-scheme: dark) {
+// Dark mode - respects app theme toggle, not system preference
+:host-context(body.dark) {
   .category-selection-section,
   .category-preview {
     background: var(--ion-color-dark);
@@ -115,6 +115,8 @@ ion-card[color="danger"] {
   ion-item {
     ion-input, ion-textarea, ion-select {
       border-color: var(--ion-color-dark-shade);
+      background: var(--ion-item-background);
+      color: var(--ion-text-color);
     }
   }
 }

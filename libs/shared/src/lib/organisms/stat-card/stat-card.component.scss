@@ -86,7 +86,7 @@
   &__value {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--ion-color-dark);
+    color: #1a1a1a;
     line-height: 1;
     margin-bottom: 4px;
     display: flex;
@@ -96,7 +96,7 @@
 
   &__label {
     font-size: 0.75rem;
-    color: var(--ion-color-medium);
+    color: #4a4a4a;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 600;
@@ -196,19 +196,45 @@
   }
 }
 
-// Dark mode adaptations
-@media (prefers-color-scheme: dark) {
-  .lib-stat-card {
-    --card-background: rgba(30, 30, 40, 0.85);
-    --card-border: 1px solid rgba(255, 255, 255, 0.1);
+// Light mode specific improvements for better contrast
+:host-context(body:not(.dark)) .lib-stat-card {
+  --card-background: rgba(248, 249, 250, 0.95);
+  --card-border: 1px solid rgba(200, 200, 200, 0.4);
+  --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  
+  &__value {
+    color: #1a1a1a !important;
+  }
+  
+  &__label {
+    color: #4a4a4a !important;
+    font-weight: 700;
+  }
+  
+  &__icon {
+    opacity: 0.6;
+  }
+}
 
-    &--minimal {
-      --card-background: transparent;
-      --card-border: 1px solid rgba(255, 255, 255, 0.05);
+// Dark mode adaptations - using body.dark instead of prefers-color-scheme
+:host-context(body.dark) .lib-stat-card {
+  --card-background: rgba(45, 45, 55, 0.85);
+  --card-border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  &__value {
+    color: #ffffff;
+  }
+  
+  &__label {
+    color: rgba(255, 255, 255, 0.8);
+  }
 
-      &:hover {
-        --card-background: rgba(255, 255, 255, 0.02);
-      }
+  &--minimal {
+    --card-background: transparent;
+    --card-border: 1px solid rgba(255, 255, 255, 0.05);
+
+    &:hover {
+      --card-background: rgba(255, 255, 255, 0.02);
     }
   }
 }

@@ -45,18 +45,7 @@ import { FeatureFlagStore } from '../../stores/feature-flag.store';
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule, ButtonComponent, SearchComponent, StatCardComponent, TaskCardComponent, FilterChipComponent],
   template: `
-    <ion-header [translucent]="true">
-      <ion-toolbar>
-        <ion-title>Todo Tasks</ion-title>
-        <ion-buttons slot="end">
-          <ion-button fill="clear" (click)="navigateToCategories()">
-            <ion-icon name="list-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content [fullscreen]="true" class="modern-content">
+    <div class="modern-content">
       <!-- Search Bar -->
       <div class="search-section">
         <lib-search 
@@ -197,35 +186,7 @@ import { FeatureFlagStore } from '../../stores/feature-flag.store';
           class="task-card-item">
         </lib-task-card>
       </div>
-
-      <!-- Modern Floating Action Menu -->
-      <div class="fab-menu">
-        <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-          <ion-fab-button 
-            color="primary" 
-            class="main-fab"
-            (click)="toggleFabMenu()">
-            <ion-icon [name]="fabMenuOpen() ? 'close' : 'add'"></ion-icon>
-          </ion-fab-button>
-          
-          <!-- Sub FABs -->
-          <ion-fab-list side="top" [activated]="fabMenuOpen()">
-            <ion-fab-button 
-              color="secondary" 
-              (click)="onAddTask()" 
-              class="sub-fab">
-              <ion-icon name="add-circle"></ion-icon>
-            </ion-fab-button>
-            <ion-fab-button 
-              color="tertiary" 
-              (click)="navigateToCategories()" 
-              class="sub-fab">
-              <ion-icon name="albums"></ion-icon>
-            </ion-fab-button>
-          </ion-fab-list>
-        </ion-fab>
-      </div>
-    </ion-content>
+    </div>
   `,
   styleUrls: ['./task-list.component.scss']
 })

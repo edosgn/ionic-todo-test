@@ -13,8 +13,11 @@ export class AppComponent implements OnInit {
   constructor() {}
 
   async ngOnInit() {
-    // Initialize feature flags from Firebase Remote Config on app startup
-    await this.featureFlagStore.initializeFeatureFlags();
-    console.log('🚀 Mobile App initialized with feature flags:', this.featureFlagStore.featureFlags());
+    // Initialize feature flags from Firebase Remote Config on app startup (non-blocking)
+    this.featureFlagStore.initializeFeatureFlags().then(() => {
+      console.log('🚀 Mobile App initialized with feature flags:', this.featureFlagStore.featureFlags());
+    }).catch(error => {
+      console.error('❌ Error initializing feature flags:', error);
+    });
   }
 }

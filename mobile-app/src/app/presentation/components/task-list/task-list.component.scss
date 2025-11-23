@@ -367,36 +367,40 @@ ion-item-options {
   }
 }
 
-// Dark mode adaptations
-@media (prefers-color-scheme: dark) {
+// Dark mode adaptations - respects app theme toggle
+:host-context(body.dark) {
   .modern-content {
-    --background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    --background: var(--ion-background-color);
     
     &::before {
-      opacity: 0.2;
+      opacity: 0.1;
     }
   }
 
   .modern-searchbar {
-    --background: rgba(30, 30, 40, 0.9) !important;
-    border-color: rgba(255, 255, 255, 0.1);
+    --background: var(--ion-item-background) !important;
+    border-color: var(--ion-item-border-color);
   }
 
   .filter-pill {
-    --background: rgba(30, 30, 40, 0.8) !important;
-    border-color: rgba(255, 255, 255, 0.1);
+    --background: var(--ion-item-background) !important;
+    border-color: var(--ion-item-border-color);
+    --color: var(--ion-text-color);
   }
 
   .stat-card,
   .modern-task-list,
   .loading-container,
   .empty-state {
-    --background: rgba(30, 30, 40, 0.85) !important;
-    border-color: rgba(255, 255, 255, 0.1);
+    --background: var(--ion-card-background) !important;
+    border-color: var(--ion-item-border-color);
+    --color: var(--ion-text-color);
   }
 
   .task-item {
-    border-bottom-color: rgba(255, 255, 255, 0.1);
+    border-bottom-color: var(--ion-item-border-color);
+    --color: var(--ion-text-color);
+    --background: var(--ion-item-background);
   }
 }
 

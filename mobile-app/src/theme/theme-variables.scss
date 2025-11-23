@@ -7,7 +7,7 @@
 
 // Light Theme Colors (Default)
 :root {
-  // Primary colors  
+  // Primary colors - Professional Purple: #6429cd
   --ion-color-primary: #6429cd;
   --ion-color-primary-rgb: 100, 41, 205;
   --ion-color-primary-contrast: #ffffff;
@@ -15,7 +15,7 @@
   --ion-color-primary-shade: #5823b4;
   --ion-color-primary-tint: #7441d3;
 
-  // Secondary colors
+  // Secondary colors - Light Purple: #bdbdff
   --ion-color-secondary: #bdbdff;
   --ion-color-secondary-rgb: 189, 189, 255;
   --ion-color-secondary-contrast: #1a1a1a;
@@ -77,7 +77,7 @@
   --ion-color-dark-shade: #1e2023;
   --ion-color-dark-tint: #383a3e;
 
-  // Background colors
+  // Background colors - Clean white theme
   --ion-background-color: #ffffff;
   --ion-background-color-rgb: 255, 255, 255;
 
@@ -86,16 +86,17 @@
 
   --ion-card-background: #ffffff;
   
-  // Toolbar
+  // Toolbar - Clean professional look
   --ion-toolbar-background: #ffffff;
   --ion-toolbar-color: #1a1a1a;
   --ion-toolbar-color-rgb: 26, 26, 26;
+  --ion-toolbar-border-color: #e0e0e0;
 
   // Item
   --ion-item-background: #ffffff;
   --ion-item-border-color: #e0e0e0;
   
-  // Custom app variables
+  // Custom App Colors for enhanced theming
   --app-surface: #ffffff;
   --app-surface-variant: #f8f9fa;
   --app-on-surface: #1a1a1a;
@@ -105,21 +106,21 @@
 
 // Dark Theme Colors
 body.dark {
-  // Primary colors (adjusted for dark mode)
-  --ion-color-primary: #4c8dff;
-  --ion-color-primary-rgb: 76, 141, 255;
+  // Primary colors - Brighter purple for dark mode
+  --ion-color-primary: #8a52ff;
+  --ion-color-primary-rgb: 138, 82, 255;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #4380e0;
-  --ion-color-primary-tint: #5e99ff;
+  --ion-color-primary-shade: #7a48e0;
+  --ion-color-primary-tint: #9765ff;
 
-  // Secondary colors
-  --ion-color-secondary: #24d6ea;
-  --ion-color-secondary-rgb: 36, 214, 234;
-  --ion-color-secondary-contrast: #000000;
-  --ion-color-secondary-contrast-rgb: 0, 0, 0;
-  --ion-color-secondary-shade: #20bcce;
-  --ion-color-secondary-tint: #3adaec;
+  // Secondary colors - Lighter purple for better visibility
+  --ion-color-secondary: #d4d4ff;
+  --ion-color-secondary-rgb: 212, 212, 255;
+  --ion-color-secondary-contrast: #1a1a1a;
+  --ion-color-secondary-contrast-rgb: 26, 26, 26;
+  --ion-color-secondary-shade: #bbbbe0;
+  --ion-color-secondary-tint: #d8d8ff;
 
   // Tertiary colors
   --ion-color-tertiary: #7e57ff;
@@ -153,20 +154,20 @@ body.dark {
   --ion-color-danger-shade: #d54a4a;
   --ion-color-danger-tint: #f36565;
 
-  // Light/Medium/Dark colors (inverted for dark mode)
-  --ion-color-light: #2d2d2d;
-  --ion-color-light-rgb: 45, 45, 45;
+  // Light/Medium/Dark colors (adjusted for better visibility in dark mode)
+  --ion-color-light: #2a2a2a;
+  --ion-color-light-rgb: 42, 42, 42;
   --ion-color-light-contrast: #ffffff;
   --ion-color-light-contrast-rgb: 255, 255, 255;
-  --ion-color-light-shade: #282828;
-  --ion-color-light-tint: #424242;
+  --ion-color-light-shade: #252525;
+  --ion-color-light-tint: #363636;
 
-  --ion-color-medium: #b4b5b8;
-  --ion-color-medium-rgb: 180, 181, 184;
+  --ion-color-medium: #a0a0a0;
+  --ion-color-medium-rgb: 160, 160, 160;
   --ion-color-medium-contrast: #000000;
   --ion-color-medium-contrast-rgb: 0, 0, 0;
-  --ion-color-medium-shade: #9e9fa2;
-  --ion-color-medium-tint: #bcbdbf;
+  --ion-color-medium-shade: #8d8d8d;
+  --ion-color-medium-tint: #aaaaaa;
 
   --ion-color-dark: #f4f5f8;
   --ion-color-dark-rgb: 244, 245, 248;
@@ -175,54 +176,54 @@ body.dark {
   --ion-color-dark-shade: #d7d8da;
   --ion-color-dark-tint: #f5f6f9;
 
-  // Background colors
-  --ion-background-color: #1e1e1e;
-  --ion-background-color-rgb: 30, 30, 30;
+  // Background colors - Professional dark theme with better contrast
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
 
   --ion-text-color: #ffffff;
   --ion-text-color-rgb: 255, 255, 255;
 
-  --ion-card-background: #2a2a2a;
+  --ion-card-background: #1e1e1e;
 
-  // Toolbar
+  // Toolbar - Dark professional look with high contrast
   --ion-toolbar-background: #1e1e1e;
   --ion-toolbar-color: #ffffff;
   --ion-toolbar-color-rgb: 255, 255, 255;
 
-  // Item
-  --ion-item-background: #2a2a2a;
+  // Item - Better contrast for readability
+  --ion-item-background: #1e1e1e;
   --ion-item-border-color: #404040;
 
-  // Additional dark mode adjustments  
-  --ion-border-color: #404040;
-  --ion-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
-  
-  // Custom app variables for dark theme
-  --app-surface: #2a2a2a;
-  --app-surface-variant: #363636;
+  // Custom App Colors for dark mode - Enhanced contrast
+  --app-surface: #1e1e1e;
+  --app-surface-variant: #2a2a2a;
   --app-on-surface: #ffffff;
   --app-outline: #404040;
-  --app-shadow: rgba(0, 0, 0, 0.3);
+  --app-shadow: rgba(0, 0, 0, 0.5);
+
+  // Additional dark mode adjustments
+  --ion-border-color: #2d2d2d;
+  --ion-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 // iOS Dark Theme specific adjustments
 body.dark.ios {
-  --ion-background-color: #1a1a1a;
-  --ion-background-color-rgb: 26, 26, 26;
+  --ion-background-color: #000000;
+  --ion-background-color-rgb: 0, 0, 0;
   
-  --ion-card-background: #2a2a2a;
-  --ion-toolbar-background: #1e1e1e;
-  --ion-item-background: #2a2a2a;
+  --ion-card-background: #1c1c1c;
+  --ion-toolbar-background: #000000;
+  --ion-item-background: #000000;
 }
 
-// Material Design Dark Theme specific adjustments  
+// Material Design Dark Theme specific adjustments
 body.dark.md {
-  --ion-background-color: #1e1e1e;
-  --ion-background-color-rgb: 30, 30, 30;
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
   
-  --ion-card-background: #2a2a2a;
-  --ion-toolbar-background: #1e1e1e;
-  --ion-item-background: #2a2a2a;
+  --ion-card-background: #1e1e1e;
+  --ion-toolbar-background: #1f1f1f;
+  --ion-item-background: #1e1e1e;
 }
 
 // Smooth transitions for theme switching

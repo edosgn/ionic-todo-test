@@ -51,8 +51,9 @@ export class RemoteConfigService {
     this.remoteConfig.defaultConfig = {
       'enableCategories': true,
       'enableDeleteTask': true,
-      'remoteTitle': 'Mis Tareas',
+      'appTitle': 'Mis Tareas',
       'maxTasks': 200,
+      'showStatistics': true,
       'theme_config': JSON.stringify({
         primaryColor: '#3880ff',
         accentColor: '#0cd1e8',
@@ -92,7 +93,8 @@ export class RemoteConfigService {
     try {
       const value = getValue(this.remoteConfig, key);
       const boolValue = value.asBoolean();
-      console.log(`🏁 Feature flag '${key}': ${boolValue}`);
+      const source = value.getSource();
+      console.log(`🏁 Feature flag '${key}': ${boolValue} [source: ${source}]`);
       return boolValue;
     } catch (error) {
       console.warn(`⚠️ Error getting feature flag '${key}', using default:`, defaultValue, error);
@@ -111,7 +113,8 @@ export class RemoteConfigService {
     try {
       const value = getValue(this.remoteConfig, key);
       const numberValue = value.asNumber();
-      console.log(`🔢 Number value '${key}': ${numberValue}`);
+      const source = value.getSource();
+      console.log(`🔢 Number value '${key}': ${numberValue} [source: ${source}]`);
       return numberValue;
     } catch (error) {
       console.warn(`⚠️ Error getting number value '${key}', using default:`, defaultValue, error);
@@ -130,7 +133,8 @@ export class RemoteConfigService {
     try {
       const value = getValue(this.remoteConfig, key);
       const stringValue = value.asString();
-      console.log(`📝 String value '${key}': ${stringValue}`);
+      const source = value.getSource();
+      console.log(`📝 String value '${key}': "${stringValue}" [source: ${source}]`);
       return stringValue;
     } catch (error) {
       console.warn(`⚠️ Error getting string value '${key}', using default:`, defaultValue, error);

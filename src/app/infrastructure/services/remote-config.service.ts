@@ -51,8 +51,9 @@ export class RemoteConfigService {
     this.remoteConfig.defaultConfig = {
       'enableCategories': true,
       'enableDeleteTask': true,
-      'remoteTitle': 'Mis Tareas',
+      'appTitle': 'Mis Tareas',
       'maxTasks': 200,
+      'showStatistics': true,
       'theme_config': JSON.stringify({
         primaryColor: '#3880ff',
         accentColor: '#0cd1e8',
@@ -66,16 +67,36 @@ export class RemoteConfigService {
    */
   async initialize(): Promise<void> {
     if (this.initialized) {
+      console.log('🔥 Remote Config already initialized, skipping...');
       return;
     }
 
     try {
       console.log('🔥 Initializing Firebase Remote Config...');
+      console.log('⚙️ Settings:', {
+        minimumFetchIntervalMillis: environment.remoteConfig.minimumFetchIntervalMillis,
+        fetchTimeoutMillis: environment.remoteConfig.fetchTimeoutMillis
+      });
+      
       await fetchAndActivate(this.remoteConfig);
       this.initialized = true;
+      
+      // Log current activated values to verify they're loaded
       console.log('✅ Firebase Remote Config initialized successfully');
+      console.log('🔍 Verifying activated values:');
+      
+      const testValues = {
+        appTitle: getValue(this.remoteConfig, 'appTitle').asString(),
+        enableDeleteTask: getValue(this.remoteConfig, 'enableDeleteTask').asBoolean(),
+        maxTasks: getValue(this.remoteConfig, 'maxTasks').asNumber(),
+        showStatistics: getValue(this.remoteConfig, 'showStatistics').asBoolean()
+      };
+      
+      console.log('📋 Current activated values:', testValues);
+      
     } catch (error) {
       console.error('❌ Error initializing Remote Config:', error);
+      console.log('🔄 Continuing with default values...');
       // Continue with default values
       this.initialized = true;
     }
@@ -92,7 +113,8 @@ export class RemoteConfigService {
     try {
       const value = getValue(this.remoteConfig, key);
       const boolValue = value.asBoolean();
-      console.log(`🏁 Feature flag '${key}': ${boolValue}`);
+      const source = value.getSource();
+      console.log(`🏁 Feature flag '${key}': ${boolValue} [source: ${source}]`);
       return boolValue;
     } catch (error) {
       console.warn(`⚠️ Error getting feature flag '${key}', using default:`, defaultValue, error);
@@ -111,7 +133,8 @@ export class RemoteConfigService {
     try {
       const value = getValue(this.remoteConfig, key);
       const numberValue = value.asNumber();
-      console.log(`🔢 Number value '${key}': ${numberValue}`);
+      const source = value.getSource();
+      console.log(`🔢 Number value '${key}': ${numberValue} [source: ${source}]`);
       return numberValue;
     } catch (error) {
       console.warn(`⚠️ Error getting number value '${key}', using default:`, defaultValue, error);
@@ -130,7 +153,8 @@ export class RemoteConfigService {
     try {
       const value = getValue(this.remoteConfig, key);
       const stringValue = value.asString();
-      console.log(`📝 String value '${key}': ${stringValue}`);
+      const source = value.getSource();
+      console.log(`📝 String value '${key}': "${stringValue}" [source: ${source}]`);
       return stringValue;
     } catch (error) {
       console.warn(`⚠️ Error getting string value '${key}', using default:`, defaultValue, error);
@@ -150,7 +174,8 @@ export class RemoteConfigService {
       const value = getValue(this.remoteConfig, key);
       const stringValue = value.asString();
       const jsonValue = JSON.parse(stringValue) as T;
-      console.log(`📦 JSON value '${key}':`, jsonValue);
+      const source = value.getSource();
+      console.log(`📦 JSON value '${key}':`, jsonValue, `[source: ${source}]`);
       return jsonValue;
     } catch (error) {
       console.warn(`⚠️ Error getting JSON value '${key}', using default:`, defaultValue, error);

@@ -15,49 +15,47 @@ import { ThemeService } from '../../services/theme.service';
   template: `
     <ion-button 
       fill="clear" 
+      size="default"
+      class="theme-toggle-btn"
       (click)="toggleTheme()"
       [attr.aria-label]="'Toggle theme to ' + (isDarkMode() ? 'light' : 'dark') + ' mode'">
       <ion-icon 
         slot="icon-only" 
-        [name]="isDarkMode() ? 'sunny-outline' : 'moon-outline'"
-        [style.color]="'var(--ion-toolbar-color)'">
+        size="large"
+        [name]="isDarkMode() ? 'sunny' : 'moon'">
       </ion-icon>
     </ion-button>
   `,
   styles: [`
-    :host {
-      display: inline-block;
+    .theme-toggle-btn {
+      --color: var(--ion-toolbar-color) !important;
+      --background: transparent;
+      --padding-start: 12px;
+      --padding-end: 12px;
+      --border-radius: 8px;
+      margin: 0 4px;
     }
     
-    ion-button {
-      --padding-start: 8px;
-      --padding-end: 8px;
-      --color: var(--ion-toolbar-color);
+    .theme-toggle-btn:hover {
+      --background: rgba(var(--ion-toolbar-color-rgb), 0.1) !important;
     }
     
     ion-icon {
-      font-size: 24px;
-      transition: color 0.3s ease;
+      font-size: 22px;
+      color: var(--ion-toolbar-color) !important;
     }
     
-    // Ensure proper contrast in different themes
     :host-context(body.dark) {
-      ion-button {
-        --color: #ffffff;
+      .theme-toggle-btn {
+        --color: #ffffff !important;
       }
       
       ion-icon {
         color: #ffffff !important;
       }
-    }
-    
-    :host-context(body:not(.dark)) {
-      ion-button {
-        --color: #1a1a1a;
-      }
       
-      ion-icon {
-        color: #1a1a1a !important;
+      .theme-toggle-btn:hover {
+        --background: rgba(255, 255, 255, 0.1) !important;
       }
     }
   `]
