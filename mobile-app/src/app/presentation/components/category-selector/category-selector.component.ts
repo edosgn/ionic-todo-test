@@ -49,8 +49,8 @@ import { CategoryStore } from '../../stores/category.store';
           <ion-icon name="close" class="category-icon"></ion-icon>
         </div>
         <ion-label>
-          <h3>No Category</h3>
-          <p>Tasks without category</p>
+          <h3>Sin Categoría</h3>
+          <p>Tareas sin categoría</p>
         </ion-label>
         <ion-icon 
           slot="end" 
@@ -90,8 +90,8 @@ import { CategoryStore } from '../../stores/category.store';
       <!-- Empty State -->
       <div *ngIf="categories().length === 0" class="empty-categories">
         <ion-text color="medium">
-          <p>No categories available</p>
-          <small>Create categories first to organize your tasks</small>
+          <p>No hay categorías disponibles</p>
+          <small>Crea categorías primero para organizar tus tareas</small>
         </ion-text>
       </div>
     </div>

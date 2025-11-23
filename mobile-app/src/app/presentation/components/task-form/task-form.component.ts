@@ -30,6 +30,9 @@ import { TaskStore } from '../../stores/task.store';
 import { CategoryStore } from '../../stores/category.store';
 import { CategorySelectorComponent } from '../category-selector/category-selector.component';
 
+// Infrastructure imports
+import { TranslationService } from '../../../infrastructure/services/translation.service';
+
 @Component({
   selector: 'app-task-form',
   standalone: true,
@@ -37,7 +40,7 @@ import { CategorySelectorComponent } from '../category-selector/category-selecto
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-title>{{ isEditMode() ? 'Edit Task' : 'New Task' }}</ion-title>
+        <ion-title>{{ isEditMode() ? translationService.getForms('EDIT_TASK') : translationService.getForms('NEW_TASK') }}</ion-title>
         <ion-buttons slot="start">
           <lib-button 
             variant="clear" 
@@ -62,30 +65,30 @@ import { CategorySelectorComponent } from '../category-selector/category-selecto
       <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
         <!-- Task Title -->
         <lib-form-field
-          label="Title"
+          [label]="translationService.getForms('TITLE')"
           formControlName="title"
-          placeholder="Enter task title"
+          [placeholder]="translationService.getForms('TITLE_PLACEHOLDER')"
           type="text"
           [maxLength]="100"
           [required]="true"
-          errorMessage="Title is required and must be at least 2 characters long"
+          [errorMessage]="translationService.getForms('TITLE_ERROR')"
           [showCharacterCount]="true">
         </lib-form-field>
 
         <!-- Task Description -->
         <lib-form-field
-          label="Description"
+          [label]="translationService.getForms('DESCRIPTION')"
           formControlName="description"
-          placeholder="Enter task description (optional)"
+          [placeholder]="translationService.getForms('DESCRIPTION_PLACEHOLDER')"
           type="textarea"
           [maxLength]="500"
-          helperText="Optional - Add more details about this task"
+          [helperText]="translationService.getForms('DESCRIPTION_HELPER')"
           [showCharacterCount]="true">
         </lib-form-field>
 
         <!-- Category Selection -->
         <div class="category-selection-section">
-          <h4>Category Selection</h4>
+          <h4>{{ translationService.getForms('CATEGORY_SELECTION') }}</h4>
           <app-category-selector
             [selectedCategoryId]="selectedCategorySignal"
             (categorySelected)="onCategorySelected($event)">
@@ -95,7 +98,7 @@ import { CategorySelectorComponent } from '../category-selector/category-selecto
         <!-- Error Messages -->
         <ion-card *ngIf="error()" color="danger">
           <ion-card-content>
-            <h4>Error</h4>
+            <h4>{{ translationService.getCommon('ERROR') }}</h4>
             <p>{{ error() }}</p>
           </ion-card-content>
         </ion-card>
@@ -110,7 +113,7 @@ import { CategorySelectorComponent } from '../category-selector/category-selecto
             [disabled]="taskForm.invalid || isSubmitting()"
             [loading]="isSubmitting()"
             (buttonClick)="onSubmit()">
-            {{ isEditMode() ? 'Update Task' : 'Create Task' }}
+            {{ isEditMode() ? translationService.getForms('UPDATE_TASK') : translationService.getForms('CREATE_TASK') }}
           </lib-button>
           
           <lib-button 
@@ -119,7 +122,7 @@ import { CategorySelectorComponent } from '../category-selector/category-selecto
             expand="full"
             [disabled]="isSubmitting()"
             (buttonClick)="onCancel()">
-            Cancel
+            {{ translationService.getCommon('CANCEL') }}
           </lib-button>
         </div>
       </form>
@@ -137,6 +140,7 @@ export class TaskFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly toastController = inject(ToastController);
+  readonly translationService = inject(TranslationService);
 
   // Component state
   readonly isSubmitting = signal(false);
@@ -260,8 +264,12 @@ export class TaskFormComponent implements OnInit {
     this.isSubmitting.set(false);
     
     // Show success toast
+    const message = this.isEditMode() 
+      ? this.translationService.getTasks('UPDATED_SUCCESS')
+      : this.translationService.getTasks('CREATED_SUCCESS');
+    
     const toast = await this.toastController.create({
-      message: this.isEditMode() ? 'Task updated successfully' : 'Task created successfully',
+      message,
       duration: 2000,
       position: 'bottom',
       color: 'success',
@@ -275,11 +283,11 @@ export class TaskFormComponent implements OnInit {
 
   private async handleError(error: any): Promise<void> {
     this.isSubmitting.set(false);
-    this.error.set(error.message || 'Failed to save task');
+    this.error.set(error.message || this.translationService.getTasks('SAVE_ERROR'));
     
     // Show error toast
     const toast = await this.toastController.create({
-      message: error.message || 'Failed to save task',
+      message: error.message || this.translationService.getTasks('SAVE_ERROR'),
       duration: 3000,
       position: 'bottom',
       color: 'danger',

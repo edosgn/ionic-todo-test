@@ -5,7 +5,7 @@
         <ion-icon name="arrow-back"></ion-icon>
       </ion-back-button>
     </ion-buttons>
-    <ion-title>Categories</ion-title>
+    <ion-title>{{ translationService.getCategories('TITLE') }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -13,13 +13,13 @@
   <!-- Header -->
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Categories</ion-title>
+      <ion-title size="large">{{ translationService.getCategories('TITLE') }}</ion-title>
     </ion-toolbar>
   </ion-header>
 
   <!-- Search Bar -->
   <ion-searchbar 
-    placeholder="Search categories..."
+    [placeholder]="translationService.getCategories('SEARCH_PLACEHOLDER')"
     [debounce]="300"
     (ionInput)="onSearchChange($event)"
     show-clear-button="focus">
@@ -30,7 +30,7 @@
     <ion-card-header>
       <ion-card-title>
         <ion-icon name="color-palette"></ion-icon>
-        Category Statistics
+        {{ translationService.getCategories('STATISTICS_TITLE') }}
       </ion-card-title>
     </ion-card-header>
     <ion-card-content>
@@ -39,19 +39,19 @@
           <ion-text color="primary">
             <h2>{{ stats()?.totalCategories || 0 }}</h2>
           </ion-text>
-          <p>Total Categories</p>
+          <p>{{ translationService.getCategories('TOTAL_CATEGORIES') }}</p>
         </div>
         <div class="stat-item">
           <ion-text color="success">
             <h2>{{ (stats()?.categoriesWithTaskCounts || []).length }}</h2>
           </ion-text>
-          <p>With Tasks</p>
+          <p>{{ translationService.getCategories('WITH_TASKS') }}</p>
         </div>
         <div class="stat-item">
           <ion-text color="warning">
             <h2>{{ stats()?.unassignedTasks || 0 }}</h2>
           </ion-text>
-          <p>Unassigned Tasks</p>
+          <p>{{ translationService.getCategories('UNASSIGNED_TASKS') }}</p>
         </div>
       </div>
     </ion-card-content>
@@ -61,7 +61,7 @@
   <div *ngIf="loading()" class="loading-container">
     <ion-spinner></ion-spinner>
     <ion-text>
-      <p>Loading categories...</p>
+      <p>{{ translationService.getCommon('LOADING') }}...</p>
     </ion-text>
   </div>
 
@@ -71,13 +71,13 @@
       <ion-text color="light">
         <h3>
           <ion-icon name="alert-circle"></ion-icon>
-          Error Loading Categories
+          {{ translationService.getCategories('LOAD_ERROR') }}
         </h3>
         <p>{{ error() }}</p>
       </ion-text>
       <ion-button fill="clear" color="light" (click)="onRetryLoad()">
         <ion-icon name="refresh" slot="start"></ion-icon>
-        Try Again
+        {{ translationService.getCommon('RETRY') }}
       </ion-button>
     </ion-card-content>
   </ion-card>
@@ -86,12 +86,12 @@
   <div *ngIf="!loading() && !error() && sortedCategories().length === 0" class="empty-state">
     <ion-icon name="color-palette" class="empty-icon"></ion-icon>
     <ion-text>
-      <h2>No Categories Yet</h2>
-      <p>Create your first category to organize your tasks better!</p>
+      <h2>{{ translationService.getCategories('NO_CATEGORIES') }}</h2>
+      <p>{{ translationService.getCategories('NO_CATEGORIES_DESCRIPTION') }}</p>
     </ion-text>
     <ion-button fill="solid" (click)="onCreateCategory()">
       <ion-icon name="add" slot="start"></ion-icon>
-      Create Category
+      {{ translationService.getCategories('CREATE') }}
     </ion-button>
   </div>
 
@@ -110,7 +110,7 @@
           <h2>{{ category.name }}</h2>
           <p>
             <ion-icon [name]="category.icon"></ion-icon>
-            Created {{ category.createdAt | date:'short' }}
+            {{ translationService.getDates('CREATED') }} {{ category.createdAt | date:'short' }}
           </p>
         </ion-label>
 

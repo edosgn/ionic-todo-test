@@ -40,6 +40,9 @@ import { TaskStore } from '../../stores/task.store';
 import { CategoryStore } from '../../stores/category.store';
 import { FeatureFlagStore } from '../../stores/feature-flag.store';
 
+// Infrastructure imports
+import { TranslationService } from '../../../infrastructure/services/translation.service';
+
 @Component({
   selector: 'app-task-list',
   standalone: true,
@@ -51,7 +54,7 @@ import { FeatureFlagStore } from '../../stores/feature-flag.store';
         <lib-search 
           [value]="searchTerm()" 
           (searchChange)="onSearchChange($event)"
-          placeholder="Search tasks..."
+          [placeholder]="translationService.getTasks('SEARCH_PLACEHOLDER')"
           [debounceTime]="300"
           class="modern-searchbar">
         </lib-search>
@@ -63,7 +66,7 @@ import { FeatureFlagStore } from '../../stores/feature-flag.store';
         <lib-filter-chip
           [data]="{
             id: 'all',
-            label: 'All Tasks',
+            label: translationService.getTasks('ALL_TASKS'),
             icon: 'apps-outline',
             count: taskStats().total
           }"
@@ -100,7 +103,7 @@ import { FeatureFlagStore } from '../../stores/feature-flag.store';
       <div class="stats-container" *ngIf="statisticsVisible()">
         <lib-stat-card 
           [value]="taskStats().total.toString()"
-          label="Total Tasks"
+          [label]="translationService.getTasks('TOTAL_TASKS')"
           icon="list-outline"
           [variant]="'minimal'"
           [size]="'small'"
@@ -109,7 +112,7 @@ import { FeatureFlagStore } from '../../stores/feature-flag.store';
         
         <lib-stat-card 
           [value]="taskStats().completed.toString()"
-          label="Completed"
+          [label]="translationService.getTasks('COMPLETED_TASKS')"
           icon="checkmark-circle"
           [variant]="'minimal'"
           [size]="'small'"
@@ -118,7 +121,7 @@ import { FeatureFlagStore } from '../../stores/feature-flag.store';
         
         <lib-stat-card 
           [value]="taskStats().pending.toString()"
-          label="Pending"
+          [label]="translationService.getTasks('PENDING_TASKS')"
           icon="time-outline"
           [variant]="'minimal'"
           [size]="'small'"
@@ -127,7 +130,7 @@ import { FeatureFlagStore } from '../../stores/feature-flag.store';
         
         <lib-stat-card 
           [value]="taskStats().completionRate + '%'"
-          label="Progress"
+          [label]="translationService.getTasks('PROGRESS')"
           icon="trending-up"
           [trend]="taskStats().completionRate > 50 ? 'up' : undefined"
           [variant]="'minimal'"
@@ -139,19 +142,19 @@ import { FeatureFlagStore } from '../../stores/feature-flag.store';
       <!-- Loading State -->
       <div *ngIf="isLoading()" class="loading-container">
         <ion-spinner></ion-spinner>
-        <p>Loading tasks...</p>
+        <p>{{ translationService.getCommon('LOADING') }}...</p>
       </div>
 
       <!-- Error State -->
       <ion-card *ngIf="error()" color="danger">
         <ion-card-content>
-          <h3>Error</h3>
+          <h3>{{ translationService.getCommon('ERROR') }}</h3>
           <p>{{ error() }}</p>
           <lib-button 
             variant="clear" 
             startIcon="refresh"
             (buttonClick)="onRetry()">
-            Retry
+            {{ translationService.getCommon('RETRY') }}
           </lib-button>
         </ion-card-content>
       </ion-card>
@@ -159,14 +162,14 @@ import { FeatureFlagStore } from '../../stores/feature-flag.store';
       <!-- Empty State -->
       <div *ngIf="!isLoading() && !error() && filteredTasks().length === 0" class="empty-state">
         <ion-icon name="checkbox-outline" size="large"></ion-icon>
-        <h3>{{ hasAnyTasks() ? 'No tasks match your filters' : 'No tasks yet' }}</h3>
-        <p>{{ hasAnyTasks() ? 'Try adjusting your search or filter criteria' : 'Create your first task to get started!' }}</p>
+        <h3>{{ hasAnyTasks() ? translationService.getTasks('NO_FILTERED_TASKS') : translationService.getTasks('NO_TASKS') }}</h3>
+        <p>{{ hasAnyTasks() ? translationService.getTasks('NO_FILTERED_TASKS_DESCRIPTION') : translationService.getTasks('NO_TASKS_DESCRIPTION') }}</p>
         <lib-button 
           variant="primary" 
           startIcon="add"
           (buttonClick)="onAddTask()" 
           *ngIf="!hasAnyTasks()">
-          Add Task
+          {{ translationService.getTasks('ADD_TASK') }}
         </lib-button>
       </div>
 
@@ -198,6 +201,7 @@ export class TaskListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly alertController = inject(AlertController);
   private readonly toastController = inject(ToastController);
+  readonly translationService = inject(TranslationService);
 
   // Component signals from stores
   readonly tasks = this.taskStore.tasks;
@@ -304,8 +308,11 @@ export class TaskListComponent implements OnInit {
   onToggleCompleteFromCard(event: { taskId: string; completed: boolean }): void {
     this.taskStore.toggleTaskCompletion(event.taskId).subscribe({
       next: async (updatedTask) => {
+        const message = event.completed 
+          ? this.translationService.getTasks('COMPLETED_SUCCESS')
+          : this.translationService.getTasks('PENDING_SUCCESS');
         const toast = await this.toastController.create({
-          message: `Task marked as ${event.completed ? 'completed' : 'pending'}`,
+          message,
           duration: 1500,
           color: event.completed ? 'success' : 'medium'
         });
@@ -314,7 +321,7 @@ export class TaskListComponent implements OnInit {
       error: async (error) => {
         console.error('Failed to toggle task completion:', error);
         const toast = await this.toastController.create({
-          message: 'Failed to update task',
+          message: this.translationService.getTasks('UPDATE_ERROR'),
           duration: 3000,
           color: 'danger'
         });
@@ -338,15 +345,15 @@ export class TaskListComponent implements OnInit {
     if (!task) return;
 
     const alert = await this.alertController.create({
-      header: 'Delete Task',
-      message: `Are you sure you want to delete "${task.title}"? This action cannot be undone.`,
+      header: this.translationService.getDialogs('DELETE_TASK'),
+      message: this.translationService.getDialogs('DELETE_TASK_CONFIRM').replace('{0}', task.title),
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getCommon('CANCEL'),
           role: 'cancel'
         },
         {
-          text: 'Delete',
+          text: this.translationService.getCommon('DELETE'),
           role: 'destructive',
           handler: () => {
             this.deleteTaskConfirmed(taskId);
@@ -365,8 +372,11 @@ export class TaskListComponent implements OnInit {
     const isCompleted = event.detail.checked;
     this.taskStore.toggleTaskCompletion(taskId).subscribe({
       next: async (updatedTask) => {
+        const message = isCompleted 
+          ? this.translationService.getTasks('COMPLETED_SUCCESS')
+          : this.translationService.getTasks('PENDING_SUCCESS');
         const toast = await this.toastController.create({
-          message: `Task marked as ${isCompleted ? 'completed' : 'pending'}`,
+          message,
           duration: 1500,
           color: isCompleted ? 'success' : 'medium'
         });
@@ -377,7 +387,7 @@ export class TaskListComponent implements OnInit {
         // Revert the checkbox state
         event.target.checked = !isCompleted;
         const toast = await this.toastController.create({
-          message: 'Failed to update task',
+          message: this.translationService.getTasks('UPDATE_ERROR'),
           duration: 3000,
           color: 'danger'
         });
@@ -394,15 +404,15 @@ export class TaskListComponent implements OnInit {
     if (!task) return;
 
     const alert = await this.alertController.create({
-      header: 'Delete Task',
-      message: `Are you sure you want to delete "${task.title}"? This action cannot be undone.`,
+      header: this.translationService.getDialogs('DELETE_TASK'),
+      message: this.translationService.getDialogs('DELETE_TASK_CONFIRM').replace('{0}', task.title),
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getCommon('CANCEL'),
           role: 'cancel'
         },
         {
-          text: 'Delete',
+          text: this.translationService.getCommon('DELETE'),
           role: 'destructive',
           handler: () => {
             this.deleteTaskConfirmed(taskId);
@@ -418,7 +428,7 @@ export class TaskListComponent implements OnInit {
     this.taskStore.deleteTask(taskId).subscribe({
       next: async () => {
         const toast = await this.toastController.create({
-          message: 'Task deleted successfully',
+          message: this.translationService.getTasks('DELETED_SUCCESS'),
           duration: 2000,
           color: 'success'
         });
@@ -427,7 +437,7 @@ export class TaskListComponent implements OnInit {
       error: async (error) => {
         console.error('Failed to delete task:', error);
         const toast = await this.toastController.create({
-          message: 'Failed to delete task',
+          message: this.translationService.getTasks('DELETE_ERROR'),
           duration: 3000,
           color: 'danger'
         });
@@ -445,9 +455,9 @@ export class TaskListComponent implements OnInit {
     // Check if we can add more tasks
     if (!this.canAddMoreTasks()) {
       const alert = await this.alertController.create({
-        header: 'Task Limit Reached',
-        message: `You have reached the maximum limit of ${this.maxTasksLimit()} tasks. Please delete some tasks before creating new ones.`,
-        buttons: ['OK']
+        header: this.translationService.getTasks('TASK_LIMIT_REACHED'),
+        message: this.translationService.getTasks('TASK_LIMIT_MESSAGE', [this.maxTasksLimit()]),
+        buttons: [this.translationService.getCommon('OK')]
       });
       await alert.present();
       return;

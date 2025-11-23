@@ -137,7 +137,7 @@ export class TaskStore {
       },
       error: (error) => {
         console.error('Error loading tasks:', error);
-        this._error.set(error.message || 'Failed to load tasks');
+        this._error.set(error.message || 'Error al cargar las tareas');
         this._loading.set(false);
       }
     });
@@ -152,7 +152,7 @@ export class TaskStore {
     const currentTaskCount = this._tasks().length;
     
     if (currentTaskCount >= maxTasks) {
-      const errorMsg = `Cannot create task. Maximum limit of ${maxTasks} tasks reached.`;
+      const errorMsg = `No se puede crear la tarea. Se ha alcanzado el límite máximo de ${maxTasks} tareas.`;
       this._error.set(errorMsg);
       return throwError(() => new Error(errorMsg));
     }

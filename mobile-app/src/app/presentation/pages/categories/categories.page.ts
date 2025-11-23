@@ -46,6 +46,7 @@ import { CategoryStore } from '../../stores/category.store';
 import { FeatureFlagStore } from '../../stores/feature-flag.store';
 import { Category } from '../../../domain/entities/category.entity';
 import { CategoryFormModalComponent } from '../../components/category-form-modal/category-form-modal.component';
+import { TranslationService } from '../../../infrastructure/services/translation.service';
 
 @Component({
   selector: 'app-categories',
@@ -87,6 +88,7 @@ export class CategoriesPage implements OnInit {
   private readonly alertController = inject(AlertController);
   private readonly toastController = inject(ToastController);
   private readonly modalController = inject(ModalController);
+  readonly translationService = inject(TranslationService);
 
   // Reactive signals from store
   readonly categories = this.categoryStore.categories;
@@ -174,15 +176,15 @@ export class CategoriesPage implements OnInit {
 
   async onDeleteCategory(category: Category) {
     const alert = await this.alertController.create({
-      header: 'Delete Category',
-      message: `Are you sure you want to delete "${category.name}"? This action cannot be undone.`,
+      header: this.translationService.getDialogs('DELETE_CATEGORY'),
+      message: this.translationService.getDialogs('DELETE_CATEGORY_CONFIRM').replace('{0}', category.name),
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getCommon('CANCEL'),
           role: 'cancel'
         },
         {
-          text: 'Delete',
+          text: this.translationService.getCommon('DELETE'),
           role: 'destructive',
           handler: () => this.deleteCategory(category.id)
         }
@@ -196,16 +198,16 @@ export class CategoriesPage implements OnInit {
     try {
       this.categoryStore.deleteCategory(categoryId).subscribe({
         next: () => {
-          this.showSuccessToast('Category deleted successfully');
+          this.showSuccessToast(this.translationService.getCategories('DELETED_SUCCESS'));
         },
         error: (error) => {
           console.error('Error deleting category:', error);
-          this.showErrorToast('Error deleting category');
+          this.showErrorToast(this.translationService.getCategories('DELETE_ERROR'));
         }
       });
     } catch (error) {
       console.error('Error deleting category:', error);
-      this.showErrorToast('Error deleting category');
+      this.showErrorToast(this.translationService.getCategories('DELETE_ERROR'));
     }
   }
 
