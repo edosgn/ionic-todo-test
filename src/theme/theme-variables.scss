@@ -1,0 +1,220 @@
+/**
+ * Theme Variables - Dark and Light Mode
+ * 
+ * Defines color schemes and design tokens for both themes.
+ * Follows Ionic's color system and design system tokens.
+ */
+
+// Light Theme Colors (Default)
+:root {
+  // Primary colors
+  --ion-color-primary: #3880ff;
+  --ion-color-primary-rgb: 56, 128, 255;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #3171e0;
+  --ion-color-primary-tint: #4c8dff;
+
+  // Secondary colors
+  --ion-color-secondary: #0cd1e8;
+  --ion-color-secondary-rgb: 12, 209, 232;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #0bb8cc;
+  --ion-color-secondary-tint: #24d6ea;
+
+  // Tertiary colors
+  --ion-color-tertiary: #7044ff;
+  --ion-color-tertiary-rgb: 112, 68, 255;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #633ce0;
+  --ion-color-tertiary-tint: #7e57ff;
+
+  // Success colors
+  --ion-color-success: #10dc60;
+  --ion-color-success-rgb: 16, 220, 96;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #0ec254;
+  --ion-color-success-tint: #28e070;
+
+  // Warning colors
+  --ion-color-warning: #ffce00;
+  --ion-color-warning-rgb: 255, 206, 0;
+  --ion-color-warning-contrast: #ffffff;
+  --ion-color-warning-contrast-rgb: 255, 255, 255;
+  --ion-color-warning-shade: #e0b500;
+  --ion-color-warning-tint: #ffd31a;
+
+  // Danger colors
+  --ion-color-danger: #f04141;
+  --ion-color-danger-rgb: 240, 65, 65;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #d33939;
+  --ion-color-danger-tint: #f25454;
+
+  // Light/Medium/Dark colors
+  --ion-color-light: #f4f5f8;
+  --ion-color-light-rgb: 244, 245, 248;
+  --ion-color-light-contrast: #000000;
+  --ion-color-light-contrast-rgb: 0, 0, 0;
+  --ion-color-light-shade: #d7d8da;
+  --ion-color-light-tint: #f5f6f9;
+
+  --ion-color-medium: #989aa2;
+  --ion-color-medium-rgb: 152, 154, 162;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #86888f;
+  --ion-color-medium-tint: #a2a4ab;
+
+  --ion-color-dark: #222428;
+  --ion-color-dark-rgb: 34, 36, 40;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #1e2023;
+  --ion-color-dark-tint: #383a3e;
+
+  // Background colors
+  --ion-background-color: #ffffff;
+  --ion-background-color-rgb: 255, 255, 255;
+
+  --ion-text-color: #000000;
+  --ion-text-color-rgb: 0, 0, 0;
+
+  --ion-card-background: #ffffff;
+  
+  // Toolbar
+  --ion-toolbar-background: #f8f9fa;
+  --ion-toolbar-color: #000000;
+
+  // Item
+  --ion-item-background: #ffffff;
+  --ion-item-border-color: #dedede;
+}
+
+// Dark Theme Colors
+body.dark {
+  // Primary colors (adjusted for dark mode)
+  --ion-color-primary: #4c8dff;
+  --ion-color-primary-rgb: 76, 141, 255;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #4380e0;
+  --ion-color-primary-tint: #5e99ff;
+
+  // Secondary colors
+  --ion-color-secondary: #24d6ea;
+  --ion-color-secondary-rgb: 36, 214, 234;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0, 0, 0;
+  --ion-color-secondary-shade: #20bcce;
+  --ion-color-secondary-tint: #3adaec;
+
+  // Tertiary colors
+  --ion-color-tertiary: #7e57ff;
+  --ion-color-tertiary-rgb: 126, 87, 255;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #6f4de0;
+  --ion-color-tertiary-tint: #8b68ff;
+
+  // Success colors
+  --ion-color-success: #28e070;
+  --ion-color-success-rgb: 40, 224, 112;
+  --ion-color-success-contrast: #000000;
+  --ion-color-success-contrast-rgb: 0, 0, 0;
+  --ion-color-success-shade: #24c563;
+  --ion-color-success-tint: #3ee37e;
+
+  // Warning colors
+  --ion-color-warning: #ffd31a;
+  --ion-color-warning-rgb: 255, 211, 26;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-contrast-rgb: 0, 0, 0;
+  --ion-color-warning-shade: #e0ba17;
+  --ion-color-warning-tint: #ffd731;
+
+  // Danger colors
+  --ion-color-danger: #f25454;
+  --ion-color-danger-rgb: 242, 84, 84;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #d54a4a;
+  --ion-color-danger-tint: #f36565;
+
+  // Light/Medium/Dark colors (inverted for dark mode)
+  --ion-color-light: #2d2d2d;
+  --ion-color-light-rgb: 45, 45, 45;
+  --ion-color-light-contrast: #ffffff;
+  --ion-color-light-contrast-rgb: 255, 255, 255;
+  --ion-color-light-shade: #282828;
+  --ion-color-light-tint: #424242;
+
+  --ion-color-medium: #b4b5b8;
+  --ion-color-medium-rgb: 180, 181, 184;
+  --ion-color-medium-contrast: #000000;
+  --ion-color-medium-contrast-rgb: 0, 0, 0;
+  --ion-color-medium-shade: #9e9fa2;
+  --ion-color-medium-tint: #bcbdbf;
+
+  --ion-color-dark: #f4f5f8;
+  --ion-color-dark-rgb: 244, 245, 248;
+  --ion-color-dark-contrast: #000000;
+  --ion-color-dark-contrast-rgb: 0, 0, 0;
+  --ion-color-dark-shade: #d7d8da;
+  --ion-color-dark-tint: #f5f6f9;
+
+  // Background colors
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
+
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+
+  --ion-card-background: #1e1e1e;
+
+  // Toolbar
+  --ion-toolbar-background: #1f1f1f;
+  --ion-toolbar-color: #ffffff;
+
+  // Item
+  --ion-item-background: #1e1e1e;
+  --ion-item-border-color: #2d2d2d;
+
+  // Additional dark mode adjustments
+  --ion-border-color: #2d2d2d;
+  --ion-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+// iOS Dark Theme specific adjustments
+body.dark.ios {
+  --ion-background-color: #000000;
+  --ion-background-color-rgb: 0, 0, 0;
+  
+  --ion-card-background: #1c1c1c;
+  --ion-toolbar-background: #000000;
+  --ion-item-background: #000000;
+}
+
+// Material Design Dark Theme specific adjustments
+body.dark.md {
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
+  
+  --ion-card-background: #1e1e1e;
+  --ion-toolbar-background: #1f1f1f;
+  --ion-item-background: #1e1e1e;
+}
+
+// Smooth transitions for theme switching
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+// Disable transitions on load to prevent flash
+body.theme-loading * {
+  transition: none !important;
+}
