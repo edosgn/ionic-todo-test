@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { NxWelcome } from './nx-welcome';
+import { IonicModule } from '@ionic/angular';
+import { FeatureFlagDemoComponent } from './presentation/components/feature-flag-demo/feature-flag-demo.component';
 
 @Component({
-  imports: [NxWelcome, RouterModule],
+  imports: [RouterModule, IonicModule, FeatureFlagDemoComponent],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',

@@ -3,6 +3,7 @@ export default {
   preset: './jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   coverageDirectory: './coverage/ionic-todo-test',
+  testEnvironment: 'jsdom',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
@@ -12,7 +13,13 @@ export default {
       },
     ],
   },
-  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
+  transformIgnorePatterns: [
+    'node_modules/(?!.*\\.mjs$|@ionic|@angular|@stencil|@firebase)'
+  ],
+  moduleNameMapper: {
+    // Mock ES modules that Jest can't handle
+    '^@ionic/core/components$': '<rootDir>/src/__mocks__/ionic-core.mock.ts',
+  },
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',

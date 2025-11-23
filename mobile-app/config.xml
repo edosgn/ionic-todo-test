@@ -24,6 +24,8 @@
             <application android:networkSecurityConfig="@xml/network_security_config" />
         </edit-config>
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
+        <!-- Firebase configuration for Android -->
+        <resource-file src="firebase-config/google-services.json" target="app/google-services.json" />
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
@@ -47,6 +49,8 @@
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
+        <!-- Firebase configuration for iOS -->
+        <resource-file src="firebase-config/GoogleService-Info.plist" target="GoogleService-Info.plist" />
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
         <icon height="29" src="resources/ios/icon/icon-small.png" width="29" />
@@ -98,4 +102,13 @@
     <plugin name="cordova-plugin-splashscreen" spec="5.0.2" />
     <plugin name="cordova-plugin-ionic-webview" spec="^5.0.0" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.0.5" />
+    
+    <!-- Firebase Plugins -->
+    <plugin name="cordova-plugin-firebase-analytics" spec="^7.0.0" />
+    <plugin name="cordova-plugin-firebase-config" spec="^6.0.0" />
+    
+    <!-- Preferences for Firebase -->
+    <preference name="AndroidXEnabled" value="true" />
+    <preference name="GradlePluginGoogleServicesEnabled" value="true" />
+    <preference name="GradlePluginGoogleServicesVersion" value="4.3.10" />
 </widget>
