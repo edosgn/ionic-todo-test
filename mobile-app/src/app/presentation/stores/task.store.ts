@@ -139,20 +139,19 @@ export class TaskStore {
     this._loading.set(true);
     this._error.set(null);
 
-    const result$ = this.createTaskUseCase.execute(input);
-    
-    result$.subscribe({
-      next: (taskOutput) => {
-        this.loadTasks();
-      },
-      error: (error) => {
-        console.error('Error creating task:', error);
-        this._error.set(error.message || 'Failed to create task');
-        this._loading.set(false);
-      }
-    });
-
-    return result$.pipe(
+    return this.createTaskUseCase.execute(input).pipe(
+      tap({
+        next: (taskOutput) => {
+          const newTask = this.mapper.toDomain(taskOutput);
+          this._tasks.update(tasks => [...tasks, newTask]);
+          this._loading.set(false);
+        },
+        error: (error) => {
+          console.error('Error creating task:', error);
+          this._error.set(error.message || 'Failed to create task');
+          this._loading.set(false);
+        }
+      }),
       map(taskOutput => this.mapper.toDomain(taskOutput))
     );
   }
@@ -161,20 +160,21 @@ export class TaskStore {
     this._loading.set(true);
     this._error.set(null);
 
-    const result$ = this.updateTaskUseCase.execute(input);
-    
-    result$.subscribe({
-      next: (taskOutput) => {
-        this.loadTasks();
-      },
-      error: (error) => {
-        console.error('Error updating task:', error);
-        this._error.set(error.message || 'Failed to update task');
-        this._loading.set(false);
-      }
-    });
-
-    return result$.pipe(
+    return this.updateTaskUseCase.execute(input).pipe(
+      tap({
+        next: (taskOutput) => {
+          const updatedTask = this.mapper.toDomain(taskOutput);
+          this._tasks.update(tasks => 
+            tasks.map(task => task.id === updatedTask.id ? updatedTask : task)
+          );
+          this._loading.set(false);
+        },
+        error: (error) => {
+          console.error('Error updating task:', error);
+          this._error.set(error.message || 'Failed to update task');
+          this._loading.set(false);
+        }
+      }),
       map((taskOutput: TaskOutput) => this.mapper.toDomain(taskOutput))
     );
   }
