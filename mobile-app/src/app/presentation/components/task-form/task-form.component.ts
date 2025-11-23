@@ -1,13 +1,3 @@
-/**
- * TaskFormComponent - Form for creating and editing tasks
- * 
- * Provides a reactive form for task creation and editing
- * with validation and category selection.
- * 
- * @author Edgar Guerrero
- * @since 1.0.0
- */
-
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -16,117 +6,19 @@ import { IonicModule, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { save, close, checkmark, checkmarkCircle, alertCircle } from 'ionicons/icons';
 
-// Design System imports
 import { ButtonComponent, FormFieldComponent } from '@ionic-todo-test/shared-ui';
-
-// Domain imports
 import { Task, Category } from '../../../domain';
-
-// Application imports
 import { CreateTaskInput, UpdateTaskInput } from '../../../application';
-
-// Presentation imports
 import { TaskStore } from '../../stores/task.store';
 import { CategoryStore } from '../../stores/category.store';
 import { CategorySelectorComponent } from '../category-selector/category-selector.component';
-
-// Infrastructure imports
 import { TranslationService } from '../../../infrastructure/services/translation.service';
 
 @Component({
   selector: 'app-task-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule, CategorySelectorComponent, ButtonComponent, FormFieldComponent],
-  template: `
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ isEditMode() ? translationService.getForms('EDIT_TASK') : translationService.getForms('NEW_TASK') }}</ion-title>
-        <ion-buttons slot="start">
-          <lib-button 
-            variant="clear" 
-            size="medium"
-            startIcon="close"
-            (buttonClick)="onCancel()">
-          </lib-button>
-        </ion-buttons>
-        <ion-buttons slot="end">
-          <lib-button 
-            variant="clear" 
-            size="medium"
-            startIcon="checkmark"
-            [disabled]="taskForm.invalid || isSubmitting()"
-            (buttonClick)="onSubmit()">
-          </lib-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content class="ion-padding">
-      <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
-        <!-- Task Title -->
-        <lib-form-field
-          [label]="translationService.getForms('TITLE')"
-          formControlName="title"
-          [placeholder]="translationService.getForms('TITLE_PLACEHOLDER')"
-          type="text"
-          [maxLength]="100"
-          [required]="true"
-          [showCharacterCount]="true">
-        </lib-form-field>
-
-        <!-- Task Description -->
-        <lib-form-field
-          [label]="translationService.getForms('DESCRIPTION')"
-          formControlName="description"
-          [placeholder]="translationService.getForms('DESCRIPTION_PLACEHOLDER')"
-          type="textarea"
-          [maxLength]="500"
-          [helperText]="translationService.getForms('DESCRIPTION_HELPER')"
-          [showCharacterCount]="true">
-        </lib-form-field>
-
-        <!-- Category Selection -->
-        <div class="category-selection-section">
-          <h4>{{ translationService.getForms('CATEGORY_SELECTION') }}</h4>
-          <app-category-selector
-            [selectedCategoryId]="selectedCategorySignal"
-            (categorySelected)="onCategorySelected($event)">
-          </app-category-selector>
-        </div>
-
-        <!-- Error Messages -->
-        <ion-card *ngIf="error()" color="danger">
-          <ion-card-content>
-            <h4>{{ translationService.getCommon('ERROR') }}</h4>
-            <p>{{ error() }}</p>
-          </ion-card-content>
-        </ion-card>
-
-        <!-- Action Buttons (Mobile) -->
-        <div class="form-actions ion-margin-top">
-          <lib-button 
-            variant="primary" 
-            size="large"
-            expand="full"
-            startIcon="save"
-            [disabled]="taskForm.invalid || isSubmitting()"
-            [loading]="isSubmitting()"
-            (buttonClick)="onSubmit()">
-            {{ isEditMode() ? translationService.getForms('UPDATE_TASK') : translationService.getForms('CREATE_TASK') }}
-          </lib-button>
-          
-          <lib-button 
-            variant="outline" 
-            size="large"
-            expand="full"
-            [disabled]="isSubmitting()"
-            (buttonClick)="onCancel()">
-            {{ translationService.getCommon('CANCEL') }}
-          </lib-button>
-        </div>
-      </form>
-    </ion-content>
-  `,
+  templateUrl: './task-form.component.html',
   styleUrls: ['./task-form.component.scss']
 })
 export class TaskFormComponent implements OnInit {

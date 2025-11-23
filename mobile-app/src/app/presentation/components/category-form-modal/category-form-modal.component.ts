@@ -1,13 +1,3 @@
-/**
- * CategoryFormModalComponent - Advanced modal for creating/editing categories
- * 
- * Provides a comprehensive interface for category management with
- * color selection, icon selection, and form validation.
- * 
- * @author Edgar Guerrero
- * @since 1.0.0
- */
-
 import { Component, Input, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -71,7 +61,6 @@ import { IconSelectorComponent } from '../icon-selector/icon-selector.component'
 export class CategoryFormModalComponent implements OnInit {
   @Input() category: Category | null = null;
 
-  // Injected services
   private readonly modalController = inject(ModalController);
   private readonly toastController = inject(ToastController);
   private readonly alertController = inject(AlertController);
@@ -80,7 +69,6 @@ export class CategoryFormModalComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   readonly translationService = inject(TranslationService);
 
-  // Component state
   readonly isSubmitting = signal(false);
   readonly isEditMode = signal(false);
   readonly selectedColor = signal('#4ECDC4');
@@ -89,10 +77,8 @@ export class CategoryFormModalComponent implements OnInit {
   readonly canDeleteCategory = signal(false);
   readonly tasksCount = signal(0);
 
-  // Form
   categoryForm!: FormGroup;
 
-  // Form controls for easier access
   get nameControl() { return this.categoryForm.get('name')!; }
 
   constructor() {
@@ -215,13 +201,11 @@ export class CategoryFormModalComponent implements OnInit {
           text: this.translationService.getCommon('DELETE'),
           role: 'destructive',
           handler: () => {
-            // Double check before proceeding with deletion
             this.checkCategoryTasks();
             if (this.canDeleteCategory()) {
               this.confirmDeleteCategory();
               return true;
             } else {
-              // Prevent alert from closing and show error
               this.showErrorToast(
                 this.translationService.getCategories('CANNOT_DELETE_HAS_TASKS')
               );
@@ -238,7 +222,6 @@ export class CategoryFormModalComponent implements OnInit {
   private async confirmDeleteCategory(): Promise<void> {
     if (!this.category) return;
 
-    // Final validation check before deletion
     this.checkCategoryTasks();
     
     if (!this.canDeleteCategory()) {

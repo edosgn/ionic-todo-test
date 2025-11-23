@@ -91,7 +91,6 @@ export class CategoriesPage implements OnInit {
   private readonly modalController = inject(ModalController);
   readonly translationService = inject(TranslationService);
 
-  // Reactive signals from store
   readonly categories = this.categoryStore.categories;
   readonly sortedCategories = this.categoryStore.sortedCategories;
   readonly stats = this.categoryStore.stats;
@@ -151,7 +150,6 @@ export class CategoriesPage implements OnInit {
 
     modal.onDidDismiss().then((result) => {
       if (result.data) {
-        // Category was created successfully
         this.loadCategories();
       }
     });
@@ -169,7 +167,6 @@ export class CategoriesPage implements OnInit {
 
     modal.onDidDismiss().then((result) => {
       if (result.data) {
-        // Category was updated successfully
         this.loadCategories();
       }
     });
@@ -178,11 +175,9 @@ export class CategoriesPage implements OnInit {
   }
 
   async onDeleteCategory(category: Category) {
-    // Check if category has associated tasks
     const taskCount = this.taskStore.getTaskCountByCategory()(category.id);
     
     if (taskCount > 0) {
-      // Category has tasks, cannot delete
       await this.showErrorToast(
         this.translationService.getCategories('CANNOT_DELETE_HAS_TASKS')
       );
@@ -209,7 +204,6 @@ export class CategoriesPage implements OnInit {
   }
 
   private async deleteCategory(categoryId: string) {
-    // Final validation check before deletion
     const taskCount = this.taskStore.getTaskCountByCategory()(categoryId);
     
     if (taskCount > 0) {
