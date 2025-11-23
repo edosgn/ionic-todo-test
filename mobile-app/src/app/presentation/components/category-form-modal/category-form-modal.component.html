@@ -121,6 +121,19 @@
       >
         Cancelar
       </ion-button>
+
+      <!-- Delete Button - Solo en modo edición -->
+      <ion-button 
+        *ngIf="isEditMode()"
+        expand="block" 
+        fill="outline"
+        color="danger"
+        (click)="onDeleteCategory()"
+        [disabled]="isSubmitting() || !canDeleteCategory()"
+      >
+        <ion-icon name="trash" slot="start"></ion-icon>
+        {{ canDeleteCategory() ? 'Eliminar Categoría' : 'No se puede eliminar (' + tasksCount() + ' tareas asignadas)' }}
+      </ion-button>
     </div>
   </form>
 </ion-content>

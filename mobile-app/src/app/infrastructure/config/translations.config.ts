@@ -178,11 +178,13 @@ export const TRANSLATIONS = Object.freeze({
     UPDATE_ERROR: 'Error al actualizar la categoría',
     DELETE_ERROR: 'Error al eliminar la categoría',
     DELETE_WITH_TASKS_ERROR: 'No se puede eliminar una categoría que tiene tareas asignadas',
+    CANNOT_DELETE_HAS_TASKS: 'No se puede eliminar la categoría porque tiene tareas asignadas',
     
     // Success messages
     CREATED_SUCCESS: 'Categoría creada exitosamente',
     UPDATED_SUCCESS: 'Categoría actualizada exitosamente',
     DELETED_SUCCESS: 'Categoría eliminada exitosamente',
+    DELETE_CONFIRMATION: 'Esta acción eliminará permanentemente la categoría',
     
     // Date labels
     CREATED_DATE: 'Creado',

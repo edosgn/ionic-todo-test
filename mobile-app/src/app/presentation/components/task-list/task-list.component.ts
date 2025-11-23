@@ -247,8 +247,8 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Load initial data
-    this.taskStore.loadTasks();
+    // Load initial data only if needed
+    this.taskStore.loadTasksIfNeeded();
     this.categoryStore.loadCategories();
   }
 

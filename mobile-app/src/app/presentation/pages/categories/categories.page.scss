@@ -166,6 +166,39 @@
     opacity: 0.6;
     font-size: 0.75rem;
   }
+  
+  .category-actions {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    
+    ion-button {
+      --padding-start: 8px;
+      --padding-end: 8px;
+      
+      ion-icon {
+        font-size: 1.1rem;
+      }
+      
+      &[color="primary"] {
+        --color: var(--ion-color-primary);
+        
+        &:hover {
+          --background: var(--ion-color-primary-tint);
+          --color: var(--ion-color-primary-contrast);
+        }
+      }
+      
+      &[color="danger"] {
+        --color: var(--ion-color-danger);
+        
+        &:hover {
+          --background: var(--ion-color-danger-tint);
+          --color: var(--ion-color-danger-contrast);
+        }
+      }
+    }
+  }
 }
 
 // Dark mode support - respects app theme toggle, not system preference
@@ -190,6 +223,28 @@
     ion-label {
       h2 {
         color: var(--ion-text-color);
+      }
+    }
+  }
+  
+  .category-actions {
+    ion-button {
+      &[color="primary"] {
+        --color: var(--ion-color-primary-tint);
+        
+        &:hover {
+          --background: var(--ion-color-primary);
+          --color: var(--ion-color-primary-contrast);
+        }
+      }
+      
+      &[color="danger"] {
+        --color: var(--ion-color-danger-tint);
+        
+        &:hover {
+          --background: var(--ion-color-danger);
+          --color: var(--ion-color-danger-contrast);
+        }
       }
     }
   }

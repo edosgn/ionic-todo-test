@@ -51,6 +51,7 @@ export class TaskStore {
   private readonly _error = signal<string | null>(null);
   private readonly _selectedCategoryId = signal<string | null>(null);
   private readonly _searchTerm = signal<string>('');
+  private readonly _isInitialized = signal<boolean>(false);
 
   // Public readonly signals
   readonly tasks = this._tasks.asReadonly();
@@ -106,6 +107,15 @@ export class TaskStore {
     };
   });
 
+  /**
+   * Get task count for a specific category
+   */
+  getTaskCountByCategory = computed(() => {
+    return (categoryId: string): number => {
+      return this._tasks().filter(task => task.categoryId === categoryId).length;
+    };
+  });
+
   constructor(
     private getAllTasksUseCase: GetAllTasksUseCase,
     private getTaskByIdUseCase: GetTaskByIdUseCase,
@@ -134,6 +144,7 @@ export class TaskStore {
         const tasks = this.mapper.toDomainArray(taskOutputs);
         this._tasks.set(tasks);
         this._loading.set(false);
+        this._isInitialized.set(true);
       },
       error: (error) => {
         console.error('Error loading tasks:', error);
@@ -141,6 +152,15 @@ export class TaskStore {
         this._loading.set(false);
       }
     });
+  }
+
+  /**
+   * Load tasks only if not already initialized
+   */
+  loadTasksIfNeeded(): void {
+    if (!this._isInitialized()) {
+      this.loadTasks();
+    }
   }
 
   /**
@@ -164,10 +184,9 @@ export class TaskStore {
     
     result$.subscribe({
       next: (taskOutput) => {
-        // Convert DTO to domain entity and add to current state
-        const task = this.mapper.toDomain(taskOutput);
-        this._tasks.update(tasks => [...tasks, task]);
-        this._loading.set(false);
+        // Reload all tasks to ensure data consistency
+        // This prevents duplications when navigating back to task list
+        this.loadTasks();
       },
       error: (error) => {
         console.error('Error creating task:', error);
@@ -193,14 +212,8 @@ export class TaskStore {
     
     result$.subscribe({
       next: (taskOutput) => {
-        // Convert DTO to domain entity and update in current state
-        const updatedTask = this.mapper.toDomain(taskOutput);
-        this._tasks.update(tasks => 
-          tasks.map(task => 
-            task.id === updatedTask.id ? updatedTask : task
-          )
-        );
-        this._loading.set(false);
+        // Reload all tasks to ensure data consistency
+        this.loadTasks();
       },
       error: (error) => {
         console.error('Error updating task:', error);

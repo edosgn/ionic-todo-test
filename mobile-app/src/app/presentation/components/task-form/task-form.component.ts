@@ -138,6 +138,7 @@ export class TaskFormComponent implements OnInit {
   private readonly categoryStore = inject(CategoryStore);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly toastController = inject(ToastController);
   readonly translationService = inject(TranslationService);
 
@@ -165,7 +166,24 @@ export class TaskFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isEditMode.set(!!this.task);
+    // Check if we're in edit mode by getting task ID from route
+    const taskId = this.route.snapshot.paramMap.get('id');
+    
+    if (taskId) {
+      // We're in edit mode, get the task from the store
+      const taskFromStore = this.taskStore.tasks().find(t => t.id === taskId);
+      if (taskFromStore) {
+        this.task = taskFromStore;
+        this.isEditMode.set(true);
+      } else {
+        // Task not found, redirect to tasks list
+        this.router.navigate(['/tasks']);
+        return;
+      }
+    } else {
+      // We're in create mode
+      this.isEditMode.set(false);
+    }
     
     // Load categories
     this.categoryStore.loadCategories();

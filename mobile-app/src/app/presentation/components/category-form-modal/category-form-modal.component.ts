@@ -14,6 +14,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { 
   ModalController, 
   ToastController,
+  AlertController,
   IonHeader,
   IonToolbar, 
   IonTitle,
@@ -31,10 +32,12 @@ import {
   IonAccordionGroup
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { close, save, checkmarkCircle } from 'ionicons/icons';
+import { close, save, checkmarkCircle, trash } from 'ionicons/icons';
 
 import { Category } from '../../../domain/entities/category.entity';
 import { CategoryStore } from '../../stores/category.store';
+import { TaskStore } from '../../stores/task.store';
+import { TranslationService } from '../../../infrastructure/services/translation.service';
 import { CreateCategoryInput, UpdateCategoryInput } from '../../../application';
 import { ColorSelectorComponent } from '../color-selector/color-selector.component';
 import { IconSelectorComponent } from '../icon-selector/icon-selector.component';
@@ -71,8 +74,11 @@ export class CategoryFormModalComponent implements OnInit {
   // Injected services
   private readonly modalController = inject(ModalController);
   private readonly toastController = inject(ToastController);
+  private readonly alertController = inject(AlertController);
   private readonly categoryStore = inject(CategoryStore);
+  private readonly taskStore = inject(TaskStore);
   private readonly fb = inject(FormBuilder);
+  readonly translationService = inject(TranslationService);
 
   // Component state
   readonly isSubmitting = signal(false);
@@ -80,6 +86,8 @@ export class CategoryFormModalComponent implements OnInit {
   readonly selectedColor = signal('#4ECDC4');
   readonly selectedIcon = signal('folder');
   readonly currentDate = new Date();
+  readonly canDeleteCategory = signal(false);
+  readonly tasksCount = signal(0);
 
   // Form
   categoryForm!: FormGroup;
@@ -88,7 +96,7 @@ export class CategoryFormModalComponent implements OnInit {
   get nameControl() { return this.categoryForm.get('name')!; }
 
   constructor() {
-    addIcons({ close, save, checkmarkCircle });
+    addIcons({ close, save, checkmarkCircle, trash });
     this.initializeForm();
   }
 
@@ -97,6 +105,7 @@ export class CategoryFormModalComponent implements OnInit {
     
     if (this.category) {
       this.loadCategoryData();
+      this.checkCategoryTasks();
     }
   }
 
@@ -115,6 +124,27 @@ export class CategoryFormModalComponent implements OnInit {
 
     this.selectedColor.set(this.category.color);
     this.selectedIcon.set(this.category.icon);
+  }
+
+  private checkCategoryTasks(): void {
+    if (!this.category) {
+      this.tasksCount.set(0);
+      this.canDeleteCategory.set(true);
+      return;
+    }
+
+    // Count tasks assigned to this category using TaskStore computed signal
+    const count = this.taskStore.getTaskCountByCategory()(this.category.id);
+    
+    console.log('Category tasks check:', {
+      categoryId: this.category.id,
+      categoryName: this.category.name,
+      tasksCount: count,
+      canDelete: count === 0
+    });
+    
+    this.tasksCount.set(count);
+    this.canDeleteCategory.set(count === 0);
   }
 
   onColorSelected(color: string): void {
@@ -149,6 +179,102 @@ export class CategoryFormModalComponent implements OnInit {
     } catch (error) {
       console.error('Error saving category:', error);
       await this.showErrorToast('Failed to save category');
+    } finally {
+      this.isSubmitting.set(false);
+    }
+  }
+
+  async onDeleteCategory(): Promise<void> {
+    if (!this.category) {
+      console.error('No category to delete');
+      return;
+    }
+
+    // Re-check tasks count before proceeding
+    this.checkCategoryTasks();
+    
+    if (!this.canDeleteCategory()) {
+      console.log('Cannot delete category - has associated tasks:', this.tasksCount());
+      await this.showErrorToast(
+        this.translationService.getCategories('CANNOT_DELETE_HAS_TASKS')
+      );
+      return;
+    }
+
+    console.log('Proceeding with category deletion - no associated tasks');
+
+    const alert = await this.alertController.create({
+      header: this.translationService.getDialogs('DELETE_CATEGORY'),
+      message: this.translationService.getDialogs('DELETE_CATEGORY_CONFIRM').replace('{0}', this.category.name),
+      buttons: [
+        {
+          text: this.translationService.getCommon('CANCEL'),
+          role: 'cancel'
+        },
+        {
+          text: this.translationService.getCommon('DELETE'),
+          role: 'destructive',
+          handler: () => {
+            // Double check before proceeding with deletion
+            this.checkCategoryTasks();
+            if (this.canDeleteCategory()) {
+              this.confirmDeleteCategory();
+              return true;
+            } else {
+              // Prevent alert from closing and show error
+              this.showErrorToast(
+                this.translationService.getCategories('CANNOT_DELETE_HAS_TASKS')
+              );
+              return false;
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async confirmDeleteCategory(): Promise<void> {
+    if (!this.category) return;
+
+    // Final validation check before deletion
+    this.checkCategoryTasks();
+    
+    if (!this.canDeleteCategory()) {
+      console.error('Cannot delete category - final check failed. Tasks count:', this.tasksCount());
+      await this.showErrorToast(
+        this.translationService.getCategories('CANNOT_DELETE_HAS_TASKS')
+      );
+      return;
+    }
+
+    this.isSubmitting.set(true);
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        this.categoryStore.deleteCategory(this.category!.id).subscribe({
+          next: () => {
+            console.log('Category deleted successfully');
+            resolve();
+          },
+          error: (error) => {
+            console.error('Error deleting category:', error);
+            reject(error);
+          }
+        });
+      });
+
+      await this.showSuccessToast(
+        this.translationService.getCategories('DELETED_SUCCESS')
+      );
+
+      await this.dismissModal(true);
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      await this.showErrorToast(
+        this.translationService.getCategories('DELETE_ERROR')
+      );
     } finally {
       this.isSubmitting.set(false);
     }
