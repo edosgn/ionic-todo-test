@@ -6,7 +6,6 @@ import { IonicModule, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { save, close, checkmark, checkmarkCircle, alertCircle } from 'ionicons/icons';
 
-import { ButtonComponent, FormFieldComponent } from '@ionic-todo-test/shared-ui';
 import { Task, Category } from '../../../domain';
 import { CreateTaskInput, UpdateTaskInput } from '../../../application';
 import { TaskStore } from '../../stores/task.store';
@@ -17,11 +16,15 @@ import { TranslationService } from '../../../infrastructure/services/translation
 @Component({
   selector: 'app-task-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, CategorySelectorComponent, ButtonComponent, FormFieldComponent],
+  imports: [CommonModule, ReactiveFormsModule, IonicModule, CategorySelectorComponent],
   templateUrl: './task-form.component.html',
   styleUrls: ['./task-form.component.scss']
 })
 export class TaskFormComponent implements OnInit {
+  // Icons
+  public readonly saveIcon = save;
+  public readonly closeIcon = close;
+  public readonly checkmarkIcon = checkmark;
   // Inputs
   @Input() task: Task | null = null;
 
@@ -117,7 +120,18 @@ export class TaskFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.taskForm.invalid || this.isSubmitting()) {
+    console.log('Form submitted, checking validity...');
+    // Mark all fields as touched to show validation errors
+    this.taskForm.markAllAsTouched();
+    
+    // Check if title is provided and valid
+    if (!this.titleControl.value || this.titleControl.value.trim().length === 0) {
+      console.log('Title is required, aborting...');
+      return;
+    }
+    
+    if (this.isSubmitting()) {
+      console.log('Already submitting, aborting...');
       return;
     }
 
@@ -130,42 +144,47 @@ export class TaskFormComponent implements OnInit {
       // Update existing task
       const updateInput: UpdateTaskInput = {
         id: this.task.id,
-        title: formValue.title,
-        description: formValue.description || '',
+        title: formValue.title?.trim() || '',
+        description: formValue.description?.trim() || '',
         categoryId: formValue.categoryId || null
       };
 
+      console.log('Updating task with input:', updateInput);
       this.taskStore.updateTask(updateInput).subscribe({
         next: (updatedTask) => {
           console.log('Task updated successfully:', updatedTask);
           this.onSuccess();
         },
         error: (error) => {
-          this.handleError(error);
+          console.error('Error updating task:', error);
+          this.showErrorToast(error.message);
         }
       });
     } else {
       // Create new task
       const createInput: CreateTaskInput = {
-        title: formValue.title,
-        description: formValue.description || '',
+        title: formValue.title?.trim() || '',
+        description: formValue.description?.trim() || '',
         categoryId: formValue.categoryId || undefined
       };
 
+      console.log('Creating task with input:', createInput);
       this.taskStore.createTask(createInput).subscribe({
         next: (newTask) => {
           console.log('Task created successfully:', newTask);
+          console.log('Calling onSuccess...');
           this.onSuccess();
         },
         error: (error) => {
-          this.handleError(error);
+          console.error('Error creating task:', error);
+          this.showErrorToast(error.message);
         }
       });
     }
   }
 
   onCancel(): void {
-    // Navigate back to task list
+    // Navigate back to tasks page
     this.router.navigate(['/tasks']);
   }
 
@@ -174,40 +193,39 @@ export class TaskFormComponent implements OnInit {
     
     // Show success toast
     const message = this.isEditMode() 
-      ? this.translationService.getTasks('UPDATED_SUCCESS')
-      : this.translationService.getTasks('CREATED_SUCCESS');
+      ? (this.translationService.getTasks('UPDATED_SUCCESS') || 'Tarea actualizada correctamente')
+      : (this.translationService.getTasks('CREATED_SUCCESS') || 'Tarea creada correctamente');
     
-    const toast = await this.toastController.create({
-      message,
-      duration: 2000,
-      position: 'bottom',
-      color: 'success',
-      icon: 'checkmark-circle'
-    });
-    await toast.present();
+    await this.showSuccessToast(message);
     
-    // Navigate back to task list
-    this.router.navigate(['/tasks']);
-  }
-
-  private async handleError(error: any): Promise<void> {
-    this.isSubmitting.set(false);
-    this.error.set(error.message || this.translationService.getTasks('SAVE_ERROR'));
-    
-    // Show error toast
-    const toast = await this.toastController.create({
-      message: error.message || this.translationService.getTasks('SAVE_ERROR'),
-      duration: 3000,
-      position: 'bottom',
-      color: 'danger',
-      icon: 'alert-circle'
-    });
-    await toast.present();
-    
-    console.error('Task form error:', error);
+    // Wait a bit for toast to show, then navigate back
+    setTimeout(() => {
+      this.router.navigate(['/tasks']);
+    }, 1500);
   }
 
   trackByCategoryId(index: number, category: Category): string {
     return category.id;
+  }
+
+  private async showSuccessToast(message: string): Promise<void> {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      color: 'success',
+      position: 'bottom',
+      icon: 'checkmark-circle'
+    });
+    await toast.present();
+  }
+
+  private async showErrorToast(message: string): Promise<void> {
+    const toast = await this.toastController.create({
+      message,
+      duration: 5000,
+      color: 'danger',
+      position: 'bottom'
+    });
+    await toast.present();
   }
 }

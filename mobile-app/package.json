@@ -6,7 +6,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && npm run fix-cordova",
+    "build:prod": "ng build --configuration production && npm run fix-cordova",
+    "copy-www": "rm -rf www/* && cp -r ../dist/ionic-todo-test/* www/",
+    "fix-cordova": "node scripts/fix-cordova.js",
+    "build:android": "npm run build:prod && cordova build android",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"
@@ -46,13 +50,15 @@
     "@typescript-eslint/parser": "^8.18.0",
     "autoprefixer": "^10.4.22",
     "cordova-android": "^14.0.1",
-    "cordova-ios": "^7.1.1",
+    "cordova-ios": "^8.0.0",
     "cordova-plugin-device": "2.0.2",
     "cordova-plugin-firebase": "^2.0.6",
+    "cordova-plugin-firebase-analytics": "~6.1.0",
+    "cordova-plugin-firebase-config": "^6.0.0",
     "cordova-plugin-ionic-keyboard": "^2.0.5",
-    "cordova-plugin-ionic-webview": "^5.0.0",
     "cordova-plugin-splashscreen": "5.0.2",
     "cordova-plugin-statusbar": "^2.4.2",
+    "cordova-support-android-plugin": "~1.0.0",
     "eslint": "^9.16.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsdoc": "^48.2.1",
@@ -74,12 +80,13 @@
       "cordova-plugin-statusbar": {},
       "cordova-plugin-device": {},
       "cordova-plugin-splashscreen": {},
-      "cordova-plugin-ionic-webview": {},
-      "cordova-plugin-ionic-keyboard": {}
+      "cordova-plugin-ionic-keyboard": {},
+      "cordova-plugin-firebase-config": {
+        "ANDROID_FIREBASE_CONFIG_VERSION": "21.0.+"
+      }
     },
     "platforms": [
-      "android",
-      "ios"
+      "android"
     ]
   }
 }

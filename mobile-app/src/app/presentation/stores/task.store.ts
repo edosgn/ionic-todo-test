@@ -148,7 +148,7 @@ export class TaskStore {
         },
         error: (error) => {
           console.error('Error creating task:', error);
-          this._error.set(error.message || 'Failed to create task');
+          this._error.set(error.message || 'Error al crear la tarea');
           this._loading.set(false);
         }
       }),
@@ -171,7 +171,7 @@ export class TaskStore {
         },
         error: (error) => {
           console.error('Error updating task:', error);
-          this._error.set(error.message || 'Failed to update task');
+          this._error.set(error.message || 'Error al actualizar la tarea');
           this._loading.set(false);
         }
       }),
@@ -195,7 +195,7 @@ export class TaskStore {
         },
         error: (error) => {
           console.error('Error deleting task:', error);
-          this._error.set(error.message || 'Failed to delete task');
+          this._error.set(error.message || 'Error al eliminar la tarea');
           this._loading.set(false);
         }
       })

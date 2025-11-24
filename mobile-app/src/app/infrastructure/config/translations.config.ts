@@ -59,6 +59,7 @@ export const TRANSLATIONS = Object.freeze({
     
     // Search and filters
     SEARCH_PLACEHOLDER: 'Buscar tareas...',
+    SEARCH_TASKS: 'Buscar tareas...',
     NO_TASKS_FOUND: 'No hay tareas que coincidan con tus filtros',
     NO_TASKS_YET: 'Aún no hay tareas',
     NO_TASKS: 'Aún no hay tareas',
@@ -86,6 +87,7 @@ export const TRANSLATIONS = Object.freeze({
     CREATE_TASK: 'Crear Tarea',
     UPDATE_TASK: 'Actualizar Tarea',
     DELETE_TASK: 'Eliminar Tarea',
+    DELETE_TASK_CONFIRMATION: '¿Estás seguro de que quieres eliminar esta tarea?',
     COMPLETE_TASK: 'Completar Tarea',
     MARK_PENDING: 'Marcar como Pendiente',
     

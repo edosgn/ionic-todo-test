@@ -15,7 +15,6 @@ import {
   IonItem,
   IonLabel,
   IonInput,
-  IonTextarea,
   IonNote,
   IonList,
   IonAccordion,

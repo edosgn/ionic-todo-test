@@ -7,6 +7,38 @@
   font-weight: 500;
 }
 
+// Form sections without ion-item to avoid setFocus errors
+.title-section,
+.description-section {
+  margin-bottom: 16px;
+
+  ion-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--ion-color-step-600);
+  }
+
+  ion-input {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    border: 1px solid var(--ion-color-medium-shade);
+    border-radius: 8px;
+    background: var(--ion-background-color);
+
+    &:focus-within {
+      border-color: var(--ion-color-primary);
+      box-shadow: 0 0 0 2px rgba(var(--ion-color-primary-rgb), 0.2);
+    }
+
+    &.ion-invalid {
+      border-color: var(--ion-color-danger);
+    }
+  }
+}
+
 ion-item {
   --padding-start: 0;
   --inner-padding-end: 0;
@@ -107,6 +139,24 @@ ion-card[color="danger"] {
 
 // Dark mode - respects app theme toggle, not system preference
 :host-context(body.dark) {
+  .title-section,
+  .description-section {
+    ion-label {
+      color: #ffffff !important;
+    }
+
+    ion-input {
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.04) !important;
+      color: var(--ion-text-color);
+      
+      &:focus-within {
+        border-color: var(--ion-color-primary-tint);
+        background: rgba(255, 255, 255, 0.08) !important;
+      }
+    }
+  }
+
   .category-selection-section,
   .category-preview {
     background: rgba(255, 255, 255, 0.06) !important;

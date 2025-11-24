@@ -96,18 +96,19 @@ export class FeatureFlagStore {
     try {
       console.log('🏁 Initializing Feature Flags Store...');
       
-      // Initialize Remote Config
-      await this.remoteConfigService.initialize();
+      // Add a timeout to prevent infinite blocking
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Firebase initialization timeout')), 8000)
+      );
 
-      // Fetch all feature flags
-      const [
-        enableCategories,
-        enableDeleteTask,
-        appTitle,
-        maxTasks,
-        showStatistics,
-        themeConfigString
-      ] = await Promise.all([
+      // Race between Firebase initialization and timeout
+      await Promise.race([
+        this.remoteConfigService.initialize(),
+        timeoutPromise
+      ]);
+
+      // Fetch all feature flags with timeout
+      const fetchPromise = Promise.all([
         this.remoteConfigService.getFeatureFlag('enableCategories', true),
         this.remoteConfigService.getFeatureFlag('enableDeleteTask', true),
         this.remoteConfigService.getStringValue('appTitle', 'Mis Tareas'),
@@ -115,6 +116,19 @@ export class FeatureFlagStore {
         this.remoteConfigService.getFeatureFlag('showStatistics', true),
         this.remoteConfigService.getStringValue('theme_config', JSON.stringify(DEFAULT_FEATURE_FLAGS.themeConfig))
       ]);
+
+      const fetchTimeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Feature flags fetch timeout')), 5000)
+      );
+
+      const [
+        enableCategories,
+        enableDeleteTask,
+        appTitle,
+        maxTasks,
+        showStatistics,
+        themeConfigString
+      ] = await Promise.race([fetchPromise, fetchTimeoutPromise]);
 
       // Parse theme config
       let themeConfig: ThemeConfig;
@@ -147,6 +161,7 @@ export class FeatureFlagStore {
       
       // Keep default values but mark as initialized to prevent infinite retries
       this._initialized.set(true);
+      console.log('🔄 Using default feature flags due to initialization error');
     }
   }
 

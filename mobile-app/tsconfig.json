@@ -5,9 +5,6 @@
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
-    "paths": {
-      "@ionic-todo-test/shared-ui": ["../libs/shared/src/index.ts"]
-    },
     "esModuleInterop": true,
     "strict": true,
     "noImplicitOverride": true,

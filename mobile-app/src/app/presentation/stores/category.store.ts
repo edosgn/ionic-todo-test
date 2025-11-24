@@ -91,7 +91,7 @@ export class CategoryStore {
       },
       error: (error) => {
         console.error('Error loading categories:', error);
-        this._error.set(error.message || 'Failed to load categories');
+        this._error.set(error.message || 'Error al cargar las categorías');
         this._loading.set(false);
       }
     });
@@ -115,7 +115,7 @@ export class CategoryStore {
         },
         error: (error: any) => {
           console.error('Error creating category:', error);
-          this._error.set(error.message || 'Failed to create category');
+          this._error.set(error.message || 'Error al crear la categoría');
           this._loading.set(false);
         }
       }),
@@ -148,7 +148,7 @@ export class CategoryStore {
       },
       error: (error) => {
         console.error('Error updating category:', error);
-        this._error.set(error.message || 'Failed to update category');
+        this._error.set(error.message || 'Error al actualizar la categoría');
         this._loading.set(false);
       }
     });
@@ -181,7 +181,7 @@ export class CategoryStore {
       },
       error: (error) => {
         console.error('Error deleting category:', error);
-        this._error.set(error.message || 'Failed to delete category');
+        this._error.set(error.message || 'Error al eliminar la categoría');
         this._loading.set(false);
       }
     });
@@ -206,7 +206,7 @@ export class CategoryStore {
       },
       error: (error) => {
         console.error('Error loading category stats:', error);
-        this._error.set(error.message || 'Failed to load category statistics');
+        this._error.set(error.message || 'Error al cargar las estadísticas de categorías');
         this._loading.set(false);
       }
     });

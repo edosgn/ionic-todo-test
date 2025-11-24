@@ -18,6 +18,6 @@ export const environment = {
   },
   remoteConfig: {
     minimumFetchIntervalMillis: 0, // 0 in dev for immediate updates
-    fetchTimeoutMillis: 60000, // 1 minute
+    fetchTimeoutMillis: 10000, // Reduced to 10 seconds to prevent blocking
   }
 };
