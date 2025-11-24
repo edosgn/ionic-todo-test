@@ -1,8 +1,8 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, inject, signal, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { IonicModule, ToastController } from '@ionic/angular';
+import { IonicModule, ToastController, IonContent, Platform } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { save, close, checkmark, checkmarkCircle, alertCircle } from 'ionicons/icons';
 
@@ -20,7 +20,9 @@ import { TranslationService } from '../../../infrastructure/services/translation
   templateUrl: './task-form.component.html',
   styleUrls: ['./task-form.component.scss']
 })
-export class TaskFormComponent implements OnInit {
+export class TaskFormComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild(IonContent, { static: false }) content!: IonContent;
+  
   // Icons
   public readonly saveIcon = save;
   public readonly closeIcon = close;
@@ -35,12 +37,15 @@ export class TaskFormComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly toastController = inject(ToastController);
+  private readonly platform = inject(Platform);
   readonly translationService = inject(TranslationService);
 
   // Component state
   readonly isSubmitting = signal(false);
   readonly error = signal<string | null>(null);
   readonly categories = this.categoryStore.categories;
+  private componentReady = signal(false);
+  private keyboardListeners: any[] = [];
 
   // Form
   taskForm!: FormGroup;
@@ -58,6 +63,63 @@ export class TaskFormComponent implements OnInit {
   constructor() {
     addIcons({ save, close, checkmark, checkmarkCircle, alertCircle });
     this.initializeForm();
+  }
+
+  ngAfterViewInit(): void {
+    // Ensure Ionic context is ready for ToastController
+    setTimeout(() => {
+      this.componentReady.set(true);
+    }, 100);
+
+    // Setup iOS keyboard listeners if on iOS
+    if (this.platform.is('ios')) {
+      this.setupIOSKeyboardListeners();
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Clean up keyboard listeners
+    this.keyboardListeners.forEach(listener => {
+      if (listener && typeof listener === 'function') {
+        listener();
+      }
+    });
+  }
+
+  private setupIOSKeyboardListeners(): void {
+    // Listen for keyboard events on iOS
+    if (typeof (window as any).Keyboard !== 'undefined') {
+      const keyboard = (window as any).Keyboard;
+      
+      // Force keyboard resize mode
+      if (keyboard.setResizeMode) {
+        keyboard.setResizeMode('ionic');
+      }
+      
+      // Listen for keyboard show/hide events
+      const keyboardShowListener = keyboard.onKeyboardShow?.((event: any) => {
+        console.log('Keyboard shown:', event);
+        // Force content resize
+        if (this.content) {
+          this.content.getScrollElement().then((scrollEl: HTMLElement) => {
+            scrollEl.style.paddingBottom = event.keyboardHeight + 'px';
+          });
+        }
+      });
+      
+      const keyboardHideListener = keyboard.onKeyboardHide?.(() => {
+        console.log('Keyboard hidden');
+        // Reset content padding
+        if (this.content) {
+          this.content.getScrollElement().then((scrollEl: HTMLElement) => {
+            scrollEl.style.paddingBottom = '0px';
+          });
+        }
+      });
+      
+      if (keyboardShowListener) this.keyboardListeners.push(keyboardShowListener);
+      if (keyboardHideListener) this.keyboardListeners.push(keyboardHideListener);
+    }
   }
 
   ngOnInit(): void {
@@ -196,12 +258,18 @@ export class TaskFormComponent implements OnInit {
       ? (this.translationService.getTasks('UPDATED_SUCCESS') || 'Tarea actualizada correctamente')
       : (this.translationService.getTasks('CREATED_SUCCESS') || 'Tarea creada correctamente');
     
-    await this.showSuccessToast(message);
-    
-    // Wait a bit for toast to show, then navigate back
-    setTimeout(() => {
+    // Ensure toast shows before navigation
+    try {
+      await this.showSuccessToast(message);
+      // Wait a bit for toast to show, then navigate back
+      setTimeout(() => {
+        this.router.navigate(['/tasks']);
+      }, 800); // Reduced time for better UX
+    } catch (error) {
+      console.warn('Toast failed, proceeding with navigation:', error);
+      // If toast fails, still navigate
       this.router.navigate(['/tasks']);
-    }, 1500);
+    }
   }
 
   trackByCategoryId(index: number, category: Category): string {
@@ -209,23 +277,66 @@ export class TaskFormComponent implements OnInit {
   }
 
   private async showSuccessToast(message: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color: 'success',
-      position: 'bottom',
-      icon: 'checkmark-circle'
-    });
-    await toast.present();
+    try {
+      // Wait for component to be ready if needed
+      let attempts = 0;
+      while (!this.componentReady() && attempts < 10) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        attempts++;
+      }
+      
+      const toast = await this.toastController.create({
+        message,
+        duration: 2500,
+        color: 'success',
+        position: 'bottom',
+        icon: 'checkmark-circle'
+      });
+      
+      await toast.present();
+      console.log('Success toast presented successfully');
+    } catch (error) {
+      console.error('Error showing success toast:', error);
+      // Fallback: try simpler toast without icon
+      try {
+        const simpleToast = await this.toastController.create({
+          message,
+          duration: 2500,
+          color: 'success',
+          position: 'bottom'
+        });
+        await simpleToast.present();
+      } catch (fallbackError) {
+        console.error('Fallback toast also failed:', fallbackError);
+        // Even if toast fails, don't block the user flow
+      }
+    }
   }
 
   private async showErrorToast(message: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 5000,
-      color: 'danger',
-      position: 'bottom'
-    });
-    await toast.present();
+    try {
+      // Wait for component to be ready if needed
+      let attempts = 0;
+      while (!this.componentReady() && attempts < 10) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        attempts++;
+      }
+      
+      const toast = await this.toastController.create({
+        message,
+        duration: 4000,
+        color: 'danger',
+        position: 'bottom'
+      });
+      
+      await toast.present();
+      console.log('Error toast presented successfully');
+    } catch (error) {
+      console.error('Error showing error toast:', error);
+      // Fallback: show error in console and update error signal
+      this.error.set(message);
+    } finally {
+      this.isSubmitting.set(false);
+    }
   }
 }

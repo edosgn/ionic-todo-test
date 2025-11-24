@@ -7,7 +7,6 @@
   font-weight: 500;
 }
 
-// Form sections without ion-item to avoid setFocus errors
 .title-section,
 .description-section {
   margin-bottom: 16px;
@@ -19,7 +18,7 @@
     color: var(--ion-color-step-600);
   }
 
-  ion-input {
+  ion-input, ion-textarea {
     --padding-start: 12px;
     --padding-end: 12px;
     --padding-top: 12px;
@@ -27,6 +26,7 @@
     border: 1px solid var(--ion-color-medium-shade);
     border-radius: 8px;
     background: var(--ion-background-color);
+    font-size: 16px !important;
 
     &:focus-within {
       border-color: var(--ion-color-primary);
@@ -35,6 +35,32 @@
 
     &.ion-invalid {
       border-color: var(--ion-color-danger);
+    }
+  }
+}
+
+// iOS specific fixes for keyboard/input issues
+.ios {
+  .title-section,
+  .description-section {
+    ion-input, ion-textarea {
+      --background: var(--ion-background-color);
+      --color: var(--ion-text-color);
+      --placeholder-color: var(--ion-placeholder-text-color);
+      opacity: 1 !important;
+      background: var(--ion-background-color) !important;
+      
+      // Force redraw to prevent white screen
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+      will-change: transform;
+      
+      // Ensure text is visible
+      input, textarea {
+        background: transparent !important;
+        -webkit-appearance: none;
+        appearance: none;
+      }
     }
   }
 }
@@ -55,6 +81,7 @@ ion-item {
     border: 1px solid var(--ion-color-medium-shade);
     border-radius: 8px;
     background: var(--ion-background-color);
+    font-size: 16px !important;
 
     &:focus-within {
       border-color: var(--ion-color-primary);
@@ -145,10 +172,11 @@ ion-card[color="danger"] {
       color: #ffffff !important;
     }
 
-    ion-input {
+    ion-input, ion-textarea {
       border-color: rgba(255, 255, 255, 0.2);
       background: rgba(255, 255, 255, 0.04) !important;
       color: var(--ion-text-color);
+      font-size: 16px !important;
       
       &:focus-within {
         border-color: var(--ion-color-primary-tint);
@@ -176,6 +204,7 @@ ion-card[color="danger"] {
       border-color: rgba(255, 255, 255, 0.2);
       background: rgba(255, 255, 255, 0.04) !important;
       color: var(--ion-text-color);
+      font-size: 16px !important;
       
       &:focus-within {
         border-color: var(--ion-color-primary-tint);

@@ -34,6 +34,18 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
         <resource-file src="firebase-config/GoogleService-Info.plist" target="GoogleService-Info.plist" />
+        
+        <!-- iOS Deployment Target Configuration -->
+        <preference name="deployment-target" value="13.0" />
+        
+        <!-- Keyboard Plugin Configuration -->
+        <preference name="HideKeyboardFormAccessoryBar" value="true" />
+        <preference name="KeyboardDisplayRequiresUserAction" value="false" />
+        <preference name="KeyboardShrinksView" value="true" />
+        <preference name="KeyboardResize" value="true" />
+        <preference name="KeyboardResizeMode" value="ionic" />
+        <preference name="DisallowOverscroll" value="true" />
+        <preference name="ScrollEnabled" value="true" />
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
         <icon height="29" src="resources/ios/icon/icon-small.png" width="29" />
