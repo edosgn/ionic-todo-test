@@ -1,0 +1,128 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+// Import custom theme variables (dark/light mode) - @use must be at the top
+@use './theme/theme-variables.scss';
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Custom Dark Mode
+ * -----------------------------------------------------
+ * Using our custom theme service instead of Ionic's automatic dark mode
+ * to have full control over theme switching
+ */
+
+/* Ionic's automatic dark mode disabled - using custom implementation */
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+/* @import '@ionic/angular/css/palettes/dark.system.css'; */
+
+// Global header and icon improvements
+ion-header {
+  ion-toolbar {
+    ion-button {
+      ion-icon {
+        font-size: 24px;
+        transition: color 0.3s ease;
+      }
+    }
+  }
+}
+
+// Global searchbar improvements for dark mode
+body.dark {
+  ion-searchbar {
+    --background: rgba(45, 45, 55, 0.95);
+    --color: #ffffff;
+    --placeholder-color: rgba(255, 255, 255, 0.6);
+    --icon-color: rgba(255, 255, 255, 0.8);
+    --clear-button-color: rgba(255, 255, 255, 0.7);
+    --border-radius: 12px;
+    --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    
+    .searchbar-input-container {
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      background: rgba(45, 45, 55, 0.95) !important;
+    }
+    
+    .searchbar-search-icon {
+      color: rgba(255, 255, 255, 0.8) !important;
+      font-size: 20px !important;
+    }
+    
+    .searchbar-clear-button {
+      color: rgba(255, 255, 255, 0.7) !important;
+      
+      &:hover {
+        color: #ffffff !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 50% !important;
+      }
+    }
+    
+    input {
+      color: #ffffff !important;
+      
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.6) !important;
+      }
+    }
+  }
+}
+
+// Ensure icons are always visible in headers
+body.dark {
+  ion-header {
+    ion-toolbar {
+      ion-button {
+        ion-icon {
+          color: #ffffff !important;
+        }
+      }
+      
+      ion-title {
+        color: #ffffff !important;
+      }
+    }
+  }
+}
+
+// Light mode - ensure good contrast
+body:not(.dark) {
+  ion-header {
+    ion-toolbar {
+      ion-button {
+        ion-icon {
+          color: #1a1a1a !important;
+        }
+      }
+      
+      ion-title {
+        color: #1a1a1a !important;
+      }
+    }
+  }
+}

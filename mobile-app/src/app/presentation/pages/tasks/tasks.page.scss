@@ -1,0 +1,75 @@
+// Tasks Page Styles
+// Main page with header navigation and floating action button
+
+ion-header {
+  ion-toolbar {
+    --background: var(--ion-toolbar-background);
+    --color: var(--ion-toolbar-color);
+    
+    ion-title {
+      font-weight: 600;
+      --color: var(--ion-toolbar-color);
+    }
+    
+    ion-button {
+      --color: var(--ion-toolbar-color);
+      --background: transparent;
+      
+      ion-icon {
+        color: var(--ion-toolbar-color);
+        font-size: 24px;
+      }
+      
+      &:hover {
+        --background: rgba(var(--ion-toolbar-color-rgb), 0.1);
+      }
+    }
+  }
+}
+
+ion-content {
+  --background: var(--ion-background-color);
+}
+
+// Floating Action Button styling
+ion-fab {
+  ion-fab-button {
+    --background: var(--ion-color-primary);
+    --color: white;
+    --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    
+    &:hover {
+      --background: var(--ion-color-primary-shade);
+    }
+  }
+}
+
+// Dark mode support - respects app theme toggle
+:host-context(body.dark) {
+  ion-content {
+    --background: var(--ion-background-color);
+  }
+  
+  ion-header {
+    ion-toolbar {
+      --background: var(--ion-toolbar-background) !important;
+      --color: var(--ion-toolbar-color) !important;
+      
+      ion-title {
+        --color: var(--ion-toolbar-color) !important;
+      }
+      
+      ion-button {
+        --color: var(--ion-toolbar-color) !important;
+        
+        ion-icon {
+          color: var(--ion-toolbar-color) !important;
+        }
+        
+        &:hover {
+          --background: rgba(255, 255, 255, 0.1) !important;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,145 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button (click)="navigateBack()" default-href="/tasks">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ translationService.getCategories('TITLE') }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Header -->
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ translationService.getCategories('TITLE') }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Search Bar -->
+  <ion-searchbar 
+    [placeholder]="translationService.getCategories('SEARCH_PLACEHOLDER')"
+    [debounce]="300"
+    (ionInput)="onSearchChange($event)"
+    show-clear-button="focus">
+  </ion-searchbar>
+
+  <!-- Statistics Card -->
+  <ion-card *ngIf="stats() && !loading() && statisticsVisible()" class="stats-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="color-palette"></ion-icon>
+        {{ translationService.getCategories('STATISTICS_TITLE') }}
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <ion-text color="primary">
+            <h2>{{ stats()?.totalCategories || 0 }}</h2>
+          </ion-text>
+          <p>{{ translationService.getCategories('TOTAL_CATEGORIES') }}</p>
+        </div>
+        <div class="stat-item">
+          <ion-text color="success">
+            <h2>{{ (stats()?.categoriesWithTaskCounts || []).length }}</h2>
+          </ion-text>
+          <p>{{ translationService.getCategories('WITH_TASKS') }}</p>
+        </div>
+        <div class="stat-item">
+          <ion-text color="warning">
+            <h2>{{ stats()?.unassignedTasks || 0 }}</h2>
+          </ion-text>
+          <p>{{ translationService.getCategories('UNASSIGNED_TASKS') }}</p>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-container">
+    <ion-spinner></ion-spinner>
+    <ion-text>
+      <p>{{ translationService.getCommon('LOADING') }}...</p>
+    </ion-text>
+  </div>
+
+  <!-- Error State -->
+  <ion-card *ngIf="error() && !loading()" color="danger" class="error-card">
+    <ion-card-content>
+      <ion-text color="light">
+        <h3>
+          <ion-icon name="alert-circle"></ion-icon>
+          {{ translationService.getCategories('LOAD_ERROR') }}
+        </h3>
+        <p>{{ error() }}</p>
+      </ion-text>
+      <ion-button fill="clear" color="light" (click)="onRetryLoad()">
+        <ion-icon name="refresh" slot="start"></ion-icon>
+        {{ translationService.getCommon('RETRY') }}
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading() && !error() && sortedCategories().length === 0" class="empty-state">
+    <ion-icon name="color-palette" class="empty-icon"></ion-icon>
+    <ion-text>
+      <h2>{{ translationService.getCategories('NO_CATEGORIES') }}</h2>
+      <p>{{ translationService.getCategories('NO_CATEGORIES_DESCRIPTION') }}</p>
+    </ion-text>
+    <ion-button fill="solid" (click)="onCreateCategory()">
+      <ion-icon name="add" slot="start"></ion-icon>
+      {{ translationService.getCategories('CREATE') }}
+    </ion-button>
+  </div>
+
+  <!-- Categories List -->
+  <ion-list *ngIf="!loading() && !error() && sortedCategories().length > 0" class="categories-list">
+    <ion-item-sliding 
+      *ngFor="let category of sortedCategories(); trackBy: trackByCategory"
+      class="category-item-sliding">
+      
+      <ion-item>
+        <div class="category-content" slot="start">
+          <div class="category-color-indicator" [style.background-color]="category.color"></div>
+        </div>
+        
+        <ion-label>
+          <h2>{{ category.name }}</h2>
+          <p>
+            <ion-icon [name]="category.icon"></ion-icon>
+            {{ translationService.getDates('CREATED') }} {{ category.createdAt | date:'short' }}
+          </p>
+        </ion-label>
+
+        <div slot="end" class="category-actions">
+          <ion-button 
+            fill="clear" 
+            size="small" 
+            color="primary"
+            (click)="onEditCategory(category)"
+            [attr.aria-label]="'Editar ' + category.name">
+            <ion-icon name="create" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button 
+            fill="clear" 
+            size="small" 
+            color="danger"
+            (click)="onDeleteCategory(category)"
+            [attr.aria-label]="'Eliminar ' + category.name">
+            <ion-icon name="trash" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+
+  <!-- Floating Action Button -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!loading()">
+    <ion-fab-button (click)="onCreateCategory()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

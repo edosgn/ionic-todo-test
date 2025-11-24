@@ -1,0 +1,31 @@
+.theme-toggle-btn {
+  --color: var(--ion-toolbar-color) !important;
+  --background: transparent;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --border-radius: 8px;
+  margin: 0 4px;
+}
+
+.theme-toggle-btn:hover {
+  --background: rgba(var(--ion-toolbar-color-rgb), 0.1) !important;
+}
+
+ion-icon {
+  font-size: 22px;
+  color: var(--ion-toolbar-color) !important;
+}
+
+:host-context(body.dark) {
+  .theme-toggle-btn {
+    --color: #ffffff !important;
+  }
+  
+  ion-icon {
+    color: #ffffff !important;
+  }
+  
+  .theme-toggle-btn:hover {
+    --background: rgba(255, 255, 255, 0.1) !important;
+  }
+}

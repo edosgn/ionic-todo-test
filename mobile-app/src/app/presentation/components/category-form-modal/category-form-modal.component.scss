@@ -1,0 +1,85 @@
+.styling-accordion {
+  margin: 16px 0;
+}
+
+.accordion-content {
+  padding: 0;
+}
+
+.color-preview {
+  display: flex;
+  align-items: center;
+}
+
+.color-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--ion-color-medium);
+}
+
+.icon-preview {
+  font-size: 20px;
+  color: var(--ion-color-primary);
+}
+
+.category-preview {
+  margin: 24px 0;
+  padding: 16px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+}
+
+.category-preview h4 {
+  margin: 0 0 12px 0;
+  color: var(--ion-color-medium);
+}
+
+.preview-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  margin: 0;
+}
+
+.category-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.category-color-circle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--ion-color-medium);
+}
+
+.category-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  color: var(--ion-color-primary);
+}
+
+.action-buttons {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ion-color-medium);
+}
+
+.action-buttons ion-button {
+  margin-bottom: 8px;
+}
+
+.submit-button {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+}
+
+ion-input {
+  font-size: 16px !important;
+}

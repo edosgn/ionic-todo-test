@@ -1,0 +1,88 @@
+/**
+ * Icon Component Styles
+ */
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+
+  &.lib-icon-wrapper--clickable {
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 4px;
+
+    &:hover {
+      background-color: rgba(var(--ion-color-primary-rgb, 56, 128, 255), 0.1);
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ion-color-primary);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.lib-icon {
+  &--clickable {
+    transition: all 0.2s ease-in-out;
+  }
+}
+
+// Size-specific wrapper styles
+.lib-icon-wrapper {
+  &--xs {
+    min-width: 16px;
+    min-height: 16px;
+  }
+
+  &--sm {
+    min-width: 20px;
+    min-height: 20px;
+  }
+
+  &--md {
+    min-width: 24px;
+    min-height: 24px;
+  }
+
+  &--lg {
+    min-width: 28px;
+    min-height: 28px;
+  }
+
+  &--xl {
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  &--2xl {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+// Animation for rotated icons
+.lib-icon-wrapper--rotated {
+  transition: transform 0.3s ease-in-out;
+}
+
+// Loading animation
+@keyframes icon-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.lib-icon-wrapper--loading {
+  animation: icon-pulse 1.5s ease-in-out infinite;
+}

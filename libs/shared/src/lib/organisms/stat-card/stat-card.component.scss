@@ -1,0 +1,284 @@
+/**
+ * StatCardComponent Styles
+ * 
+ * Modern statistics card with glass-morphism design,
+ * smooth animations, and responsive behavior.
+ */
+
+.lib-stat-card {
+  --card-background: rgba(255, 255, 255, 0.85);
+  --card-border: 1px solid rgba(255, 255, 255, 0.3);
+  --card-border-radius: 20px;
+  --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --card-backdrop-filter: blur(10px);
+  --card-padding: 20px;
+  
+  position: relative;
+  background: var(--card-background);
+  border: var(--card-border);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--card-shadow);
+  backdrop-filter: var(--card-backdrop-filter);
+  padding: var(--card-padding);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--ion-color-primary);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+
+    &::before {
+      opacity: 1;
+    }
+
+    .lib-stat-card__icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+  }
+
+  &--interactive {
+    cursor: pointer;
+
+    &:focus {
+      outline: 2px solid var(--ion-color-primary);
+      outline-offset: 2px;
+    }
+
+    &:active {
+      transform: translateY(-2px) scale(1.01);
+    }
+  }
+
+  &--loading {
+    pointer-events: none;
+    opacity: 0.7;
+
+    .lib-stat-card__content {
+      opacity: 0.5;
+    }
+  }
+
+  // Content layout
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+  }
+
+  &__main {
+    flex: 1;
+  }
+
+  &__value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    color: #4a4a4a;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+
+  &__trend {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 6px;
+    
+    &--up {
+      color: var(--ion-color-success);
+      background: rgba(var(--ion-color-success-rgb), 0.1);
+    }
+
+    &--down {
+      color: var(--ion-color-danger);
+      background: rgba(var(--ion-color-danger-rgb), 0.1);
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    opacity: 0.3;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &__loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+
+    ion-spinner {
+      --color: var(--ion-color-primary);
+    }
+  }
+
+  &__accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  // Size variants
+  &--small {
+    --card-padding: 16px;
+    --card-border-radius: 16px;
+
+    .lib-stat-card__value {
+      font-size: 1.5rem;
+    }
+
+    .lib-stat-card__label {
+      font-size: 0.7rem;
+    }
+  }
+
+  &--large {
+    --card-padding: 24px;
+
+    .lib-stat-card__value {
+      font-size: 2.5rem;
+    }
+
+    .lib-stat-card__label {
+      font-size: 0.8rem;
+    }
+  }
+
+  // Variant styles
+  &--minimal {
+    --card-background: transparent;
+    --card-border: 1px solid rgba(var(--ion-color-medium-rgb), 0.2);
+    --card-shadow: none;
+    --card-backdrop-filter: none;
+
+    &:hover {
+      --card-background: rgba(255, 255, 255, 0.05);
+      --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  &--elevated {
+    --card-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+
+    &:hover {
+      --card-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
+      transform: translateY(-6px) scale(1.03);
+    }
+  }
+}
+
+// Light mode specific improvements for better contrast
+:host-context(body:not(.dark)) .lib-stat-card {
+  --card-background: rgba(248, 249, 250, 0.95);
+  --card-border: 1px solid rgba(200, 200, 200, 0.4);
+  --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  
+  &__value {
+    color: #1a1a1a !important;
+  }
+  
+  &__label {
+    color: #4a4a4a !important;
+    font-weight: 700;
+  }
+  
+  &__icon {
+    opacity: 0.6;
+  }
+}
+
+// Dark mode adaptations - using body.dark instead of prefers-color-scheme
+:host-context(body.dark) .lib-stat-card {
+  --card-background: rgba(45, 45, 55, 0.85);
+  --card-border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  &__value {
+    color: #ffffff;
+  }
+  
+  &__label {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  &--minimal {
+    --card-background: transparent;
+    --card-border: 1px solid rgba(255, 255, 255, 0.05);
+
+    &:hover {
+      --card-background: rgba(255, 255, 255, 0.02);
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .lib-stat-card {
+    &:hover {
+      transform: none;
+    }
+
+    &--interactive {
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+
+    &__value {
+      font-size: 1.6rem;
+    }
+
+    &--large {
+      .lib-stat-card__value {
+        font-size: 2rem;
+      }
+    }
+  }
+}
+
+// Animation for loading state
+@keyframes statCardPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.5; }
+}
+
+.lib-stat-card--loading {
+  .lib-stat-card__content {
+    animation: statCardPulse 2s ease-in-out infinite;
+  }
+}
+
+// Focus styles for accessibility
+.lib-stat-card--interactive:focus-visible {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
+  border-radius: var(--card-border-radius);
+}

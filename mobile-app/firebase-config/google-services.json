@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "680054199044",
+    "project_id": "ionic-test-1a876",
+    "storage_bucket": "ionic-test-1a876.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:680054199044:android:203a5112206b7fae7b7651",
+        "android_client_info": {
+          "package_name": "com.ionictest.todoapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAS3P7y9985wfl-xJRGJUmxR0_Q6-nVvRI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

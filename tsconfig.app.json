@@ -10,6 +10,9 @@
     "src/test-setup.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
-    "jest.config.cts"
+    "src/__mocks__/**",
+    "jest.config.cts",
+    "**/*.stories.ts",
+    "**/*.stories.js"
   ]
 }

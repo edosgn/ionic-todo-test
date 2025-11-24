@@ -1,0 +1,79 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEditMode() ? translationService.getForms('EDIT_TASK') : translationService.getForms('NEW_TASK') }}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button 
+        fill="clear" 
+        (click)="onCancel()">
+        <ion-icon [icon]="closeIcon"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+    <!-- Task Title -->
+    <div class="title-section">
+      <ion-label position="stacked">{{ translationService.getForms('TITLE') }}</ion-label>
+      <ion-input 
+        formControlName="title"
+        [placeholder]="translationService.getForms('TITLE_PLACEHOLDER')"
+        type="text"
+        maxlength="100"
+        required="true"
+        fill="outline">
+      </ion-input>
+    </div>
+
+    <!-- Task Description -->
+    <div class="description-section">
+      <ion-label position="stacked">{{ translationService.getForms('DESCRIPTION') }}</ion-label>
+      <ion-input
+        formControlName="description"
+        [placeholder]="translationService.getForms('DESCRIPTION_PLACEHOLDER')"
+        maxlength="500"
+        fill="outline"
+        type="text">
+      </ion-input>
+    </div>
+    <ion-note>{{ translationService.getForms('DESCRIPTION_HELPER') }}</ion-note>
+
+    <!-- Category Selection -->
+    <div class="category-selection-section">
+      <h4>{{ translationService.getForms('CATEGORY_SELECTION') }}</h4>
+      <app-category-selector
+        [selectedCategoryId]="selectedCategorySignal"
+        (categorySelected)="onCategorySelected($event)">
+      </app-category-selector>
+    </div>
+
+    <!-- Error Messages -->
+    <ion-card *ngIf="error()" color="danger">
+      <ion-card-content>
+        <h4>{{ translationService.getCommon('ERROR') }}</h4>
+        <p>{{ error() }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Action Buttons (Mobile) -->
+    <div class="form-actions ion-margin-top">
+      <ion-button 
+        expand="block"
+        type="submit"
+        [disabled]="taskForm.invalid || isSubmitting()"
+        class="submit-button">
+        <ion-icon [icon]="saveIcon" slot="start"></ion-icon>
+        {{ isSubmitting() ? 'Guardando...' : (isEditMode() ? translationService.getForms('UPDATE_TASK') : translationService.getForms('CREATE_TASK')) }}
+      </ion-button>
+      
+      <ion-button 
+        expand="block"
+        fill="outline"
+        (click)="onCancel()"
+        [disabled]="isSubmitting()">
+        {{ translationService.getCommon('CANCEL') }}
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

@@ -1,0 +1,30 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>{{ featureFlagStore.appTitle() }}</ion-title>
+    <ion-buttons slot="end">
+      <app-theme-toggle></app-theme-toggle>
+      <ion-button fill="clear" (click)="navigateToCategories()">
+        <ion-icon name="settings" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Header -->
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ featureFlagStore.appTitle() }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Task List Component -->
+  <app-task-list></app-task-list>
+
+  <!-- Floating Action Button for new task -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="navigateToNewTask()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

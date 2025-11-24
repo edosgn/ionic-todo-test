@@ -1,0 +1,187 @@
+/**
+ * TaskListComponent Styles - Mobile optimized
+ */
+
+.task-list-container {
+  padding: 16px;
+}
+
+.search-section {
+  margin-bottom: 16px;
+}
+
+.filter-section {
+  margin-bottom: 16px;
+}
+
+// Statistics Card - New improved design
+.stats-card {
+  margin-bottom: 16px;
+  
+  ion-card-header {
+    padding-bottom: 8px;
+    
+    ion-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      
+      ion-icon {
+        font-size: 1.4rem;
+      }
+    }
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    @media (max-width: 480px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+  }
+  
+  .stat-item {
+    text-align: center;
+    padding: 8px 4px;
+    
+    h2 {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 0 0 4px 0;
+      line-height: 1;
+      
+      @media (max-width: 480px) {
+        font-size: 1.4rem;
+      }
+    }
+    
+    p {
+      font-size: 0.8rem;
+      margin: 0;
+      text-transform: uppercase;
+      font-weight: 500;
+      opacity: 0.8;
+      
+      @media (max-width: 480px) {
+        font-size: 0.7rem;
+      }
+    }
+  }
+}
+
+// Old stats container - keeping for compatibility
+.stats-container {
+  margin-bottom: 16px;
+  
+  .stat-card {
+    margin-bottom: 8px;
+    
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+    }
+    
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+      text-align: center;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  
+  ion-spinner {
+    margin-bottom: 16px;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  
+  .empty-icon {
+    font-size: 4rem;
+    opacity: 0.5;
+    margin-bottom: 20px;
+  }
+  
+  ion-icon {
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+  }
+  
+  ion-text {
+    h2 {
+      margin: 16px 0 8px 0;
+      color: var(--ion-color-medium);
+    }
+    
+    p {
+      margin: 0 0 24px 0;
+      color: var(--ion-color-medium);
+    }
+  }
+  
+  h3 {
+    margin-bottom: 8px;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+  }
+}
+
+.task-list {
+  margin-bottom: 20px;
+  
+  .task-item {
+    margin-bottom: 8px;
+    
+    ion-item {
+      --padding-start: 0;
+      --inner-padding-end: 0;
+    }
+    
+    ion-label {
+      h2.completed {
+        text-decoration: line-through;
+        opacity: 0.6;
+      }
+      
+      p {
+        margin-top: 4px;
+        color: var(--ion-color-medium);
+      }
+      
+      ion-chip {
+        margin-top: 8px;
+        font-size: 0.75rem;
+        color: white;
+        font-weight: 500;
+      }
+    }
+    
+    .completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+  }
+}

@@ -1,0 +1,58 @@
+<div class="category-selector">
+  <!-- None/Clear Option -->
+  <ion-item 
+    button 
+    (click)="selectCategory(null)"
+    [class.selected]="selectedCategoryId() === null"
+    class="category-item">
+    <div class="category-indicator" slot="start">
+      <div class="category-color-circle no-category"></div>
+      <ion-icon name="close" class="category-icon"></ion-icon>
+    </div>
+    <ion-label>
+      <h3>Sin Categoría</h3>
+      <p>Tareas sin categoría</p>
+    </ion-label>
+    <ion-icon 
+      slot="end" 
+      [name]="selectedCategoryId() === null ? 'checkmark-circle' : 'ellipse-outline'"
+      [color]="selectedCategoryId() === null ? 'primary' : 'medium'">
+    </ion-icon>
+  </ion-item>
+
+  <!-- Available Categories -->
+  <ion-item 
+    *ngFor="let category of categories(); trackBy: trackByCategoryId" 
+    button 
+    (click)="selectCategory(category)"
+    [class.selected]="selectedCategoryId() === category.id"
+    class="category-item">
+    
+    <div class="category-indicator" slot="start">
+      <div 
+        class="category-color-circle" 
+        [style.background-color]="category.color">
+      </div>
+      <ion-icon [name]="category.icon" class="category-icon"></ion-icon>
+    </div>
+    
+    <ion-label>
+      <h3>{{ category.name }}</h3>
+      <p>{{ category.createdAt | date:'mediumDate' }}</p>
+    </ion-label>
+
+    <ion-icon 
+      slot="end" 
+      [name]="selectedCategoryId() === category.id ? 'checkmark-circle' : 'ellipse-outline'"
+      [color]="selectedCategoryId() === category.id ? 'primary' : 'medium'">
+    </ion-icon>
+  </ion-item>
+
+  <!-- Empty State -->
+  <div *ngIf="categories().length === 0" class="empty-categories">
+    <ion-text color="medium">
+      <p>No hay categorías disponibles</p>
+      <small>Crea categorías primero para organizar tus tareas</small>
+    </ion-text>
+  </div>
+</div>
