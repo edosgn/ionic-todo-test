@@ -7,7 +7,7 @@
  * @since 1.0.0
  */
 
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { 
@@ -22,10 +22,12 @@ import {
   IonFabButton
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { add, list, settings } from 'ionicons/icons';
+import { add, list, settings, moonOutline, sunnyOutline, moon, sunny } from 'ionicons/icons';
 
 // Presentation imports
 import { TaskListComponent } from '../../components/task-list/task-list.component';
+import { FeatureFlagStore } from '../../stores/feature-flag.store';
+import { ThemeToggleComponent } from '../../components/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-tasks',
@@ -34,6 +36,7 @@ import { TaskListComponent } from '../../components/task-list/task-list.componen
   imports: [
     CommonModule, 
     TaskListComponent,
+    ThemeToggleComponent,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -47,8 +50,10 @@ import { TaskListComponent } from '../../components/task-list/task-list.componen
 })
 export class TasksPage {
 
+  protected featureFlagStore = inject(FeatureFlagStore);
+
   constructor(private router: Router) {
-    addIcons({ add, list, settings });
+    addIcons({ add, list, settings, moonOutline, sunnyOutline, moon, sunny });
   }
 
   navigateToCategories() {

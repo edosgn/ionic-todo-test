@@ -23,14 +23,19 @@ export class TaskDataGuard implements CanActivate {
   private readonly categoryStore = inject(CategoryStore);
 
   canActivate(): boolean {
-    // Load initial data if not already loaded
-    if (this.categoryStore.categories().length === 0) {
-      this.categoryStore.loadCategories();
-    }
+    // Always allow navigation, load data asynchronously
+    // This prevents the app from being stuck on the splash screen
     
-    if (this.taskStore.tasks().length === 0) {
-      this.taskStore.loadTasks();
-    }
+    // Load initial data if not already loaded (non-blocking)
+    setTimeout(() => {
+      if (this.categoryStore.categories().length === 0) {
+        this.categoryStore.loadCategories();
+      }
+      
+      if (this.taskStore.tasks().length === 0) {
+        this.taskStore.loadTasks();
+      }
+    }, 0);
 
     return true;
   }

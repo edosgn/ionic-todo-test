@@ -1,7 +1,8 @@
 {
   "name": "ionic-todo-test",
   "integrations": {
-    "cordova": {}
+    "cordova": {},
+    "capacitor": {}
   },
   "type": "angular-standalone"
 }

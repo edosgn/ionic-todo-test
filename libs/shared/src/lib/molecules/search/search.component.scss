@@ -58,7 +58,7 @@
     background: transparent;
     padding: 16px 12px;
     font-size: 1rem;
-    color: var(--ion-color-dark);
+    color: var(--ion-text-color, #1a1a1a);
     
     &::placeholder {
       color: var(--ion-color-medium);
@@ -103,11 +103,50 @@
   }
 }
 
-// Dark mode adaptations
-@media (prefers-color-scheme: dark) {
-  .lib-search {
-    --search-background: rgba(30, 30, 40, 0.9);
-    --search-border: 1px solid rgba(255, 255, 255, 0.1);
+// Dark mode adaptations - using body.dark class
+:host-context(body.dark) .lib-search {
+  --search-background: rgba(45, 45, 55, 0.95);
+  --search-border: 1px solid rgba(255, 255, 255, 0.2);
+  --search-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+  &__input {
+    color: #ffffff;
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 400;
+    }
+  }
+
+  &__icon {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  &__clear {
+    color: rgba(255, 255, 255, 0.7);
+
+    &:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  &__container {
+    &:hover {
+      --search-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      --search-border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  &--focused {
+    .lib-search__container {
+      --search-shadow: 0 12px 40px rgba(var(--ion-color-primary-rgb), 0.3);
+      --search-border: 1px solid var(--ion-color-primary);
+
+      .lib-search__icon {
+        color: var(--ion-color-primary);
+      }
+    }
   }
 }
 

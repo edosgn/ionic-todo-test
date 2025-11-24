@@ -29,4 +29,25 @@ export default {
     '<rootDir>/src/**/__tests__/**/*.[jt]s?(x)',
     '<rootDir>/src/**/*(*.)@(spec|test).[jt]s?(x)',
   ],
+  // Coverage configuration
+  collectCoverageFrom: [
+    'src/**/*.{ts,js}',
+    '!src/**/*.spec.ts',
+    '!src/**/*.test.ts',
+    '!src/test-setup.ts',
+    '!src/setup-jest.ts',
+    '!src/main.ts',
+    '!src/environments/**',
+    '!src/__mocks__/**',
+    '!src/**/*.mock.ts',
+    '!src/**/*.d.ts',
+  ],
+  coverageThreshold: {
+    global: {
+      statements: 35,
+      branches: 35,
+      functions: 35,
+      lines: 33,
+    },
+  },
 };

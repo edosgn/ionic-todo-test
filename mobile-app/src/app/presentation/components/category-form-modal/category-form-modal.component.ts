@@ -1,19 +1,10 @@
-/**
- * CategoryFormModalComponent - Advanced modal for creating/editing categories
- * 
- * Provides a comprehensive interface for category management with
- * color selection, icon selection, and form validation.
- * 
- * @author Edgar Guerrero
- * @since 1.0.0
- */
-
 import { Component, Input, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { 
   ModalController, 
   ToastController,
+  AlertController,
   IonHeader,
   IonToolbar, 
   IonTitle,
@@ -24,17 +15,18 @@ import {
   IonItem,
   IonLabel,
   IonInput,
-  IonTextarea,
   IonNote,
   IonList,
   IonAccordion,
   IonAccordionGroup
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { close, save, checkmarkCircle } from 'ionicons/icons';
+import { close, save, checkmarkCircle, trash } from 'ionicons/icons';
 
 import { Category } from '../../../domain/entities/category.entity';
 import { CategoryStore } from '../../stores/category.store';
+import { TaskStore } from '../../stores/task.store';
+import { TranslationService } from '../../../infrastructure/services/translation.service';
 import { CreateCategoryInput, UpdateCategoryInput } from '../../../application';
 import { ColorSelectorComponent } from '../color-selector/color-selector.component';
 import { IconSelectorComponent } from '../icon-selector/icon-selector.component';
@@ -62,230 +54,34 @@ import { IconSelectorComponent } from '../icon-selector/icon-selector.component'
     ColorSelectorComponent,
     IconSelectorComponent
   ],
-  template: `
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ isEditMode() ? 'Edit Category' : 'New Category' }}</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="dismissModal()">
-            <ion-icon name="close"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content class="ion-padding">
-      <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
-        <!-- Basic Information -->
-        <ion-list>
-          <ion-item>
-            <ion-label position="stacked">Category Name *</ion-label>
-            <ion-input
-              formControlName="name"
-              placeholder="Enter category name"
-              [class.ion-invalid]="nameControl.invalid && nameControl.touched"
-              maxlength="50">
-            </ion-input>
-            <ion-note 
-              slot="error" 
-              *ngIf="nameControl.invalid && nameControl.touched">
-              Category name is required (3-50 characters)
-            </ion-note>
-          </ion-item>
-        </ion-list>
-
-        <!-- Color & Icon Selection -->
-        <ion-accordion-group class="styling-accordion">
-          <ion-accordion value="color">
-            <ion-item slot="header">
-              <ion-label>
-                <h3>Color Selection</h3>
-                <p>Choose a color to represent this category</p>
-              </ion-label>
-              <div class="color-preview" slot="end">
-                <div 
-                  class="color-circle"
-                  [style.background-color]="selectedColor()">
-                </div>
-              </div>
-            </ion-item>
-            <div slot="content" class="accordion-content">
-              <app-color-selector
-                [selectedColor]="selectedColor"
-                (colorSelected)="onColorSelected($event)">
-              </app-color-selector>
-            </div>
-          </ion-accordion>
-
-          <ion-accordion value="icon">
-            <ion-item slot="header">
-              <ion-label>
-                <h3>Icon Selection</h3>
-                <p>Pick an icon to identify this category</p>
-              </ion-label>
-              <ion-icon 
-                [name]="selectedIcon()" 
-                slot="end" 
-                class="icon-preview">
-              </ion-icon>
-            </ion-item>
-            <div slot="content" class="accordion-content">
-              <app-icon-selector
-                [selectedIcon]="selectedIcon"
-                (iconSelected)="onIconSelected($event)">
-              </app-icon-selector>
-            </div>
-          </ion-accordion>
-        </ion-accordion-group>
-
-        <!-- Category Preview -->
-        <div class="category-preview">
-          <h4>Preview</h4>
-          <ion-item class="preview-item">
-            <div class="category-indicator" slot="start">
-              <div 
-                class="category-color-circle"
-                [style.background-color]="selectedColor()">
-              </div>
-              <ion-icon [name]="selectedIcon()" class="category-icon"></ion-icon>
-            </div>
-            <ion-label>
-              <h3>{{ categoryForm.value.name || 'Category Name' }}</h3>
-              <p>Created {{ currentDate | date:'mediumDate' }}</p>
-            </ion-label>
-          </ion-item>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-          <ion-button 
-            expand="block" 
-            type="submit"
-            [disabled]="categoryForm.invalid || isSubmitting()"
-            class="submit-button">
-            <ion-icon name="save" slot="start"></ion-icon>
-            {{ isEditMode() ? 'Update Category' : 'Create Category' }}
-          </ion-button>
-          
-          <ion-button 
-            expand="block" 
-            fill="clear" 
-            (click)="dismissModal()"
-            [disabled]="isSubmitting()">
-            Cancel
-          </ion-button>
-        </div>
-      </form>
-    </ion-content>
-  `,
-  styles: [`
-    .styling-accordion {
-      margin: 16px 0;
-    }
-
-    .accordion-content {
-      padding: 0;
-    }
-
-    .color-preview {
-      display: flex;
-      align-items: center;
-    }
-
-    .color-circle {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 2px solid var(--ion-color-medium);
-    }
-
-    .icon-preview {
-      font-size: 20px;
-      color: var(--ion-color-primary);
-    }
-
-    .category-preview {
-      margin: 24px 0;
-      padding: 16px;
-      background: var(--ion-color-light);
-      border-radius: 8px;
-    }
-
-    .category-preview h4 {
-      margin: 0 0 12px 0;
-      color: var(--ion-color-medium);
-    }
-
-    .preview-item {
-      --padding-start: 0;
-      --padding-end: 0;
-      --inner-padding-end: 0;
-      margin: 0;
-    }
-
-    .category-indicator {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      position: relative;
-    }
-
-    .category-color-circle {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 2px solid var(--ion-color-medium);
-    }
-
-    .category-icon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 12px;
-      color: var(--ion-color-primary);
-    }
-
-    .action-buttons {
-      margin-top: 24px;
-      padding-top: 16px;
-      border-top: 1px solid var(--ion-color-medium);
-    }
-
-    .action-buttons ion-button {
-      margin-bottom: 8px;
-    }
-
-    .submit-button {
-      --background: var(--ion-color-primary);
-      --color: var(--ion-color-primary-contrast);
-    }
-  `]
+  templateUrl: './category-form-modal.component.html',
+  styleUrls: ['./category-form-modal.component.scss']
 })
 export class CategoryFormModalComponent implements OnInit {
   @Input() category: Category | null = null;
 
-  // Injected services
   private readonly modalController = inject(ModalController);
   private readonly toastController = inject(ToastController);
+  private readonly alertController = inject(AlertController);
   private readonly categoryStore = inject(CategoryStore);
+  private readonly taskStore = inject(TaskStore);
   private readonly fb = inject(FormBuilder);
+  readonly translationService = inject(TranslationService);
 
-  // Component state
   readonly isSubmitting = signal(false);
   readonly isEditMode = signal(false);
   readonly selectedColor = signal('#4ECDC4');
   readonly selectedIcon = signal('folder');
   readonly currentDate = new Date();
+  readonly canDeleteCategory = signal(false);
+  readonly tasksCount = signal(0);
 
-  // Form
   categoryForm!: FormGroup;
 
-  // Form controls for easier access
   get nameControl() { return this.categoryForm.get('name')!; }
 
   constructor() {
-    addIcons({ close, save, checkmarkCircle });
+    addIcons({ close, save, checkmarkCircle, trash });
     this.initializeForm();
   }
 
@@ -294,6 +90,7 @@ export class CategoryFormModalComponent implements OnInit {
     
     if (this.category) {
       this.loadCategoryData();
+      this.checkCategoryTasks();
     }
   }
 
@@ -312,6 +109,27 @@ export class CategoryFormModalComponent implements OnInit {
 
     this.selectedColor.set(this.category.color);
     this.selectedIcon.set(this.category.icon);
+  }
+
+  private checkCategoryTasks(): void {
+    if (!this.category) {
+      this.tasksCount.set(0);
+      this.canDeleteCategory.set(true);
+      return;
+    }
+
+    // Count tasks assigned to this category using TaskStore computed signal
+    const count = this.taskStore.getTaskCountByCategory()(this.category.id);
+    
+    console.log('Category tasks check:', {
+      categoryId: this.category.id,
+      categoryName: this.category.name,
+      tasksCount: count,
+      canDelete: count === 0
+    });
+    
+    this.tasksCount.set(count);
+    this.canDeleteCategory.set(count === 0);
   }
 
   onColorSelected(color: string): void {
@@ -351,6 +169,99 @@ export class CategoryFormModalComponent implements OnInit {
     }
   }
 
+  async onDeleteCategory(): Promise<void> {
+    if (!this.category) {
+      console.error('No category to delete');
+      return;
+    }
+
+    // Re-check tasks count before proceeding
+    this.checkCategoryTasks();
+    
+    if (!this.canDeleteCategory()) {
+      console.log('Cannot delete category - has associated tasks:', this.tasksCount());
+      await this.showErrorToast(
+        this.translationService.getCategories('CANNOT_DELETE_HAS_TASKS')
+      );
+      return;
+    }
+
+    console.log('Proceeding with category deletion - no associated tasks');
+
+    const alert = await this.alertController.create({
+      header: this.translationService.getDialogs('DELETE_CATEGORY'),
+      message: this.translationService.getDialogs('DELETE_CATEGORY_CONFIRM').replace('{0}', this.category.name),
+      buttons: [
+        {
+          text: this.translationService.getCommon('CANCEL'),
+          role: 'cancel'
+        },
+        {
+          text: this.translationService.getCommon('DELETE'),
+          role: 'destructive',
+          handler: () => {
+            this.checkCategoryTasks();
+            if (this.canDeleteCategory()) {
+              this.confirmDeleteCategory();
+              return true;
+            } else {
+              this.showErrorToast(
+                this.translationService.getCategories('CANNOT_DELETE_HAS_TASKS')
+              );
+              return false;
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async confirmDeleteCategory(): Promise<void> {
+    if (!this.category) return;
+
+    this.checkCategoryTasks();
+    
+    if (!this.canDeleteCategory()) {
+      console.error('Cannot delete category - final check failed. Tasks count:', this.tasksCount());
+      await this.showErrorToast(
+        this.translationService.getCategories('CANNOT_DELETE_HAS_TASKS')
+      );
+      return;
+    }
+
+    this.isSubmitting.set(true);
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        this.categoryStore.deleteCategory(this.category!.id).subscribe({
+          next: () => {
+            console.log('Category deleted successfully');
+            resolve();
+          },
+          error: (error) => {
+            console.error('Error deleting category:', error);
+            reject(error);
+          }
+        });
+      });
+
+      await this.showSuccessToast(
+        this.translationService.getCategories('DELETED_SUCCESS')
+      );
+
+      await this.dismissModal(true);
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      await this.showErrorToast(
+        this.translationService.getCategories('DELETE_ERROR')
+      );
+    } finally {
+      this.isSubmitting.set(false);
+    }
+  }
+
   private async createCategory(formValue: any): Promise<void> {
     const input: CreateCategoryInput = {
       name: formValue.name.trim(),
@@ -360,8 +271,14 @@ export class CategoryFormModalComponent implements OnInit {
 
     return new Promise((resolve, reject) => {
       this.categoryStore.createCategory(input).subscribe({
-        next: () => resolve(),
-        error: reject
+        next: () => {
+          console.log('Category created successfully');
+          resolve();
+        },
+        error: (error) => {
+          console.error('Error creating category:', error);
+          reject(error);
+        }
       });
     });
   }

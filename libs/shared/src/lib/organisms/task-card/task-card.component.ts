@@ -129,8 +129,8 @@ export interface TaskCardActions {
         </div>
 
         <!-- Actions Section -->
-        <div class="lib-task-card__actions" *ngIf="showActions">
-          <!-- Edit Button -->
+        <div class="lib-task-card__actions">
+          <!-- Edit Button - Siempre visible -->
           <lib-button
             variant="clear"
             size="small"
@@ -141,8 +141,9 @@ export interface TaskCardActions {
             class="lib-task-card__action-btn">
           </lib-button>
 
-          <!-- Delete Button -->
+          <!-- Delete Button - Solo visible cuando showDeleteAction está activado -->
           <lib-button
+            *ngIf="showDeleteAction"
             variant="clear"
             size="small"
             startIcon="trash"
@@ -172,6 +173,7 @@ export class TaskCardComponent {
   @Input() disabled = false;
   @Input() interactive = false;
   @Input() showActions = true;
+  @Input() showDeleteAction = true; // Nueva propiedad para controlar delete independientemente
   @Input() showDescription = true;
   @Input() dateFormat: 'short' | 'medium' | 'long' = 'short';
 

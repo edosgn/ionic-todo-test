@@ -135,7 +135,7 @@
   &__label {
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--ion-color-dark);
+    color: var(--ion-text-color, #1a1a1a);
     transition: color 0.2s ease;
     white-space: nowrap;
   }
@@ -224,31 +224,54 @@
   }
 }
 
-// Dark mode adaptations
-@media (prefers-color-scheme: dark) {
-  .lib-filter-chip {
-    --chip-background: rgba(50, 50, 60, 0.8);
-    --chip-border: 1px solid rgba(255, 255, 255, 0.1);
+// Dark mode adaptations - using body.dark class instead of prefers-color-scheme
+:host-context(body.dark) .lib-filter-chip {
+  --chip-background: rgba(50, 50, 60, 0.8);
+  --chip-border: 1px solid rgba(255, 255, 255, 0.2);
 
-    &__label {
-      color: var(--ion-color-light);
+  &__label {
+    color: #ffffff;
+  }
+
+  // Non-selected chips should have white text for better contrast
+  &:not(.lib-filter-chip--selected) {
+    .lib-filter-chip__label {
+      color: #ffffff !important;
     }
-
-    &--selected {
-      .lib-filter-chip__count {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: rgba(255, 255, 255, 0.2);
-      }
+    
+    .lib-filter-chip__count {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
     }
+  }
 
-    &[data-variant="outlined"] {
-      --chip-background: transparent;
+  &--selected {
+    .lib-filter-chip__count {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.2);
     }
+  }
 
-    &[data-variant="minimal"] {
-      &:hover:not(.lib-filter-chip--disabled) {
-        background: rgba(var(--chip-color), 0.1);
-      }
+  &[data-variant="outlined"] {
+    --chip-background: transparent;
+  }
+
+  &[data-variant="outlined"]:not(.lib-filter-chip--selected) {
+    .lib-filter-chip__label {
+      color: #ffffff !important;
+    }
+  }
+
+  &[data-variant="minimal"] {
+    &:hover:not(.lib-filter-chip--disabled) {
+      background: rgba(var(--chip-color), 0.1);
+    }
+  }
+  
+  &[data-variant="minimal"]:not(.lib-filter-chip--selected) {
+    .lib-filter-chip__label {
+      color: #ffffff !important;
     }
   }
 }

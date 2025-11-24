@@ -17,7 +17,7 @@ export const environment = {
     measurementId: "G-4YMGDC0H2M"
   },
   remoteConfig: {
-    minimumFetchIntervalMillis: 3600000, // 1 hour in dev
-    fetchTimeoutMillis: 60000, // 1 minute
+    minimumFetchIntervalMillis: 0, // 0 in dev for immediate updates
+    fetchTimeoutMillis: 10000, // Reduced to 10 seconds to prevent blocking
   }
 };

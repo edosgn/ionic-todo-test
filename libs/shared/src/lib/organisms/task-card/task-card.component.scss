@@ -179,24 +179,85 @@
   &__actions {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    opacity: 0;
-    transform: translateX(8px);
+    gap: 8px;
+    opacity: 0.8;
+    transform: translateX(0);
     transition: all 0.2s ease;
 
-    .lib-task-card:hover & {
+    .lib-task-card:hover &,
+    .lib-task-card:focus-within & {
       opacity: 1;
       transform: translateX(0);
     }
   }
 
   &__action-btn {
-    --min-height: 32px;
-    --padding-start: 8px;
-    --padding-end: 8px;
+    --min-height: 36px !important;
+    --min-width: 36px !important;
+    --padding-start: 0px !important;
+    --padding-end: 0px !important;
+    --border-radius: 50% !important;
+    --background: var(--ion-color-secondary) !important;
+    --color: white !important;
+    --box-shadow: 0 3px 10px rgba(var(--ion-color-secondary-rgb), 0.3) !important;
+    margin: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50% !important;
+    overflow: hidden;
     
+    // Forzar estilos en el botón interno
+    ion-button {
+      --background: var(--ion-color-secondary) !important;
+      --color: white !important;
+      --border-radius: 50% !important;
+      --padding-start: 0px !important;
+      --padding-end: 0px !important;
+      width: 100%;
+      height: 100%;
+      border-radius: 50% !important;
+    }
+    
+    // Efecto hover
+    &:hover {
+      --background: var(--ion-color-secondary-shade) !important;
+      --box-shadow: 0 6px 16px rgba(var(--ion-color-secondary-rgb), 0.4) !important;
+      transform: translateY(-2px);
+      
+      ion-button {
+        --background: var(--ion-color-secondary-shade) !important;
+      }
+    }
+    
+    // Botón de eliminar (danger)
+    &[color="danger"] {
+      --background: var(--ion-color-danger) !important;
+      --color: white !important;
+      --box-shadow: 0 3px 10px rgba(var(--ion-color-danger-rgb), 0.3) !important;
+      
+      ion-button {
+        --background: var(--ion-color-danger) !important;
+        --color: white !important;
+      }
+      
+      &:hover {
+        --background: var(--ion-color-danger-shade) !important;
+        --box-shadow: 0 6px 16px rgba(var(--ion-color-danger-rgb), 0.4) !important;
+        
+        ion-button {
+          --background: var(--ion-color-danger-shade) !important;
+        }
+      }
+    }
+    
+    // Forzar estilos en elementos internos
+    .button-inner,
     lib-icon {
-      font-size: 16px;
+      color: white !important;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
@@ -248,18 +309,89 @@
   }
 }
 
-// Dark mode adaptations
-@media (prefers-color-scheme: dark) {
+// Dark mode adaptations - using app's theme system
+:host-context(body.dark) {
   .lib-task-card {
-    --card-background: rgba(40, 40, 50, 0.9);
-    --card-border: 1px solid rgba(255, 255, 255, 0.1);
+    --card-background: rgba(255, 255, 255, 0.06);
+    --card-border: 1px solid rgba(255, 255, 255, 0.12);
+    --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
 
     &--completed {
-      --card-background: rgba(30, 45, 35, 0.8);
+      --card-background: rgba(34, 197, 94, 0.1);
+      --card-border: 1px solid rgba(34, 197, 94, 0.3);
     }
 
     &__loading {
-      background: rgba(40, 40, 50, 0.9);
+      background: rgba(0, 0, 0, 0.7);
+    }
+    
+    &__title {
+      color: #ffffff !important;
+      
+      &--completed {
+        color: rgba(255, 255, 255, 0.6) !important;
+      }
+    }
+    
+    &__description {
+      color: rgba(255, 255, 255, 0.7) !important;
+      
+      &--completed {
+        color: rgba(255, 255, 255, 0.4) !important;
+      }
+    }
+    
+    &__date {
+      color: rgba(255, 255, 255, 0.6) !important;
+    }
+    
+    // Botones de acción en modo oscuro
+    &__action-btn {
+      --background: var(--ion-color-secondary-tint) !important;
+      --color: white !important;
+      --box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4) !important;
+      
+      ion-button {
+        --background: var(--ion-color-secondary-tint) !important;
+        --color: white !important;
+      }
+      
+      &:hover {
+        --background: var(--ion-color-secondary) !important;
+        --box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5) !important;
+        
+        ion-button {
+          --background: var(--ion-color-secondary) !important;
+        }
+      }
+      
+      // Botón de eliminar en modo oscuro
+      &[color="danger"] {
+        --background: var(--ion-color-danger-tint) !important;
+        --color: white !important;
+        --box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4) !important;
+        
+        ion-button {
+          --background: var(--ion-color-danger-tint) !important;
+          --color: white !important;
+        }
+        
+        &:hover {
+          --background: var(--ion-color-danger) !important;
+          --box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5) !important;
+          
+          ion-button {
+            --background: var(--ion-color-danger) !important;
+          }
+        }
+      }
+      
+      // Forzar color blanco en iconos para modo oscuro
+      .button-inner,
+      lib-icon {
+        color: white !important;
+      }
     }
   }
 }
@@ -278,6 +410,29 @@
       opacity: 1;
       transform: translateX(0);
       position: static;
+      gap: 6px;
+      
+      // En mobile, los iconos están siempre visibles
+      // Solo se oculta delete si el feature flag está desactivado
+    }
+    
+    &__action-btn {
+      --min-height: 32px !important;
+      --min-width: 32px !important;
+      width: 32px;
+      height: 32px;
+      
+      ion-button {
+        width: 100%;
+        height: 100%;
+        --border-radius: 50% !important;
+      }
+      
+      .button-inner,
+      lib-icon {
+        font-size: 16px;
+        color: white !important;
+      }
     }
 
     &__title {

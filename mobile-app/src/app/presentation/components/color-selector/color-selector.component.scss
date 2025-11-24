@@ -1,0 +1,77 @@
+.color-selector {
+  padding: 16px;
+}
+
+.color-grid {
+  margin: 16px 0;
+  padding: 0;
+}
+
+.color-col {
+  padding: 4px;
+}
+
+.color-button {
+  width: 100%;
+  height: 40px;
+  margin: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  --border-radius: 50%;
+}
+
+.color-button.selected {
+  --box-shadow: 0 0 0 3px var(--ion-color-primary);
+}
+
+.color-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--ion-color-medium-tint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.color-circle:hover {
+  transform: scale(1.1);
+  border-color: var(--ion-color-primary);
+}
+
+.checkmark-icon {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+.custom-color-item {
+  margin-top: 16px;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.color-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+}
+
+.preview-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--ion-color-medium);
+}
+
+.color-preview p {
+  margin: 0;
+}

@@ -43,9 +43,11 @@ import {
 } from 'ionicons/icons';
 
 import { CategoryStore } from '../../stores/category.store';
+import { TaskStore } from '../../stores/task.store';
 import { FeatureFlagStore } from '../../stores/feature-flag.store';
 import { Category } from '../../../domain/entities/category.entity';
 import { CategoryFormModalComponent } from '../../components/category-form-modal/category-form-modal.component';
+import { TranslationService } from '../../../infrastructure/services/translation.service';
 
 @Component({
   selector: 'app-categories',
@@ -68,7 +70,6 @@ import { CategoryFormModalComponent } from '../../components/category-form-modal
     IonSearchbar,
     IonSpinner,
     IonText,
-    IonNote,
     IonCard,
     IonCardHeader,
     IonCardTitle,
@@ -82,13 +83,14 @@ import { CategoryFormModalComponent } from '../../components/category-form-modal
 })
 export class CategoriesPage implements OnInit {
   private readonly categoryStore = inject(CategoryStore);
+  private readonly taskStore = inject(TaskStore);
   private readonly featureFlagStore = inject(FeatureFlagStore);
   private readonly router = inject(Router);
   private readonly alertController = inject(AlertController);
   private readonly toastController = inject(ToastController);
   private readonly modalController = inject(ModalController);
+  readonly translationService = inject(TranslationService);
 
-  // Reactive signals from store
   readonly categories = this.categoryStore.categories;
   readonly sortedCategories = this.categoryStore.sortedCategories;
   readonly stats = this.categoryStore.stats;
@@ -116,6 +118,8 @@ export class CategoriesPage implements OnInit {
   ngOnInit() {
     this.loadCategories();
     this.loadCategoryStats();
+    // Load tasks to ensure accurate task count for validation
+    this.taskStore.loadTasksIfNeeded();
   }
 
   private loadCategories() {
@@ -146,7 +150,6 @@ export class CategoriesPage implements OnInit {
 
     modal.onDidDismiss().then((result) => {
       if (result.data) {
-        // Category was created successfully
         this.loadCategories();
       }
     });
@@ -164,7 +167,6 @@ export class CategoriesPage implements OnInit {
 
     modal.onDidDismiss().then((result) => {
       if (result.data) {
-        // Category was updated successfully
         this.loadCategories();
       }
     });
@@ -173,16 +175,25 @@ export class CategoriesPage implements OnInit {
   }
 
   async onDeleteCategory(category: Category) {
+    const taskCount = this.taskStore.getTaskCountByCategory()(category.id);
+    
+    if (taskCount > 0) {
+      await this.showErrorToast(
+        this.translationService.getCategories('CANNOT_DELETE_HAS_TASKS')
+      );
+      return;
+    }
+
     const alert = await this.alertController.create({
-      header: 'Delete Category',
-      message: `Are you sure you want to delete "${category.name}"? This action cannot be undone.`,
+      header: this.translationService.getDialogs('DELETE_CATEGORY'),
+      message: this.translationService.getDialogs('DELETE_CATEGORY_CONFIRM').replace('{0}', category.name),
       buttons: [
         {
-          text: 'Cancel',
+          text: this.translationService.getCommon('CANCEL'),
           role: 'cancel'
         },
         {
-          text: 'Delete',
+          text: this.translationService.getCommon('DELETE'),
           role: 'destructive',
           handler: () => this.deleteCategory(category.id)
         }
@@ -193,19 +204,29 @@ export class CategoriesPage implements OnInit {
   }
 
   private async deleteCategory(categoryId: string) {
+    const taskCount = this.taskStore.getTaskCountByCategory()(categoryId);
+    
+    if (taskCount > 0) {
+      console.error('Cannot delete category - final check failed. Tasks count:', taskCount);
+      await this.showErrorToast(
+        this.translationService.getCategories('CANNOT_DELETE_HAS_TASKS')
+      );
+      return;
+    }
+
     try {
       this.categoryStore.deleteCategory(categoryId).subscribe({
         next: () => {
-          this.showSuccessToast('Category deleted successfully');
+          this.showSuccessToast(this.translationService.getCategories('DELETED_SUCCESS'));
         },
         error: (error) => {
           console.error('Error deleting category:', error);
-          this.showErrorToast('Error deleting category');
+          this.showErrorToast(this.translationService.getCategories('DELETE_ERROR'));
         }
       });
     } catch (error) {
       console.error('Error deleting category:', error);
-      this.showErrorToast('Error deleting category');
+      this.showErrorToast(this.translationService.getCategories('DELETE_ERROR'));
     }
   }
 

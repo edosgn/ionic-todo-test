@@ -1,133 +1,32 @@
-/**
- * TaskFormComponent - Form for creating and editing tasks
- * 
- * Provides a reactive form for task creation and editing
- * with validation and category selection.
- * 
- * @author Edgar Guerrero
- * @since 1.0.0
- */
-
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, inject, signal, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { IonicModule, ToastController } from '@ionic/angular';
+import { IonicModule, ToastController, IonContent, Platform } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { save, close, checkmark, checkmarkCircle, alertCircle } from 'ionicons/icons';
 
-// Design System imports
-import { ButtonComponent, FormFieldComponent } from '@ionic-todo-test/shared-ui';
-
-// Domain imports
 import { Task, Category } from '../../../domain';
-
-// Application imports
 import { CreateTaskInput, UpdateTaskInput } from '../../../application';
-
-// Presentation imports
 import { TaskStore } from '../../stores/task.store';
 import { CategoryStore } from '../../stores/category.store';
 import { CategorySelectorComponent } from '../category-selector/category-selector.component';
+import { TranslationService } from '../../../infrastructure/services/translation.service';
 
 @Component({
   selector: 'app-task-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, CategorySelectorComponent, ButtonComponent, FormFieldComponent],
-  template: `
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ isEditMode() ? 'Edit Task' : 'New Task' }}</ion-title>
-        <ion-buttons slot="start">
-          <lib-button 
-            variant="clear" 
-            size="medium"
-            startIcon="close"
-            (buttonClick)="onCancel()">
-          </lib-button>
-        </ion-buttons>
-        <ion-buttons slot="end">
-          <lib-button 
-            variant="clear" 
-            size="medium"
-            startIcon="checkmark"
-            [disabled]="taskForm.invalid || isSubmitting()"
-            (buttonClick)="onSubmit()">
-          </lib-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content class="ion-padding">
-      <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
-        <!-- Task Title -->
-        <lib-form-field
-          label="Title"
-          formControlName="title"
-          placeholder="Enter task title"
-          type="text"
-          [maxLength]="100"
-          [required]="true"
-          errorMessage="Title is required and must be at least 2 characters long"
-          [showCharacterCount]="true">
-        </lib-form-field>
-
-        <!-- Task Description -->
-        <lib-form-field
-          label="Description"
-          formControlName="description"
-          placeholder="Enter task description (optional)"
-          type="textarea"
-          [maxLength]="500"
-          helperText="Optional - Add more details about this task"
-          [showCharacterCount]="true">
-        </lib-form-field>
-
-        <!-- Category Selection -->
-        <div class="category-selection-section">
-          <h4>Category Selection</h4>
-          <app-category-selector
-            [selectedCategoryId]="selectedCategorySignal"
-            (categorySelected)="onCategorySelected($event)">
-          </app-category-selector>
-        </div>
-
-        <!-- Error Messages -->
-        <ion-card *ngIf="error()" color="danger">
-          <ion-card-content>
-            <h4>Error</h4>
-            <p>{{ error() }}</p>
-          </ion-card-content>
-        </ion-card>
-
-        <!-- Action Buttons (Mobile) -->
-        <div class="form-actions ion-margin-top">
-          <lib-button 
-            variant="primary" 
-            size="large"
-            expand="full"
-            startIcon="save"
-            [disabled]="taskForm.invalid || isSubmitting()"
-            [loading]="isSubmitting()"
-            (buttonClick)="onSubmit()">
-            {{ isEditMode() ? 'Update Task' : 'Create Task' }}
-          </lib-button>
-          
-          <lib-button 
-            variant="outline" 
-            size="large"
-            expand="full"
-            [disabled]="isSubmitting()"
-            (buttonClick)="onCancel()">
-            Cancel
-          </lib-button>
-        </div>
-      </form>
-    </ion-content>
-  `,
+  imports: [CommonModule, ReactiveFormsModule, IonicModule, CategorySelectorComponent],
+  templateUrl: './task-form.component.html',
   styleUrls: ['./task-form.component.scss']
 })
-export class TaskFormComponent implements OnInit {
+export class TaskFormComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild(IonContent, { static: false }) content!: IonContent;
+  
+  // Icons
+  public readonly saveIcon = save;
+  public readonly closeIcon = close;
+  public readonly checkmarkIcon = checkmark;
   // Inputs
   @Input() task: Task | null = null;
 
@@ -136,12 +35,17 @@ export class TaskFormComponent implements OnInit {
   private readonly categoryStore = inject(CategoryStore);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly toastController = inject(ToastController);
+  private readonly platform = inject(Platform);
+  readonly translationService = inject(TranslationService);
 
   // Component state
   readonly isSubmitting = signal(false);
   readonly error = signal<string | null>(null);
   readonly categories = this.categoryStore.categories;
+  private componentReady = signal(false);
+  private keyboardListeners: any[] = [];
 
   // Form
   taskForm!: FormGroup;
@@ -161,8 +65,82 @@ export class TaskFormComponent implements OnInit {
     this.initializeForm();
   }
 
+  ngAfterViewInit(): void {
+    // Ensure Ionic context is ready for ToastController
+    setTimeout(() => {
+      this.componentReady.set(true);
+    }, 100);
+
+    // Setup iOS keyboard listeners if on iOS
+    if (this.platform.is('ios')) {
+      this.setupIOSKeyboardListeners();
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Clean up keyboard listeners
+    this.keyboardListeners.forEach(listener => {
+      if (listener && typeof listener === 'function') {
+        listener();
+      }
+    });
+  }
+
+  private setupIOSKeyboardListeners(): void {
+    // Listen for keyboard events on iOS
+    if (typeof (window as any).Keyboard !== 'undefined') {
+      const keyboard = (window as any).Keyboard;
+      
+      // Force keyboard resize mode
+      if (keyboard.setResizeMode) {
+        keyboard.setResizeMode('ionic');
+      }
+      
+      // Listen for keyboard show/hide events
+      const keyboardShowListener = keyboard.onKeyboardShow?.((event: any) => {
+        console.log('Keyboard shown:', event);
+        // Force content resize
+        if (this.content) {
+          this.content.getScrollElement().then((scrollEl: HTMLElement) => {
+            scrollEl.style.paddingBottom = event.keyboardHeight + 'px';
+          });
+        }
+      });
+      
+      const keyboardHideListener = keyboard.onKeyboardHide?.(() => {
+        console.log('Keyboard hidden');
+        // Reset content padding
+        if (this.content) {
+          this.content.getScrollElement().then((scrollEl: HTMLElement) => {
+            scrollEl.style.paddingBottom = '0px';
+          });
+        }
+      });
+      
+      if (keyboardShowListener) this.keyboardListeners.push(keyboardShowListener);
+      if (keyboardHideListener) this.keyboardListeners.push(keyboardHideListener);
+    }
+  }
+
   ngOnInit(): void {
-    this.isEditMode.set(!!this.task);
+    // Check if we're in edit mode by getting task ID from route
+    const taskId = this.route.snapshot.paramMap.get('id');
+    
+    if (taskId) {
+      // We're in edit mode, get the task from the store
+      const taskFromStore = this.taskStore.tasks().find(t => t.id === taskId);
+      if (taskFromStore) {
+        this.task = taskFromStore;
+        this.isEditMode.set(true);
+      } else {
+        // Task not found, redirect to tasks list
+        this.router.navigate(['/tasks']);
+        return;
+      }
+    } else {
+      // We're in create mode
+      this.isEditMode.set(false);
+    }
     
     // Load categories
     this.categoryStore.loadCategories();
@@ -204,7 +182,18 @@ export class TaskFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.taskForm.invalid || this.isSubmitting()) {
+    console.log('Form submitted, checking validity...');
+    // Mark all fields as touched to show validation errors
+    this.taskForm.markAllAsTouched();
+    
+    // Check if title is provided and valid
+    if (!this.titleControl.value || this.titleControl.value.trim().length === 0) {
+      console.log('Title is required, aborting...');
+      return;
+    }
+    
+    if (this.isSubmitting()) {
+      console.log('Already submitting, aborting...');
       return;
     }
 
@@ -217,42 +206,47 @@ export class TaskFormComponent implements OnInit {
       // Update existing task
       const updateInput: UpdateTaskInput = {
         id: this.task.id,
-        title: formValue.title,
-        description: formValue.description || '',
+        title: formValue.title?.trim() || '',
+        description: formValue.description?.trim() || '',
         categoryId: formValue.categoryId || null
       };
 
+      console.log('Updating task with input:', updateInput);
       this.taskStore.updateTask(updateInput).subscribe({
         next: (updatedTask) => {
           console.log('Task updated successfully:', updatedTask);
           this.onSuccess();
         },
         error: (error) => {
-          this.handleError(error);
+          console.error('Error updating task:', error);
+          this.showErrorToast(error.message);
         }
       });
     } else {
       // Create new task
       const createInput: CreateTaskInput = {
-        title: formValue.title,
-        description: formValue.description || '',
+        title: formValue.title?.trim() || '',
+        description: formValue.description?.trim() || '',
         categoryId: formValue.categoryId || undefined
       };
 
+      console.log('Creating task with input:', createInput);
       this.taskStore.createTask(createInput).subscribe({
         next: (newTask) => {
           console.log('Task created successfully:', newTask);
+          console.log('Calling onSuccess...');
           this.onSuccess();
         },
         error: (error) => {
-          this.handleError(error);
+          console.error('Error creating task:', error);
+          this.showErrorToast(error.message);
         }
       });
     }
   }
 
   onCancel(): void {
-    // Navigate back to task list
+    // Navigate back to tasks page
     this.router.navigate(['/tasks']);
   }
 
@@ -260,37 +254,89 @@ export class TaskFormComponent implements OnInit {
     this.isSubmitting.set(false);
     
     // Show success toast
-    const toast = await this.toastController.create({
-      message: this.isEditMode() ? 'Task updated successfully' : 'Task created successfully',
-      duration: 2000,
-      position: 'bottom',
-      color: 'success',
-      icon: 'checkmark-circle'
-    });
-    await toast.present();
+    const message = this.isEditMode() 
+      ? (this.translationService.getTasks('UPDATED_SUCCESS') || 'Tarea actualizada correctamente')
+      : (this.translationService.getTasks('CREATED_SUCCESS') || 'Tarea creada correctamente');
     
-    // Navigate back to task list
-    this.router.navigate(['/tasks']);
-  }
-
-  private async handleError(error: any): Promise<void> {
-    this.isSubmitting.set(false);
-    this.error.set(error.message || 'Failed to save task');
-    
-    // Show error toast
-    const toast = await this.toastController.create({
-      message: error.message || 'Failed to save task',
-      duration: 3000,
-      position: 'bottom',
-      color: 'danger',
-      icon: 'alert-circle'
-    });
-    await toast.present();
-    
-    console.error('Task form error:', error);
+    // Ensure toast shows before navigation
+    try {
+      await this.showSuccessToast(message);
+      // Wait a bit for toast to show, then navigate back
+      setTimeout(() => {
+        this.router.navigate(['/tasks']);
+      }, 800); // Reduced time for better UX
+    } catch (error) {
+      console.warn('Toast failed, proceeding with navigation:', error);
+      // If toast fails, still navigate
+      this.router.navigate(['/tasks']);
+    }
   }
 
   trackByCategoryId(index: number, category: Category): string {
     return category.id;
+  }
+
+  private async showSuccessToast(message: string): Promise<void> {
+    try {
+      // Wait for component to be ready if needed
+      let attempts = 0;
+      while (!this.componentReady() && attempts < 10) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        attempts++;
+      }
+      
+      const toast = await this.toastController.create({
+        message,
+        duration: 2500,
+        color: 'success',
+        position: 'bottom',
+        icon: 'checkmark-circle'
+      });
+      
+      await toast.present();
+      console.log('Success toast presented successfully');
+    } catch (error) {
+      console.error('Error showing success toast:', error);
+      // Fallback: try simpler toast without icon
+      try {
+        const simpleToast = await this.toastController.create({
+          message,
+          duration: 2500,
+          color: 'success',
+          position: 'bottom'
+        });
+        await simpleToast.present();
+      } catch (fallbackError) {
+        console.error('Fallback toast also failed:', fallbackError);
+        // Even if toast fails, don't block the user flow
+      }
+    }
+  }
+
+  private async showErrorToast(message: string): Promise<void> {
+    try {
+      // Wait for component to be ready if needed
+      let attempts = 0;
+      while (!this.componentReady() && attempts < 10) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        attempts++;
+      }
+      
+      const toast = await this.toastController.create({
+        message,
+        duration: 4000,
+        color: 'danger',
+        position: 'bottom'
+      });
+      
+      await toast.present();
+      console.log('Error toast presented successfully');
+    } catch (error) {
+      console.error('Error showing error toast:', error);
+      // Fallback: show error in console and update error signal
+      this.error.set(message);
+    } finally {
+      this.isSubmitting.set(false);
+    }
   }
 }

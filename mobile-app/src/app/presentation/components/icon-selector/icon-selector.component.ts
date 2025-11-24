@@ -52,146 +52,11 @@ export interface IconOption {
     IonSearchbar,
     IonText
   ],
-  template: `
-    <div class="icon-selector">
-      <ion-text>
-        <h4>Choose an icon</h4>
-      </ion-text>
-      
-      <!-- Search Bar -->
-      <ion-searchbar
-        placeholder="Search icons..."
-        [debounce]="300"
-        (ionInput)="onSearchChange($event)"
-        class="icon-search">
-      </ion-searchbar>
-
-      <!-- Icons Grid -->
-      <ion-grid class="icons-grid">
-        <ion-row>
-          <ion-col 
-            size="2" 
-            *ngFor="let icon of filteredIcons(); trackBy: trackByIconValue"
-            class="icon-col">
-            <ion-button
-              fill="clear"
-              class="icon-button"
-              [class.selected]="selectedIcon() === icon.value"
-              (click)="selectIcon(icon.value)"
-              [attr.aria-label]="icon.name">
-              <ion-icon 
-                [name]="icon.value" 
-                class="icon-display"
-                [class.selected-icon]="selectedIcon() === icon.value">
-              </ion-icon>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-
-      <!-- No Results -->
-      <div *ngIf="filteredIcons().length === 0" class="no-results">
-        <ion-text color="medium">
-          <p>No icons found</p>
-          <small>Try a different search term</small>
-        </ion-text>
-      </div>
-
-      <!-- Selected Icon Preview -->
-      <div class="icon-preview" *ngIf="selectedIcon()">
-        <ion-icon [name]="selectedIcon()" class="preview-icon"></ion-icon>
-        <ion-text>
-          <p>Selected: <strong>{{ getSelectedIconName() }}</strong></p>
-        </ion-text>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .icon-selector {
-      padding: 16px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .icon-search {
-      margin: 8px 0;
-      --padding-start: 0;
-      --padding-end: 0;
-    }
-
-    .icons-grid {
-      margin: 16px 0;
-      padding: 0;
-    }
-
-    .icon-col {
-      padding: 2px;
-    }
-
-    .icon-button {
-      width: 100%;
-      height: 40px;
-      margin: 0;
-      --padding-start: 0;
-      --padding-end: 0;
-      --border-radius: 8px;
-      --background: transparent;
-    }
-
-    .icon-button.selected {
-      --background: var(--ion-color-primary);
-      --color: var(--ion-color-primary-contrast);
-    }
-
-    .icon-button:hover {
-      --background: var(--ion-color-light);
-    }
-
-    .icon-display {
-      font-size: 18px;
-      transition: all 0.2s ease;
-    }
-
-    .icon-display.selected-icon {
-      color: var(--ion-color-primary-contrast);
-    }
-
-    .no-results {
-      text-align: center;
-      padding: 20px;
-    }
-
-    .no-results p {
-      margin: 0 0 4px 0;
-    }
-
-    .no-results small {
-      opacity: 0.7;
-    }
-
-    .icon-preview {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 16px;
-      padding: 12px;
-      background: var(--ion-color-light);
-      border-radius: 8px;
-      border-top: 1px solid var(--ion-color-medium);
-    }
-
-    .preview-icon {
-      font-size: 24px;
-      color: var(--ion-color-primary);
-    }
-
-    .icon-preview p {
-      margin: 0;
-    }
-  `]
+  templateUrl: './icon-selector.component.html',
+  styleUrls: ['./icon-selector.component.scss']
 })
 export class IconSelectorComponent {
-  @Input() selectedIcon = signal<string>('folder');
+  @Input() selectedIcon: string = 'folder';
   @Output() iconSelected = new EventEmitter<string>();
 
   searchText = signal<string>('');
@@ -264,7 +129,7 @@ export class IconSelectorComponent {
   }
 
   selectIcon(iconValue: string): void {
-    this.selectedIcon.set(iconValue);
+    this.selectedIcon = iconValue;
     this.iconSelected.emit(iconValue);
   }
 
@@ -285,8 +150,8 @@ export class IconSelectorComponent {
   }
 
   getSelectedIconName(): string {
-    const selectedIconData = this.availableIcons.find(icon => icon.value === this.selectedIcon());
-    return selectedIconData?.name || this.selectedIcon();
+    const selectedIconData = this.availableIcons.find(icon => icon.value === this.selectedIcon);
+    return selectedIconData?.name || this.selectedIcon;
   }
 
   trackByIconValue(index: number, icon: IconOption): string {

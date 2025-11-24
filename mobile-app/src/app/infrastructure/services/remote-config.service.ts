@@ -1,21 +1,9 @@
-import { Injectable, inject } from '@angular/core';
-import { RemoteConfig, fetchAndActivate, getValue, fetchConfig, activate } from '@angular/fire/remote-config';
+import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 
-/**
- * Configuration value with metadata
- */
-interface ConfigValue {
-  value: string;
-  source: string;
-}
-
-/**
- * Configuration values map
- */
-interface ConfigValuesMap {
-  [key: string]: ConfigValue | { error: string };
-}
+// Firebase imports - dynamic to avoid initialization issues
+let firebaseApp: any = null;
+let remoteConfigInstance: any = null;
 
 /**
  * RemoteConfigService
@@ -31,186 +19,203 @@ interface ConfigValuesMap {
   providedIn: 'root'
 })
 export class RemoteConfigService {
-  private readonly remoteConfig = inject(RemoteConfig);
   private initialized = false;
+  private initializationPromise: Promise<void> | null = null;
 
-  constructor() {
-    this.setupRemoteConfigSettings();
-  }
-
-  /**
-   * Configure Remote Config settings based on environment
-   */
-  private setupRemoteConfigSettings(): void {
-    this.remoteConfig.settings = {
-      minimumFetchIntervalMillis: environment.remoteConfig.minimumFetchIntervalMillis,
-      fetchTimeoutMillis: environment.remoteConfig.fetchTimeoutMillis,
-    };
-
-    // Set default values for Remote Config parameters
-    this.remoteConfig.defaultConfig = {
-      'enableCategories': true,
-      'enableDeleteTask': true,
-      'remoteTitle': 'Mis Tareas',
-      'maxTasks': 200,
-      'theme_config': JSON.stringify({
-        primaryColor: '#3880ff',
-        accentColor: '#0cd1e8',
-        darkMode: false
-      })
-    };
-  }
+  constructor() {}
 
   /**
-   * Initialize Remote Config by fetching and activating the latest values
+   * Initialize Firebase and Remote Config dynamically
    */
-  async initialize(): Promise<void> {
-    if (this.initialized) {
-      return;
+  private async initializeFirebase(): Promise<void> {
+    if (this.initialized) return;
+    
+    if (this.initializationPromise) {
+      return this.initializationPromise;
     }
 
+    this.initializationPromise = this.performInitialization();
+    return this.initializationPromise;
+  }
+
+  private async performInitialization(): Promise<void> {
     try {
       console.log('🔥 Initializing Firebase Remote Config...');
-      await fetchAndActivate(this.remoteConfig);
+      
+      // Dynamic import to avoid initialization issues
+      const { initializeApp } = await import('firebase/app');
+      const { getRemoteConfig } = await import('firebase/remote-config');
+      
+      if (!firebaseApp) {
+        firebaseApp = initializeApp(environment.firebase);
+      }
+      
+      if (!remoteConfigInstance) {
+        remoteConfigInstance = getRemoteConfig(firebaseApp);
+        remoteConfigInstance.settings = {
+          minimumFetchIntervalMillis: environment.remoteConfig?.minimumFetchIntervalMillis || 3600000,
+          fetchTimeoutMillis: environment.remoteConfig?.fetchTimeoutMillis || 60000,
+        };
+
+        // Set default values
+        remoteConfigInstance.defaultConfig = {
+          'enableCategories': true,
+          'enableDeleteTask': true,
+          'appTitle': 'Mis Tareas',
+          'maxTasks': 200,
+          'showStatistics': true,
+          'theme_config': JSON.stringify({
+            primaryColor: '#3880ff',
+            accentColor: '#0cd1e8',
+            darkMode: false
+          })
+        };
+      }
+
       this.initialized = true;
       console.log('✅ Firebase Remote Config initialized successfully');
+      
     } catch (error) {
-      console.error('❌ Error initializing Remote Config:', error);
-      // Continue with default values
-      this.initialized = true;
+      console.error('❌ Error initializing Firebase Remote Config:', error);
+      // Don't throw - allow app to continue with defaults
+      this.initialized = false;
     }
   }
 
   /**
-   * Get a feature flag value (boolean)
-   * @param key The Remote Config key
-   * @param defaultValue Default value if fetch fails
+   * Initialize Remote Config and fetch latest values
    */
-  async getFeatureFlag(key: string, defaultValue = true): Promise<boolean> {
-    await this.ensureInitialized();
-    
+  async initialize(): Promise<void> {
     try {
-      const value = getValue(this.remoteConfig, key);
+      await this.initializeFirebase();
+      
+      if (this.initialized && remoteConfigInstance) {
+        const { fetchAndActivate } = await import('firebase/remote-config');
+        await fetchAndActivate(remoteConfigInstance);
+      }
+    } catch (error) {
+      console.error('❌ Error during Remote Config initialization:', error);
+      // Don't throw - app should continue with defaults
+    }
+  }
+
+  /**
+   * Get feature flag value with fallback
+   */
+  async getFeatureFlag(key: string, defaultValue: boolean): Promise<boolean> {
+    try {
+      await this.initializeFirebase();
+      
+      if (!this.initialized || !remoteConfigInstance) {
+        console.log(`🏁 Feature flag '${key}': ${defaultValue} [source: default]`);
+        return defaultValue;
+      }
+
+      const { getValue } = await import('firebase/remote-config');
+      const value = getValue(remoteConfigInstance, key);
       const boolValue = value.asBoolean();
-      console.log(`🏁 Feature flag '${key}': ${boolValue}`);
+      const source = value.getSource();
+      
+      console.log(`🏁 Feature flag '${key}': ${boolValue} [source: ${source}]`);
       return boolValue;
-    } catch (error) {
-      console.warn(`⚠️ Error getting feature flag '${key}', using default:`, defaultValue, error);
+      
+    } catch (error: any) {
+      console.error(`❌ Error getting feature flag '${key}':`, error);
+      console.log(`🏁 Feature flag '${key}': ${defaultValue} [source: default]`);
       return defaultValue;
     }
   }
 
   /**
-   * Get a number value from Remote Config
-   * @param key The Remote Config key
-   * @param defaultValue Default value if fetch fails
+   * Get string value with fallback
    */
-  async getNumberValue(key: string, defaultValue = 0): Promise<number> {
-    await this.ensureInitialized();
-    
+  async getStringValue(key: string, defaultValue: string): Promise<string> {
     try {
-      const value = getValue(this.remoteConfig, key);
-      const numberValue = value.asNumber();
-      console.log(`🔢 Number value '${key}': ${numberValue}`);
-      return numberValue;
-    } catch (error) {
-      console.warn(`⚠️ Error getting number value '${key}', using default:`, defaultValue, error);
-      return defaultValue;
-    }
-  }
+      await this.initializeFirebase();
+      
+      if (!this.initialized || !remoteConfigInstance) {
+        console.log(`📝 String value '${key}': "${defaultValue}" [source: default]`);
+        return defaultValue;
+      }
 
-  /**
-   * Get a string value from Remote Config
-   * @param key The Remote Config key
-   * @param defaultValue Default value if fetch fails
-   */
-  async getStringValue(key: string, defaultValue = ''): Promise<string> {
-    await this.ensureInitialized();
-    
-    try {
-      const value = getValue(this.remoteConfig, key);
-      const stringValue = value.asString();
-      console.log(`📝 String value '${key}': ${stringValue}`);
+      const { getValue } = await import('firebase/remote-config');
+      const value = getValue(remoteConfigInstance, key);
+      const stringValue = value.asString() || defaultValue;
+      const source = value.getSource();
+      
+      console.log(`📝 String value '${key}': "${stringValue}" [source: ${source}]`);
       return stringValue;
-    } catch (error) {
-      console.warn(`⚠️ Error getting string value '${key}', using default:`, defaultValue, error);
+      
+    } catch (error: any) {
+      console.error(`❌ Error getting string value '${key}':`, error);
+      console.log(`📝 String value '${key}': "${defaultValue}" [source: default]`);
       return defaultValue;
     }
   }
 
   /**
-   * Get a JSON object value from Remote Config
-   * @param key The Remote Config key
-   * @param defaultValue Default value if fetch fails
+   * Get number value with fallback
    */
-  async getJsonValue<T>(key: string, defaultValue: T): Promise<T> {
-    await this.ensureInitialized();
-    
+  async getNumberValue(key: string, defaultValue: number): Promise<number> {
     try {
-      const value = getValue(this.remoteConfig, key);
-      const stringValue = value.asString();
-      const jsonValue = JSON.parse(stringValue) as T;
-      console.log(`📦 JSON value '${key}':`, jsonValue);
-      return jsonValue;
-    } catch (error) {
-      console.warn(`⚠️ Error getting JSON value '${key}', using default:`, defaultValue, error);
+      await this.initializeFirebase();
+      
+      if (!this.initialized || !remoteConfigInstance) {
+        console.log(`🔢 Number value '${key}': ${defaultValue} [source: default]`);
+        return defaultValue;
+      }
+
+      const { getValue } = await import('firebase/remote-config');
+      const value = getValue(remoteConfigInstance, key);
+      const numberValue = value.asNumber() || defaultValue;
+      const source = value.getSource();
+      
+      console.log(`🔢 Number value '${key}': ${numberValue} [source: ${source}]`);
+      return numberValue;
+      
+    } catch (error: any) {
+      console.error(`❌ Error getting number value '${key}':`, error);
+      console.log(`🔢 Number value '${key}': ${defaultValue} [source: default]`);
       return defaultValue;
     }
   }
 
   /**
-   * Force fetch the latest config from Firebase
-   * Useful for testing or forcing updates
+   * Force fetch new values from Remote Config
    */
   async forceFetch(): Promise<void> {
     try {
-      console.log('🔄 Force fetching Remote Config...');
-      await fetchConfig(this.remoteConfig);
-      await activate(this.remoteConfig);
-      console.log('✅ Remote Config force fetch completed');
-    } catch (error) {
+      await this.initializeFirebase();
+      
+      if (this.initialized && remoteConfigInstance) {
+        const { fetchConfig, activate } = await import('firebase/remote-config');
+        await fetchConfig(remoteConfigInstance);
+        await activate(remoteConfigInstance);
+        console.log('🔄 Remote Config values refreshed');
+      }
+    } catch (error: any) {
       console.error('❌ Error force fetching Remote Config:', error);
       throw error;
     }
   }
 
   /**
-   * Get all active config values for debugging
+   * Get all current values (for debugging)
    */
-  getAllValues(): ConfigValuesMap {
-    if (!this.initialized) {
-      return {};
-    }
-
+  getAllValues(): any {
     try {
-      const keys = ['enableCategories', 'enableDeleteTask', 'remoteTitle', 'maxTasks', 'theme_config'];
-      const values: ConfigValuesMap = {};
+      if (!this.initialized || !remoteConfigInstance) {
+        return {};
+      }
       
-      keys.forEach(key => {
-        try {
-          const value = getValue(this.remoteConfig, key);
-          values[key] = {
-            value: value.asString(),
-            source: value.getSource()
-          };
-        } catch (error) {
-          values[key] = { error: (error as Error).message };
-        }
-      });
-
-      return values;
-    } catch (error) {
-      console.error('Error getting all values:', error);
+      // Return a simple object for debugging
+      return {
+        initialized: this.initialized,
+        hasRemoteConfig: !!remoteConfigInstance
+      };
+    } catch (error: any) {
+      console.error('❌ Error getting all values:', error);
       return {};
-    }
-  }
-
-  /**
-   * Ensure Remote Config is initialized before operations
-   */
-  private async ensureInitialized(): Promise<void> {
-    if (!this.initialized) {
-      await this.initialize();
     }
   }
 }

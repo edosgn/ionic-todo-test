@@ -30,11 +30,6 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./presentation/pages/categories/categories.page').then((m) => m.CategoriesPage),
   },
-  // Legacy tabs routes for fallback
-  {
-    path: 'tabs',
-    loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
-  },
   // Wildcard route - must be last
   {
     path: '**',

@@ -138,7 +138,16 @@ export class FeatureFlagStore {
       this._initialized.set(true);
       this._loading.set(false);
 
-      console.log('✅ Feature flags initialized:', newFeatureFlags);
+      // Log the feature flags before and after update
+      console.log('🔄 Feature Flags updated successfully');
+      console.log('📊 New values:', newFeatureFlags);
+      console.log('🎯 Computed values:', {
+        appTitle: this.appTitle(),
+        maxTasksLimit: this.maxTasksLimit(),
+        deleteTaskEnabled: this.deleteTaskEnabled(),
+        statisticsVisible: this.statisticsVisible(),
+        categoriesEnabled: this.categoriesEnabled()
+      });
 
     } catch (error) {
       console.error('❌ Error initializing feature flags:', error);

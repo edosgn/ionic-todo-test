@@ -166,40 +166,96 @@
     opacity: 0.6;
     font-size: 0.75rem;
   }
+  
+  .category-actions {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    
+    ion-button {
+      --padding-start: 8px;
+      --padding-end: 8px;
+      
+      ion-icon {
+        font-size: 1.1rem;
+      }
+      
+      &[color="primary"] {
+        --color: var(--ion-color-primary);
+        
+        &:hover {
+          --background: var(--ion-color-primary-tint);
+          --color: var(--ion-color-primary-contrast);
+        }
+      }
+      
+      &[color="danger"] {
+        --color: var(--ion-color-danger);
+        
+        &:hover {
+          --background: var(--ion-color-danger-tint);
+          --color: var(--ion-color-danger-contrast);
+        }
+      }
+    }
+  }
 }
 
-// Dark mode support
-@media (prefers-color-scheme: dark) {
+// Dark mode support - respects app theme toggle, not system preference
+:host-context(body.dark) {
   .categories-list {
     .category-item-sliding {
       ion-item {
-        --background: var(--ion-color-dark);
-        --border-color: var(--ion-color-dark-shade);
+        --background: var(--ion-item-background);
+        --border-color: var(--ion-item-border-color);
+        --color: var(--ion-text-color);
         
         &:hover {
-          --background: var(--ion-color-dark-tint);
+          --background: var(--app-surface-variant);
         }
       }
     }
     
     .category-color-indicator {
-      border-color: var(--ion-color-dark-contrast);
+      border-color: var(--ion-text-color);
     }
     
     ion-label {
       h2 {
-        color: var(--ion-color-light);
+        color: var(--ion-text-color);
+      }
+    }
+  }
+  
+  .category-actions {
+    ion-button {
+      &[color="primary"] {
+        --color: var(--ion-color-primary-tint);
+        
+        &:hover {
+          --background: var(--ion-color-primary);
+          --color: var(--ion-color-primary-contrast);
+        }
+      }
+      
+      &[color="danger"] {
+        --color: var(--ion-color-danger-tint);
+        
+        &:hover {
+          --background: var(--ion-color-danger);
+          --color: var(--ion-color-danger-contrast);
+        }
       }
     }
   }
   
   .empty-state {
     h2 {
-      color: var(--ion-color-light);
+      color: var(--ion-text-color);
     }
     
     .empty-icon {
-      color: var(--ion-color-medium-tint);
+      color: var(--ion-color-medium);
     }
   }
 }
@@ -268,5 +324,102 @@
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
+  }
+}
+
+// Dark mode improvements for better contrast
+:host-context(body.dark) {
+  // Searchbar improvements
+  ion-searchbar {
+    --background: rgba(45, 45, 55, 0.95);
+    --color: #ffffff;
+    --placeholder-color: rgba(255, 255, 255, 0.6);
+    --icon-color: rgba(255, 255, 255, 0.8);
+    --clear-button-color: rgba(255, 255, 255, 0.7);
+    --border-radius: 12px;
+    --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    
+    .searchbar-input-container {
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      background: rgba(45, 45, 55, 0.95) !important;
+    }
+    
+    .searchbar-search-icon {
+      color: rgba(255, 255, 255, 0.8) !important;
+    }
+    
+    .searchbar-clear-button {
+      color: rgba(255, 255, 255, 0.7) !important;
+      
+      &:hover {
+        color: #ffffff !important;
+      }
+    }
+  }
+  
+  // Stats card improvements
+  .stats-card {
+    --background: rgba(45, 45, 55, 0.9);
+    --color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    ion-card-title {
+      color: #ffffff;
+    }
+    
+    .stat-item {
+      p {
+        color: rgba(255, 255, 255, 0.8);
+      }
+    }
+  }
+  
+  // Category items improvements
+  .categories-list {
+    ion-item {
+      --background: rgba(45, 45, 55, 0.8);
+      --color: #ffffff;
+      --border-color: rgba(255, 255, 255, 0.1);
+      
+      ion-label {
+        h2 {
+          color: #ffffff;
+        }
+        
+        p {
+          color: rgba(255, 255, 255, 0.7);
+        }
+      }
+    }
+  }
+  
+  // Empty state improvements
+  .empty-state {
+    h2 {
+      color: #ffffff;
+    }
+    
+    p {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .empty-icon {
+      color: rgba(255, 255, 255, 0.4);
+    }
+  }
+  
+  // Error card improvements
+  .error-card {
+    --background: rgba(240, 65, 65, 0.1);
+    --color: #ffffff;
+    border: 1px solid rgba(240, 65, 65, 0.3);
+    
+    h3 {
+      color: #f25454;
+    }
+    
+    p {
+      color: rgba(255, 255, 255, 0.8);
+    }
   }
 }
