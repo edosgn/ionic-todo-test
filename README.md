@@ -84,7 +84,7 @@ npm install -g @ionic/cli cordova
 ### 4. Desarrollo Web (Navegador)
 ```bash
 cd mobile-app
-npm run serve
+npm run start
 # Abre en http://localhost:4200
 ```
 
@@ -205,10 +205,10 @@ La aplicación implementa feature flags dinámicos usando Firebase Remote Config
 ```javascript
 // Parámetros configurados en Firebase Console
 {
-  "enable_categories": true,        // Activar/desactivar sistema de categorías
-  "max_tasks_per_category": 10,     // Límite de tareas por categoría  
-  "theme_mode": "light",            // Tema de la aplicación
-  "enable_offline_sync": false      // Sincronización offline (futuro)
+  "enableDeleteTask": true,        // Activar/desactivar eliminacion de tareas
+  "maxTasks": 10,     // Límite de tareas por categoría  
+  "appTitle": "light",            // Titulo de la aplicación
+  "showStatistics": true      // Activar/desactivar vista de resumen
 }
 ```
 
@@ -217,20 +217,20 @@ La aplicación implementa feature flags dinámicos usando Firebase Remote Config
 // infrastructure/services/remote-config.service.ts
 export class RemoteConfigService {
   async getCategoriesEnabled(): Promise<boolean> {
-    return await this.getBoolean('enable_categories', true);
+    return await this.getBoolean('enableDeleteTask', true);
   }
   
   async getMaxTasksPerCategory(): Promise<number> {
-    return await this.getNumber('max_tasks_per_category', 10);
+    return await this.getNumber('maxTasks', 10);
   }
 }
 ```
 
 #### Demo de Feature Flag
-1. **Configurar** `enable_categories = false` en Firebase Console
-2. **Resultado**: La aplicación oculta toda la funcionalidad de categorías
-3. **Cambiar** `enable_categories = true`
-4. **Resultado**: Las categorías aparecen dinámicamente
+1. **Configurar** `enableDeleteTask = false` en Firebase Console
+2. **Resultado**: La aplicación oculta toda la funcionalidad de eliminar tareas
+3. **Cambiar** `enableDeleteTask = true`
+4. **Resultado**: El boton de eliminar aparece dinámicamente
 
 ## 🧪 Estrategias de Calidad Implementadas
 
