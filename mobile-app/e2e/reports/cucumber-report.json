@@ -1,0 +1,863 @@
+[
+  {
+    "description": "  Como usuario de la aplicacion de tareas\n  Quiero gestionar categorias\n  Para organizar mis tareas por tema",
+    "elements": [
+      {
+        "description": "",
+        "id": "gestion-de-categorias;crear-una-categoria-exitosamente",
+        "keyword": "Scenario",
+        "line": 9,
+        "name": "Crear una categoria exitosamente",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "que el usuario esta autenticado y en la pagina de \"categories\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4138713667
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 10,
+            "name": "el usuario abre el formulario de creacion de categoria",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:24"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 776501999
+            }
+          },
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": [
+                      "nombre",
+                      "color",
+                      "icono"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Trabajo",
+                      "#FF6B6B",
+                      "briefcase"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "keyword": "And ",
+            "line": 11,
+            "name": "completa el formulario de categoria con:",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 224366500
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "guarda la categoria",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:40"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1117874791
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 15,
+            "name": "la categoria \"Trabajo\" aparece en la lista",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:116"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 59436125
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "gestion-de-categorias;eliminar-una-categoria-sin-tareas",
+        "keyword": "Scenario",
+        "line": 17,
+        "name": "Eliminar una categoria sin tareas",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "que el usuario esta autenticado y en la pagina de \"categories\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 3234043459
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 18,
+            "name": "que existe una categoria llamada \"Personal\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:76"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 7702115333
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 19,
+            "name": "el usuario intenta eliminar la categoria \"Personal\"",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:46"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 585331165
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 20,
+            "name": "confirma la eliminacion",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:86"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 555019832
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 21,
+            "name": "la categoria \"Personal\" ya no aparece en la lista",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:122"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 508861166
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "gestion-de-categorias;no-permitir-eliminar-categoria-con-tareas-asociadas",
+        "keyword": "Scenario",
+        "line": 23,
+        "name": "No permitir eliminar categoria con tareas asociadas",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "que el usuario esta autenticado y en la pagina de \"categories\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2693629708
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 24,
+            "name": "que existe una categoria llamada \"Trabajo\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:76"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2641542999
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 25,
+            "name": "que la categoria \"Trabajo\" tiene 3 tareas asignadas",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:85"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6988583624
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 26,
+            "name": "el usuario intenta eliminar la categoria \"Trabajo\"",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:46"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2764245499
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 27,
+            "name": "el usuario ve un mensaje de error con el texto \"No se puede eliminar la categoría porque tiene tareas asignadas\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:186"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 508102292
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 28,
+            "name": "la categoria \"Trabajo\" permanece en la lista",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:132"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6304916
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "gestion-de-categorias;editar-una-categoria-existente",
+        "keyword": "Scenario",
+        "line": 30,
+        "name": "Editar una categoria existente",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "que el usuario esta autenticado y en la pagina de \"categories\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2696947583
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 31,
+            "name": "que existe una categoria llamada \"Personal\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:76"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 8001858000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 32,
+            "name": "el usuario abre el formulario de edicion de la categoria \"Personal\"",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:95"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2754542790
+            }
+          },
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": [
+                      "nombre",
+                      "color",
+                      "icono"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Personal+",
+                      "#4ECDC4",
+                      "star"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "keyword": "And ",
+            "line": 33,
+            "name": "completa el formulario de categoria con:",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:30"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 214030582
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 36,
+            "name": "guarda la categoria",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:40"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1048273583
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 37,
+            "name": "la categoria \"Personal+\" aparece en la lista",
+            "match": {
+              "location": "e2e/step-definitions/categories.steps.ts:116"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6415833
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "gestion-de-categorias",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Gestion de Categorias",
+    "tags": [],
+    "uri": "e2e/features/categories.feature"
+  },
+  {
+    "description": "  Como usuario de la aplicacion de tareas\n  Quiero navegar entre las diferentes pantallas\n  Para acceder a las funcionalidades de la aplicacion",
+    "elements": [
+      {
+        "description": "",
+        "id": "navegacion-entre-pantallas;navegar-a-la-pagina-de-categorias-desde-la-pagina-de-tareas",
+        "keyword": "Scenario",
+        "line": 9,
+        "name": "Navegar a la pagina de categorias desde la pagina de tareas",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "que el usuario esta autenticado y en la pagina de \"tasks\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2705576124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 10,
+            "name": "el usuario hace clic en el boton \"Categorias\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:130"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2696555667
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 11,
+            "name": "el usuario ve el texto \"Categorías\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:161"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 42509750
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "navegacion-entre-pantallas;navegar-de-vuelta-a-la-pagina-de-tareas",
+        "keyword": "Scenario",
+        "line": 13,
+        "name": "Navegar de vuelta a la pagina de tareas",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "que el usuario esta autenticado y en la pagina de \"tasks\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2662988125
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 14,
+            "name": "que el usuario esta autenticado y en la pagina de \"categories\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2636251834
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 15,
+            "name": "el usuario hace clic en el boton \"Volver\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:130"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2695666250
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 16,
+            "name": "el usuario ve el texto \"Mis Tareas\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:161"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 24335791
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "navegacion-entre-pantallas;navegar-a-creacion-de-nueva-tarea",
+        "keyword": "Scenario",
+        "line": 18,
+        "name": "Navegar a creacion de nueva tarea",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "que el usuario esta autenticado y en la pagina de \"tasks\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2655578166
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 19,
+            "name": "el usuario hace clic en el boton \"Agregar tarea\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:130"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2641330750
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 20,
+            "name": "el usuario ve el texto \"Nueva Tarea\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:161"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 34639416
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "navegacion-entre-pantallas",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Navegacion entre pantallas",
+    "tags": [],
+    "uri": "e2e/features/navigation.feature"
+  },
+  {
+    "description": "  Como usuario de la aplicacion de tareas\n  Quiero gestionar mis tareas\n  Para mantener un registro de mis pendientes",
+    "elements": [
+      {
+        "description": "",
+        "id": "gestion-de-tareas;crear-una-tarea-exitosamente",
+        "keyword": "Scenario",
+        "line": 9,
+        "name": "Crear una tarea exitosamente",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "que el usuario esta autenticado y en la pagina de \"tasks\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2646706041
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 10,
+            "name": "el usuario abre el formulario de nueva tarea",
+            "match": {
+              "location": "e2e/step-definitions/tasks.steps.ts:26"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2122233500
+            }
+          },
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": [
+                      "titulo",
+                      "descripcion",
+                      "categoria"
+                    ]
+                  },
+                  {
+                    "cells": [
+                      "Comprar viveres",
+                      "Leche, pan y huevos",
+                      "Personal"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "keyword": "And ",
+            "line": 11,
+            "name": "completa el formulario de tarea con:",
+            "match": {
+              "location": "e2e/step-definitions/tasks.steps.ts:32"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 490884791
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "guarda la tarea",
+            "match": {
+              "location": "e2e/step-definitions/tasks.steps.ts:49"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1049606375
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 15,
+            "name": "la tarea \"Comprar viveres\" aparece en la lista",
+            "match": {
+              "location": "e2e/step-definitions/tasks.steps.ts:118"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 247519667
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "gestion-de-tareas;completar-una-tarea",
+        "keyword": "Scenario",
+        "line": 17,
+        "name": "Completar una tarea",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "que el usuario esta autenticado y en la pagina de \"tasks\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2665294333
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 18,
+            "name": "que existe una tarea llamada \"Comprar viveres\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:106"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2655058124
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 19,
+            "name": "el usuario marca la tarea \"Comprar viveres\" como completada",
+            "match": {
+              "location": "e2e/step-definitions/tasks.steps.ts:55"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2701639792
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 20,
+            "name": "la tarea \"Comprar viveres\" aparece como completada",
+            "match": {
+              "location": "e2e/step-definitions/tasks.steps.ts:124"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 9272542
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "gestion-de-tareas;eliminar-una-tarea",
+        "keyword": "Scenario",
+        "line": 22,
+        "name": "Eliminar una tarea",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "que el usuario esta autenticado y en la pagina de \"tasks\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2665318416
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 23,
+            "name": "que existe una tarea llamada \"Comprar viveres\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:106"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2643284417
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 24,
+            "name": "el usuario elimina la tarea \"Comprar viveres\"",
+            "match": {
+              "location": "e2e/step-definitions/tasks.steps.ts:64"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4707243541
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 25,
+            "name": "la tarea \"Comprar viveres\" ya no aparece en la lista",
+            "match": {
+              "location": "e2e/step-definitions/tasks.steps.ts:131"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 509353084
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "gestion-de-tareas;filtrar-tareas-por-busqueda",
+        "keyword": "Scenario",
+        "line": 27,
+        "name": "Filtrar tareas por busqueda",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "que el usuario esta autenticado y en la pagina de \"tasks\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:71"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 2637444916
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 28,
+            "name": "que existen tareas llamadas \"Comprar viveres\" y \"Hacer ejercicio\"",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:115"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 12049062791
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 29,
+            "name": "el usuario escribe \"ejercicio\" en el buscador",
+            "match": {
+              "location": "e2e/step-definitions/common.steps.ts:151"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1301893166
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 30,
+            "name": "la tarea \"Hacer ejercicio\" aparece en la lista",
+            "match": {
+              "location": "e2e/step-definitions/tasks.steps.ts:118"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 6745957
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 31,
+            "name": "la tarea \"Comprar viveres\" no es visible",
+            "match": {
+              "location": "e2e/step-definitions/tasks.steps.ts:141"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 4944625
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "gestion-de-tareas",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Gestion de Tareas",
+    "tags": [],
+    "uri": "e2e/features/tasks.feature"
+  }
+]

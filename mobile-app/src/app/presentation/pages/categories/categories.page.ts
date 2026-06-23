@@ -23,8 +23,6 @@ import {
   IonCardTitle,
   IonCardContent,
   IonItemSliding,
-  IonItemOptions,
-  IonItemOption,
   AlertController,
   ToastController,
   IonBackButton,
@@ -75,8 +73,6 @@ import { TranslationService } from '../../../infrastructure/services/translation
     IonCardTitle,
     IonCardContent,
     IonItemSliding,
-    IonItemOptions,
-    IonItemOption,
     IonBackButton,
     IonButtons
   ]

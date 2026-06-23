@@ -28,6 +28,7 @@ export default {
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.[jt]s?(x)',
     '<rootDir>/src/**/*(*.)@(spec|test).[jt]s?(x)',
+    '<rootDir>/e2e/integration/**/*(*.)@(spec|test).[jt]s?(x)',
   ],
   // Coverage configuration
   collectCoverageFrom: [
