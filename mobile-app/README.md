@@ -45,7 +45,7 @@ npm run build:android    # Genera APK
 1. **Build**: `cd .. && npm run build` (desde raíz del monorepo)
 2. **Copy**: Copia archivos de `dist/ionic-todo-test/*` a `www/`
 3. **Fix**: Ajusta HTML para Cordova (base href="./" y cordova.js)
-4. **Cordova**: `cordova build android` para generar APK
+4. **Cordova**: `cordova build android` para generar APK (cordova build android -- --gradleVersion=9.2.1)
 
 ## Configuración Actual
 
